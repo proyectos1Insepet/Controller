@@ -73,7 +73,7 @@ while (true){
     while ($conexion){
         $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
         or die('Can not connect: ' . \pg_last_error());
-        $query = "SELECT  estado, esado2 FROM estado";
+        $query = "SELECT  pos1, pos2 FROM estado WHERE Pk_id_estado = 1";
         $result = pg_query($query) or die('Query error: ' . \pg_last_error()); 
         $row = pg_fetch_row($result);
         $recibe = $row[0];
@@ -152,36 +152,44 @@ while (true){
             case a3:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $query = "SELECT volumeninicial, volumenfinal, dineroinicial,dinerofinal from venta where pk_idventa = (select max(pk_idventa) from venta)"; 
+                $query = "SELECT pk_idventa,volumeninicial, volumenfinal, dineroinicial,dinerofinal from venta where pk_idventa = (select max(pk_idventa) from venta)"; 
                 $result = pg_query($query) or die('Query error: ' . \pg_last_error()); 
                 $row  = pg_fetch_row($result);
-                $volumen = $row[1]-$row[0];
-                $dinero  = $row[3]-$row[2];
+                $volumen = $row[2]-$row[1];
+                $dinero  = $row[4]-$row[3];
+                $idventa = $row[0];
+                echo "Id venta:$idventa\n";
                 
-                $revimp  = strrev($dinero);
-                $revcant = strrev($volumen);
+                $revimp     = strrev($dinero);
+                $revcant    = strrev($volumen);
+                $revidventa = strrev($idventa);
+                echo "Rev Id venta:$revidventa\n";
                 
-                $stringimp  = sprintf("%0-7s",$revimp);
-                $stringcant = sprintf("%0-7s",$revcant);
+                $stringimp     = sprintf("%0-7s",$revimp);
+                $stringcant    = sprintf("%0-7s",$revcant);
+                $stringidventa = sprintf("%0-9s",$revidventa);
                 
                 $arimporte   = str_split($stringimp);
-                $arvolumen  = str_split($stringcant);
+                $arvolumen   = str_split($stringcant);
+                $aridventa   = str_split($stringidventa);
                 
                 echo "Cadena Importe:$stringimp\n";
+                echo "Cadena consecutivo:$stringidventa\n";
                 
-                $ar = array(78, 83, 88, $array[3],211,1,44,    $arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3]+1,$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1]+1,$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3]+1,$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],$arvol[12],    80,0,0,0,7,0,    72,47,10,   70,24,5,16,      80,0,0,0,0,7,0,0,  73,0,    75,0,0,0,0,0,0,0,0,0,0);
+                $ar = array(78, 83, 88, $array[3],211,1,44,    $arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3]+1,$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2]+1,$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3]+1,$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],$arvol[12],    80,0,0,0,7,0,    72,47,10,   70,24,5,16,      80,0,0,0,0,7,0,0,  73,0,    75,0,0,0,0,0,0,0,0,0,0,   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8]);  //Borrar $aridventa para quitar consecutivo de venta
                 $largo = count($ar);                                                
-                $ar[$largo] = verificar_check($ar, ($largo +1));
+                $ar[$largo] = verificar_check($ar, ($largo+1));
+                $dato_a3 = implode("-",$ar);
+                echo "Dato A3_1: $dato_a3\n";
                 foreach ($ar as &$valor) {
                     $valor = chr($valor);
                 }
                 unset($valor);                                          
                 $envio = implode("", $ar);
                 $length = strlen($envio);
-                $dato_a3 = implode("-",$ar);
-                echo "Dato A3_1: $dato_a3\n";
-                socket_write($client, $envio);
-                $query2 = " UPDATE estado SET estado = 22";
+                echo "Largo trama: $length\n";
+                socket_write($client, $envio,$length);
+                $query2 = " UPDATE estado SET pos1 = 22";
                 $result2 = pg_query($query2) or die('Query error: ' . \pg_last_error()); 
                 pg_free_result($result);
                 pg_free_result($result2);
@@ -213,32 +221,64 @@ while (true){
             case a5:   // Se envían totales electronicos del dispansador
             $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
             or die('Can not connect: ' . \pg_last_error());
-            $query = "SELECT volumenfinal, dinerofinal from venta where pk_idventa = (select max(pk_idventa) from venta)"; 
+            
             $sql = "SELECT formatodinero FROM mapeodispensador WHERE pk_idposicion = 1";
-            $result  = pg_query($query) or die('Query error: ' . \pg_last_error()); 
             $result2 = pg_query($sql)   or die('Query error: ' . \pg_last_error()); 
-            $row  = pg_fetch_row($result);
             $row2 = pg_fetch_row($result2);
-            $voltotal = $row[0];
-            $dintotal = $row[1];
+            
             $decdin   = $row2[0]; //decimales de dinero en el equipo
-            $formatvol = sprintf("%01.2f", $voltotal);
-            echo "Totales Vol:$formatvol + Din:$dintotal\n";
-            
-            $revdin = strrev($dintotal);
-            $revvol = strrev($formatvol);
-            //$padvol= str_pad($dintotal,$decdin,"0", STR_PAD_LEFT);
-            $stringdin = sprintf("%0-12s",$revdin);
-            $stringvol = sprintf("%0-13s",$revvol);
-            
-            $ardinero  = str_split($stringdin);
-            $arvol     = str_split($stringvol);
-            
-            echo "Cadena Vol:$stringvol\n";
-            
-            
             if ($array[3]==1){
-                $ar = array(78, 83,88,$array[3],213,49,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],$arvol[12],    50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,     51,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+                $query = "SELECT totalmanguera1, dineromanguera1,totalmanguera2, dineromanguera2,totalmanguera3, dineromanguera3,totalmanguera4, dineromanguera4 from totales where pk_id_posicion  = 1"; 
+                $result  = pg_query($query) or die('Query error: ' . \pg_last_error()); 
+                $row  = pg_fetch_row($result);
+                //Lee totales electronicos en dinero y volumen de la tabla
+                $voltotal1 = $row[0];
+                $dintotal1 = $row[1];
+                $voltotal2 = $row[2];
+                $dintotal2 = $row[3];
+                $voltotal3 = $row[4];
+                $dintotal3 = $row[5];
+                $voltotal4 = $row[6];
+                $dintotal4 = $row[7];
+                //Formato
+                $formatvol1 = sprintf("%01.2f", $voltotal1);
+                $formatvol2 = sprintf("%01.2f", $voltotal2);
+                $formatvol3 = sprintf("%01.2f", $voltotal3);
+                $formatvol4 = sprintf("%01.2f", $voltotal4);
+                
+                //Invierte la trama para transmitir primero el LSB
+                $revdin1 = strrev($dintotal1);
+                $revvol1 = strrev($formatvol1);
+                $revdin2 = strrev($dintotal2);
+                $revvol2 = strrev($formatvol2);
+                $revdin3 = strrev($dintotal3);
+                $revvol3 = strrev($formatvol3);
+                $revdin4 = strrev($dintotal4);
+                $revvol4 = strrev($formatvol4);
+                
+                //Completa la cadena y formatea para envío
+                //$padvol= str_pad($dintotal,$decdin,"0", STR_PAD_LEFT);
+                $stringdin1 = sprintf("%0-12s",$revdin1);
+                $stringvol1 = sprintf("%0-13s",$revvol1);
+                $stringdin2 = sprintf("%0-12s",$revdin2);
+                $stringvol2 = sprintf("%0-13s",$revvol2);
+                $stringdin3 = sprintf("%0-12s",$revdin3);
+                $stringvol3 = sprintf("%0-13s",$revvol3);
+                $stringdin4 = sprintf("%0-12s",$revdin4);
+                $stringvol4 = sprintf("%0-13s",$revvol4);
+                
+                
+                $ardinero1  = str_split($stringdin1);
+                $arvol1     = str_split($stringvol1);
+                $ardinero2  = str_split($stringdin2);
+                $arvol2     = str_split($stringvol2);
+                $ardinero3  = str_split($stringdin3);
+                $arvol3     = str_split($stringvol3);
+                $ardinero4  = str_split($stringdin4);
+                $arvol4     = str_split($stringvol4);
+            
+            
+                $ar = array(78, 83,88,$array[3],213,49,$ardinero1[0],$ardinero1[1],$ardinero1[2],$ardinero1[3],$ardinero1[4],$ardinero1[5],$ardinero1[6],$ardinero1[7],$ardinero1[8],$ardinero1[9],$ardinero1[10],$ardinero1[11],$arvol1[0],$arvol1[1],$arvol1[3],$arvol1[4],$arvol1[5],$arvol1[6],$arvol1[7],$arvol1[8],$arvol1[9],$arvol1[10],$arvol1[11],$arvol1[12],    50,$ardinero2[0],$ardinero2[1],$ardinero2[2],$ardinero2[3],$ardinero2[4],$ardinero2[5],$ardinero2[6],$ardinero2[7],$ardinero2[8],$ardinero2[9],$ardinero2[10],$ardinero2[11],$arvol2[0],$arvol2[1],$arvol2[3],$arvol2[4],$arvol2[5],$arvol2[6],$arvol2[7],$arvol2[8],$arvol2[9],$arvol2[10],$arvol2[11],$arvol2[12],     51,$ardinero3[0],$ardinero3[1],$ardinero3[2],$ardinero3[3],$ardinero3[4],$ardinero3[5],$ardinero3[6],$ardinero3[7],$ardinero3[8],$ardinero3[9],$ardinero3[10],$ardinero3[11],$arvol3[0],$arvol3[1],$arvol3[3],$arvol3[4],$arvol3[5],$arvol3[6],$arvol3[7],$arvol3[8],$arvol3[9],$arvol3[10],$arvol3[11],$arvol3[12]);
                 $largo = count($ar);                                                
                 $ar[$largo] = verificar_check($ar, ($largo+1));
                 foreach ($ar as &$valor) {
@@ -249,11 +289,62 @@ while (true){
                 $imprime = implode("-",$ar);
                 $length = strlen($envio);
                 socket_write($client, $envio);
-                echo "Estado : $estado\n";
                 echo "Imprime : $imprime\n";
                 } 
             if($array[3]==2){
-                $ar = array(78, 83, 88,2,213,49,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],$arvol[12],    50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,     51,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+                $query = "SELECT totalmanguera1, dineromanguera1,totalmanguera2, dineromanguera2,totalmanguera3, dineromanguera3,totalmanguera4, dineromanguera4 from totales where pk_id_posicion  = 2"; 
+                $result  = pg_query($query) or die('Query error: ' . \pg_last_error()); 
+                $row  = pg_fetch_row($result);
+                //Lee totales electronicos en dinero y volumen de la tabla
+                $voltotal1 = $row[0];
+                $dintotal1 = $row[1];
+                $voltotal2 = $row[2];
+                $dintotal2 = $row[3];
+                $voltotal3 = $row[4];
+                $dintotal3 = $row[5];
+                $voltotal4 = $row[6];
+                $dintotal4 = $row[7];
+                //Formato
+                $formatvol1 = sprintf("%01.2f", $voltotal1);
+                $formatvol2 = sprintf("%01.2f", $voltotal2);
+                $formatvol3 = sprintf("%01.2f", $voltotal3);
+                $formatvol4 = sprintf("%01.2f", $voltotal4);
+                
+                //Invierte la trama para transmitir primero el LSB
+                $revdin1 = strrev($dintotal1);
+                $revvol1 = strrev($formatvol1);
+                $revdin2 = strrev($dintotal2);
+                $revvol2 = strrev($formatvol2);
+                $revdin3 = strrev($dintotal3);
+                $revvol3 = strrev($formatvol3);
+                $revdin4 = strrev($dintotal4);
+                $revvol4 = strrev($formatvol4);
+                
+                //Completa la cadena y formatea para envío
+                //$padvol= str_pad($dintotal,$decdin,"0", STR_PAD_LEFT);
+                $stringdin1 = sprintf("%0-12s",$revdin1);
+                $stringvol1 = sprintf("%0-13s",$revvol1);
+                $stringdin2 = sprintf("%0-12s",$revdin2);
+                $stringvol2 = sprintf("%0-13s",$revvol2);
+                $stringdin3 = sprintf("%0-12s",$revdin3);
+                $stringvol3 = sprintf("%0-13s",$revvol3);
+                $stringdin4 = sprintf("%0-12s",$revdin4);
+                $stringvol4 = sprintf("%0-13s",$revvol4);
+                
+                
+                $ardinero1  = str_split($stringdin1);
+                $arvol1     = str_split($stringvol1);
+                $ardinero2  = str_split($stringdin2);
+                $arvol2     = str_split($stringvol2);
+                $ardinero3  = str_split($stringdin3);
+                $arvol3     = str_split($stringvol3);
+                $ardinero4  = str_split($stringdin4);
+                $arvol4     = str_split($stringvol4);
+            
+                
+                
+                
+                $ar = array(78, 83,88,$array[3],213,49,$ardinero1[0],$ardinero1[1],$ardinero1[2],$ardinero1[3],$ardinero1[4],$ardinero1[5],$ardinero1[6],$ardinero1[7],$ardinero1[8],$ardinero1[9],$ardinero1[10],$ardinero1[11],$arvol1[0],$arvol1[1],$arvol1[3],$arvol1[4],$arvol1[5],$arvol1[6],$arvol1[7],$arvol1[8],$arvol1[9],$arvol1[10],$arvol1[11],$arvol1[12],    50,$ardinero2[0],$ardinero2[1],$ardinero2[2],$ardinero2[3],$ardinero2[4],$ardinero2[5],$ardinero2[6],$ardinero2[7],$ardinero2[8],$ardinero2[9],$ardinero2[10],$ardinero2[11],$arvol2[0],$arvol2[1],$arvol2[3],$arvol2[4],$arvol2[5],$arvol2[6],$arvol2[7],$arvol2[8],$arvol2[9],$arvol2[10],$arvol2[11],$arvol2[12],     51,$ardinero3[0],$ardinero3[1],$ardinero3[2],$ardinero3[3],$ardinero3[4],$ardinero3[5],$ardinero3[6],$ardinero3[7],$ardinero3[8],$ardinero3[9],$ardinero3[10],$ardinero3[11],$arvol3[0],$arvol3[1],$arvol3[3],$arvol3[4],$arvol3[5],$arvol3[6],$arvol3[7],$arvol3[8],$arvol3[9],$arvol3[10],$arvol3[11],$arvol3[12]);
                 $largo = count($ar);                                                
                 echo "Largo A5: $largo\n";                
                 $ar[$largo] = verificar_check($ar, ($largo +1));

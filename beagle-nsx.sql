@@ -101,3 +101,27 @@ EXECUTE PROCEDURE limpiar_copia_recibo();
 
 
 INSERT INTO copiaderecibo (Fk_IdVenta,NumeroCopiasRecibo) VALUES (1,5);
+
+
+--------Permiso de tabla--------------
+GRANT ALL PRIVILEGES ON estado TO db_admin;
+
+----------TABLAS PARA DISPENSADOR-BEAGLE------------------
+
+CREATE TABLE estado(
+    Pk_id_estado SERIAL PRIMARY KEY,
+    pos1 INT,
+    pos2 INT
+);
+
+CREATE TABLE totales(
+    Pk_id_posicion SERIAL UNIQUE PRIMARY KEY,
+    TotalManguera1  FLOAT,
+    TotalManguera2  FLOAT,
+    TotalManguera3  FLOAT,
+    TotalManguera4  FLOAT,
+    DineroManguera1 FLOAT,
+    DineroManguera2 FLOAT,
+    DineroManguera3 FLOAT,
+    DineroManguera4 FLOAT
+);
