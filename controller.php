@@ -58,18 +58,19 @@ function verificar_check($datos,  $size){
 
 
 //start loop to listen for incoming connections
-while (true) 
-{
+while (true){
     //Accept incoming connection - This is a blocking call
     $client =  socket_accept($sock);     
     //display information about the client who is connected
     if(socket_getpeername($client , $address , $port))
     {
         echo "Client $address : $port is now connected to us. \n";
+        $conexion = true;
+        echo "$conexion\n";
     }     
     //read data from the incoming socket
      
-    while (1){
+    while ($conexion){
         $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
         or die('Can not connect: ' . \pg_last_error());
         $query = "SELECT  estado, esado2 FROM estado";
@@ -77,6 +78,9 @@ while (true)
         $row = pg_fetch_row($result);
         $recibe = $row[0];
         $recibe2 = $row[1];
+        if($recibe == 16){
+            $estado = 255;
+        }
         if($recibe == 22){
             $estado = 1;
         }
@@ -95,9 +99,7 @@ while (true)
             $estado2 = 2;    
         }
         echo "Estado inicial: $estado\n" ; 
-        
         $input = socket_read($client, 1024); 
-               
         $array = str_split($input); 
         echo "Cadena entrada: $input\n";
         foreach ($array as &$valor) {
@@ -126,14 +128,14 @@ while (true)
                 socket_write($client, $envio,$length);  
                 pg_free_result($result);
                 pg_close($dbconn); // Cerrando la conexión                
-                break;
+            break;
             case a2:
-                $minuto = date("i");
-                $hora   = date("h");
-                $dia    = date("d");
-                $mes    = date("m");
-                $year   = date("y");
-                $ar = array(78, 83, 88,$array[3], 210, 1, 1,  0,0,0,7,0,0,0,  84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],$arvol[12],   80,0,0,0,7,0,   72,$minuto,$hora,     70,$dia,$mes,$year );
+                $minuto = 9; //date("i");
+                $hora   = 52;//date("h");
+                $dia    = 37;//date("d");
+                $mes    = 5;//date("m");
+                $year   = 22;//date("y");
+                $ar = array(78, 83, 88,$array[3], 210, 1, 3,  0,0,0,7,0,0,0,  84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],$arvol[12],   80,0,0,0,7,0,   72,$minuto,$hora,     70,$dia,$mes,$year );
                 $largo = count($ar);                                                
                 $ar[$largo] = verificar_check($ar, ($largo +1));
                 $dato_a2 = implode("-",$ar);
@@ -145,17 +147,29 @@ while (true)
                 $envio = implode("", $ar);
                 $length = strlen($envio);                 
                 socket_write($client, $envio,$length);
-                $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
-                    or die('Can not connect: ' . \pg_last_error());
-                $query = " UPDATE estado SET estado = 25";
-                //$query = " SELECT * FROM estado";
-                $result = pg_query($query) or die('Query error: ' . \pg_last_error()); 
-                pg_free_result($result);
-                pg_close($dbconn); // Cerrando la conexión  
-                
             break;
+            
             case a3:
-                $ar = array(78, 83, 88, $array[3],211,$array[5],44,    0,0,0,7,0,0,0,    86,0,0,0,1,0,0,0,    84,0,0,0,7,0,0,0,0,0,0,0,0, 0,0,0,1,0,0,0,0,0,0,0,0,    80,0,0,0,7,0,    72,47,10,   70,24,5,16,      80,0,0,0,7,0,0,0,  73,0,    75,0,0,0,0,0,0,0,0,0,0);
+                $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                $query = "SELECT volumeninicial, volumenfinal, dineroinicial,dinerofinal from venta where pk_idventa = (select max(pk_idventa) from venta)"; 
+                $result = pg_query($query) or die('Query error: ' . \pg_last_error()); 
+                $row  = pg_fetch_row($result);
+                $volumen = $row[1]-$row[0];
+                $dinero  = $row[3]-$row[2];
+                
+                $revimp  = strrev($dinero);
+                $revcant = strrev($volumen);
+                
+                $stringimp  = sprintf("%0-7s",$revimp);
+                $stringcant = sprintf("%0-7s",$revcant);
+                
+                $arimporte   = str_split($stringimp);
+                $arvolumen  = str_split($stringcant);
+                
+                echo "Cadena Importe:$stringimp\n";
+                
+                $ar = array(78, 83, 88, $array[3],211,1,44,    $arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3]+1,$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1]+1,$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3]+1,$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],$arvol[12],    80,0,0,0,7,0,    72,47,10,   70,24,5,16,      80,0,0,0,0,7,0,0,  73,0,    75,0,0,0,0,0,0,0,0,0,0);
                 $largo = count($ar);                                                
                 $ar[$largo] = verificar_check($ar, ($largo +1));
                 foreach ($ar as &$valor) {
@@ -167,39 +181,33 @@ while (true)
                 $dato_a3 = implode("-",$ar);
                 echo "Dato A3_1: $dato_a3\n";
                 socket_write($client, $envio);
+                $query2 = " UPDATE estado SET estado = 22";
+                $result2 = pg_query($query2) or die('Query error: ' . \pg_last_error()); 
+                pg_free_result($result);
+                pg_free_result($result2);
+                pg_close($dbconn); // Cerrando la conexión  
             break;
             
-            case a4:                
-                switch ($array){
-                    case 1:
+            case a4:   
+                switch ($array[5]){
+                    case 01:
                         $ar = array(78, 83, 88,$array[3],212,3);
+                        echo "ingresó\n";
                     break;
-                    case 2:
-                    case 3:
-                        $ar = array(78, 83, 88,$array[3],212,3);
-                    break;
-                    
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
+                    case 02:
                         $ar = array(78, 83, 88,$array[3],212,3);
                     break;
                 }
-                $largo = count($ar);   
                 $ar[6] = verificar_check($ar,7);
+                $dato_a4 = implode("-",$ar);
+                echo "Dato A4: $dato_a4\n";
                 foreach ($ar as &$valor) {
                    $valor = chr($valor);
                 }
                 unset($valor);                                          
                 $envio = implode("", $ar);
                 $length = strlen($envio);
-                $dato_a4 = implode("-",$ar);
-                echo "Dato A4: $dato_ad\n";
-                socket_write($client, $envio);
+                socket_write($client, $envio,$length);
             break;
                 
             case a5:   // Se envían totales electronicos del dispansador
@@ -322,6 +330,8 @@ while (true)
                              
                 
         }        
+    }else{
+        $conexion = false;
     }
     }
         
