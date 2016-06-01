@@ -418,6 +418,25 @@ while (true){
                 socket_write($client, $envio);
                 
             break;
+            
+            case b3:
+                $ar =array(78,83,88,$array[3],227);
+                $query = "SELECT serial from canasta;"; 
+                $result  = pg_query($query) or die('Query error: ' . \pg_last_error()); 
+                $row  = pg_fetch_row($result);
+                $arprodcanasta = str_split($row[0]);
+                array_push($ar,$arprodcanasta);
+                $largo = count($ar);   
+                $ar[$largo] = verificar_check($ar, ($largo +1));
+                foreach ($ar as &$valor) {
+                       $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                
+            break;
                              
                 
         }        

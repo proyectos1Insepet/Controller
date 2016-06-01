@@ -1,0 +1,95 @@
+Estados y peticiones del modulo:		
+0		Sin comunicacion con surtidor
+1		Espera	
+2		Sin Hora
+3		Sin Datos de Estacion
+4		Sin Config de surtidor
+5		Sin Nombre de Producto
+6		Sin Datos de Impresion
+7 		Esperando Reset de venta id recibida
+8		Datos Preset
+9		Datos Preset Id
+10		Esperando Autorizacion ID	//Si el CDG lo pone en estado[pos] es que ya lo autorizo el nsx
+11		Surtiendo
+12		Datos Fin Venta
+13		Solicitud Turno	
+14		Abrir/Cerrar Turno		
+15		Obteniendo datos de turno		//Este estado lo pone el CDG en estado[pos]
+16		Datos Turno			
+17		Esperando respuesta de turno						//Este estado lo pone el CDG en estado[pos]
+18		Respuesta del turno
+19		Pedir Totales
+20		Cambiar Precio
+21		Solicitar Precio
+22		Reset pc
+23		Imprimir
+24		Bloquear
+25		Copia de Recibo
+26              Solicitando placa para recibo
+27		Con Placa para copia recibo
+28		Configuracion inicial
+29 		Venta autoservicio
+30		Sube manija Autoservicio
+31		Listo Autoservicio
+
+
+/******************************************************/
+Estados y peticiones TCP:
+ff		Inactivo
+0		Sin comunicacion con surtidor
+1		Espera	
+2		Preset
+3		Surtiendo
+4		Venta
+5		Preset ID
+6 		Peticion Turno
+7		obteniendo Datos Turno
+8		Datos Turno
+9		Solicitud de copia de Recibo
+10		Pidiendo placa para copia de recibo
+11		Con Placa para copia de recibo
+12		Configuracion inicial
+13		sube manija autoservicio
+14		listo autoservicio
+15		Pendiente
+16		Solicitud venta canasta
+17		
+18			
+19		
+20		
+
+/******************************************************/
+ACK  = 3
+NACK = 4
+estado[18]	        Este vector contiene estados para enviar peticiones de TCP o del CDG hacia el modulo
+tcp_estado[17] 		Este vector contiene el estado de cada posicion para que los lea el TCP
+trama_tcp[16][50];	Tramas cortas q van hacia el tcp
+trama_rf[16][30];	Tramas cortas que van hacia el rf
+/*******************************************************/
+Tipos de Reset al modulo
+0 reiniciar modulo con watchdog
+1 Ok datos preset
+2 Venta recibida
+3 Ok datos preset id
+4 cancelada por pc
+5 ok datos turno
+6 ok placa recibo
+7 ok venta id recibida
+
+/*******************************************************/
+Tipos de Reset al tcp
+1	ok datos preset
+2 	Venta recibida
+3 	Cancelado por PC
+4	Operacion Correcta turno apertura
+5	Usuario invalido
+6	Islero invalido
+7	Error de apertura
+8	Error turno
+9       Ok Configuración
+10	Operacion Correcta turno cierre
+
+
+3118377
+3119377
+3123575

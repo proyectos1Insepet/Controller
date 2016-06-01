@@ -125,3 +125,7 @@ CREATE TABLE totales(
     DineroManguera3 FLOAT,
     DineroManguera4 FLOAT
 );
+
+CREATE TABLE canasta(
+	serial VARCHAR(20)
+);
