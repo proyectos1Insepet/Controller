@@ -157,7 +157,8 @@ CREATE TABLE preset(
     serial VARCHAR(16),
     tipo_venta CHAR(1),
     autorizado VARCHAR(7),
-    mensajep VARCHAR(60),
+	validacioncredito INT,
+    mensajep VARCHAR(60)
 );
 
 CREATE TABLE turno(

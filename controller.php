@@ -39,7 +39,7 @@ $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
 $query .= "UPDATE estado SET pos1 = 20;";
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
- `stty -F $impresora 19200`;
+ `stty -F $impresora 9600`;
 
  
 
@@ -122,10 +122,10 @@ while (true){
             $estado = 12;
         }
         if($recibe == 16){
-            $estado = 2; /* 16 venta canasta*/
+            $estado = 16; /* 16 venta canasta*/
         }
         if($recibe == 17){
-            $estado = 3;  /* 17 venta canasta*/
+            $estado = 17;  /* 17 venta canasta*/
         }
         if($recibe == 18){
             $estado = 18;
@@ -214,7 +214,8 @@ while (true){
             case a2:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset"; 
+                $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
+                $query = "UPDATE preset SET validacioncredito = 0;";
                 $result = pg_query($query); 
                 $row  = pg_fetch_row($result);
                 $minuto = date("i");
@@ -223,13 +224,13 @@ while (true){
                 $mes    = date("m");
                 $year   = date("y");
                 echo "Tipo Preset:$row[1]";
-                if ($row[1] == V){
+                if ($row[1] == 'V '){
                     $tipo_preset = 1;
                 }
-                if ($row[1] == F){
+                if ($row[1] == 'F '){
                     $tipo_preset = 3;
                 }
-                if($row[1]==D){
+                if($row[1]=='D '){
                     $tipo_preset = 2;
                 }
                 else{
@@ -278,14 +279,18 @@ while (true){
                 or die('Can not connect: ' . \pg_last_error());
                 $consulta    = "SELECT kilometraje, serial, tipo_venta FROM preset WHERE id_pos = $array[3] AND serial IS NOT NULL";
                 $res         = pg_query($consulta);
-                $row         = pg_fetch_row($result);
-                $actualiza   = "UPDATE venta SET kilometrajecliente = $row[0], serialibutton = $row[1], fk_idtipotransaccion = $row[2] where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3])";
+                $row         = pg_fetch_row($res);
+                if ($row[2] == null){
+                    $tventa = 0;
+                }else{
+                    $tventa = $row[2];
+                }
+                $actualiza   = "UPDATE venta SET kilometrajecliente = $row[0], serialibutton = $row[1], fk_idtipotransaccion = $tventa where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3])";
                 $finv        = pg_query($actualiza);
                 pg_free_result($res);
                 pg_free_result($finv);
                 if($recupera == 0){
                     $query = "SELECT pk_idventa,volumeninicial, volumenfinal, dineroinicial,dinerofinal, ppu,valorprogramado,kilometrajecliente,grado,nombreefectivo,placaefectivo,tipovehiculo,cantidadtotal from venta where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3]);"; 
-                    $res         = pg_query($sql); 
                     $result      = pg_query($query); 
                     $row         = pg_fetch_row($result);
                     $num2dec     = $row[12];
@@ -412,7 +417,6 @@ while (true){
                         $recupera  = 0;
                     }
                 }
-                pg_free_result($sql);
                 pg_free_result($result);
                 pg_close($dbconn); // Cerrando la conexión  
             break;
@@ -522,11 +526,13 @@ while (true){
                     break;
                     default :
                         if($array[3]==1 ){
-                           $query = "UPDATE estado SET pos1 = 22"; // Cierre OK
-                           $mensaje = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 0, turnonsx = 0";
+                           $query    = "UPDATE estado SET pos1 = 22"; // Cierre OK
+                           $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 0, turnonsx = 0;";
+                           $mensaje .= "DELETE FROM consignaciones;";
                         }else{
-                           $query = "UPDATE estado SET pos2 = 22"; 
-                           $mensaje = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 0, turnonsx = 0";
+                           $query    = "UPDATE estado SET pos2 = 22"; 
+                           $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 0, turnonsx = 0;";
+                           $mensaje .= "DELETE FROM consignaciones;";
                         }
                         $result = pg_query($query);
                         $result2 = pg_query($mensaje);
@@ -663,17 +669,18 @@ while (true){
             case a6:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu, kilometraje, serial FROM preset"; 
+                $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu, kilometraje, serial FROM preset;"; 
+                $query = "UPDATE preset SET validacioncredito = 0;";
                 $result = pg_query($query);
                 $row  = pg_fetch_row($result);
                 echo "Tipo Preset:$row[1]";
-                if ($row[1] == 'V'){
+                if ($row[1] == 'V '){
                     $tipo_preset = 1;
                 }
-                if ($row[1] == 'F'){
+                if ($row[1] == 'F '){
                     $tipo_preset = 3;
                 }
-                if($row[1]=='D'){
+                if($row[1]=='D '){
                     $tipo_preset = 2;
                 }
                 $minuto = date("i");
@@ -738,7 +745,7 @@ while (true){
                 $autoriza[0] = hexdec($array[13]);
                 $autorizado  = strrev(implode("",$autoriza));
                 echo "Autorizacion: $autorizado\n";
-                $query = "UPDATE preset SET grado ='$grado', tipo_p ='$tipo_preset', autorizado ='$autorizado';"; 
+                $query = "UPDATE preset SET grado ='$grado', tipo_p ='$tipo_preset', autorizado ='$autorizado' validacioncredito = 1;"; 
                 $result = pg_query($query);
                 if (!$result) {
                     $ACK = 4;  
@@ -1357,6 +1364,8 @@ while (true){
                 $botones     = substr($input,26,($nbotones*8));
                 $chunk_boton = chunk_split($botones,8, "~");
                 $array_btn   = explode("~",$chunk_boton);
+                $length      = strlen($input);
+                
                 
                 /*Encabezados*/
                 $pstr1       = strpos($input,'E1');
@@ -1372,7 +1381,7 @@ while (true){
                 $pstr9       = strpos($input,'F1');
                 $pstr10      = strpos($input,'F2');
                 $pstr11      = strpos($input,'F3');
-                $length      = strlen($input);
+                
                 
                 $encabezado1 = substr($input,($pstr1+2),($pstr2-($pstr1+2)));
                 $encabezado2 = substr($input,($pstr2+2),($pstr3-($pstr2+2)));
@@ -1416,6 +1425,24 @@ while (true){
                     $i++;
                 }
                 unset($v);
+                /*Productos*/
+                $prod1       = strpos($input,'B1');
+                $prod2       = strpos($input,'B2');
+                $prod3       = strpos($input,'B3');
+                $prod4       = strpos($input,'B4');
+                $finprod     = strpos($input,'A1');
+                
+                $producto1   = substr($input,($prod1+2),($prod2-($prod1+2)));
+                $producto2   = substr($input,($prod2+2),($prod3-($prod2+2)));
+                $producto3   = substr($input,($prod3+2),($prod4-($prod3+2)));
+                $producto4   = substr($input,($prod4+2),($finprod-($prod4+2)));
+                echo "Productos : $producto1 , $producto2, $producto3, $producto4, fin \n ";
+                $productos  ="UPDATE botones SET textoboton = '$producto1' WHERE id_boton = 27;";
+                $productos .="UPDATE botones SET textoboton = '$producto2' WHERE id_boton = 28;";
+                $productos .="UPDATE botones SET textoboton = '$producto3' WHERE id_boton = 29;";
+                $productos .="UPDATE botones SET textoboton = '$producto4' WHERE id_boton = 30;";
+                $rprod      = pg_query($productos);
+                
                 $ar    = array(78,83,88,$array[3],233,$ACK);
                 $largo = count($ar);   
                 $ar[$largo] = verificar_check($ar, ($largo +1));
