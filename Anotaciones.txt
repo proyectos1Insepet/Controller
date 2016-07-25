@@ -48,15 +48,15 @@ ff		Inactivo
 9		Solicitud de copia de Recibo
 10		Pidiendo placa para copia de recibo
 11		Con Placa para copia de recibo
-12		Configuracion inicial
+12		Configuracion 
 13		sube manija autoservicio
 14		listo autoservicio
 15		Pendiente
 16		Solicitud venta canasta
-17		
-18			
-19		
-20		
+17		Autorización venta canasta
+18		FIN Venta canasta	
+19		Consignaciones
+20		Configuracion inicial (una vez)
 
 /******************************************************/
 ACK  = 3
@@ -90,6 +90,4 @@ Tipos de Reset al tcp
 10	Operacion Correcta turno cierre
 
 
-3118377
-3119377
-3123575
+INSERT INTO botones VALUES(18,(select valor FROM configuraciondispensador WHERE pk_idconfiguraciondispen= 27 ));
