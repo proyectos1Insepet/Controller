@@ -154,7 +154,7 @@ CREATE TABLE preset(
     totalesvol VARCHAR (12),
     ppu VARCHAR(5),
     kilometraje VARCHAR(10),
-    serial VARCHAR(16),
+    serial VARCHAR(20),
     tipo_venta CHAR(1),
     autorizado VARCHAR(7),
 	validacioncredito INT,

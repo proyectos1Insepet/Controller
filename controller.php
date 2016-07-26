@@ -526,15 +526,15 @@ while (true){
                     break;
                     default :
                         if($array[3]==1 ){
-                           $query    = "UPDATE estado SET pos1 = 22"; // Cierre OK
-                           $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 0, turnonsx = 0;";
+                           /*$query    = "UPDATE estado SET pos1 = 22"; // Cierre OK*/
+                           $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 1, turnonsx = 0;";
                            $mensaje .= "DELETE FROM consignaciones;";
                         }else{
-                           $query    = "UPDATE estado SET pos2 = 22"; 
-                           $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 0, turnonsx = 0;";
+                           /*$query    = "UPDATE estado SET pos2 = 22"; */
+                           $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 1, turnonsx = 0;";
                            $mensaje .= "DELETE FROM consignaciones;";
                         }
-                        $result = pg_query($query);
+                        /*$result = pg_query($query);*/
                         $result2 = pg_query($mensaje);
                     break;
                 }
@@ -669,9 +669,10 @@ while (true){
             case a6:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu, kilometraje, serial FROM preset;"; 
-                $query = "UPDATE preset SET validacioncredito = 0;";
-                $result = pg_query($query);
+                $qupdate = "UPDATE preset SET validacioncredito = 0 WHERE id_pos = $array[3];";
+                $query   = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu, kilometraje, serial FROM preset WHERE id_pos = $array[3];"; 
+                $result  = pg_query($query);
+                $res     = pg_query($qupdate);
                 $row  = pg_fetch_row($result);
                 echo "Tipo Preset:$row[1]";
                 if ($row[1] == 'V '){
@@ -682,19 +683,22 @@ while (true){
                 }
                 if($row[1]=='D '){
                     $tipo_preset = 2;
+                }else{
+                    $tipo_preset = $row[1];
                 }
+                
                 $minuto = date("i");
                 $hora   = date("h");
                 $dia    = date("d");
                 $mes    = date("m");
                 $year   = date("y");
-                $preset = $row[2];
                 $ppu    = $row[5];
                 $kilometraje = $row[6];
                 
                 $revvol    = strrev(number_format((float)$row[4], 2, '', ''));
                 $revdinero = strrev($row[3]);
                 $idcliente = strrev($row[7]);
+                $preset    = "990000";
                 $revpreset = strrev($preset);
                 $revppu = strrev($ppu);
                 
@@ -714,6 +718,7 @@ while (true){
                     $valor = ord($valor);
                 }
                 unset($valor);
+                echo "Grado: $row[0]\n";
                 $ar = array(78, 83, 88,$array[3], 214, $row[0], $row[1],  $arpreset[0],$arpreset[1],$arpreset[2],$arpreset[3],$arpreset[4],$arpreset[5],$arpreset[6],  84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],   80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],   72,$minuto,$hora,     70,$dia,$mes,$year, 73,$serial[0],$serial[1],$serial[2],$serial[3],$serial[4],$serial[5],$serial[6],$serial[7],$serial[8],$serial[9],$serial[10],$serial[11],$serial[12],$serial[13],$serial[14],$serial[15], 75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9]);
                 $largo = count($ar);  
                 
@@ -745,7 +750,7 @@ while (true){
                 $autoriza[0] = hexdec($array[13]);
                 $autorizado  = strrev(implode("",$autoriza));
                 echo "Autorizacion: $autorizado\n";
-                $query = "UPDATE preset SET grado ='$grado', tipo_p ='$tipo_preset', autorizado ='$autorizado' validacioncredito = 1;"; 
+                $query = "UPDATE preset SET  tipo_p ='$tipo_preset', autorizado ='$autorizado', validacioncredito = 1;"; 
                 $result = pg_query($query);
                 if (!$result) {
                     $ACK = 4;  
@@ -766,6 +771,8 @@ while (true){
             case a8:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
+                $query = "UPDATE preset SET  tipo_p ='$tipo_preset', autorizado ='$autorizado', validacioncredito = 1;";
+                $autorizat  = pg_query($query);
                 $cprecio    = "TRUNCATE TABLE solicitudes;";
                 $cprecio   .= "INSERT INTO solicitudes VALUES(1,'P',0);";
                 $rprecio    = pg_query($cprecio);
@@ -847,8 +854,7 @@ while (true){
                 $compara    = "SELECT nsx1,disp1 FROM precios;";
                 $rcompara   = pg_query($compara);
                 $fcompara   = pg_fetch_row($rcompara);
-                if($fcompara[0] == $fcompara[1]){
-                    $solicitud  = "UPDATE solicitudes SET solicitabge2=0, confirmacion = 1;";
+                if($fcompara[0] == $fcompara[1]){                    $solicitud  = "UPDATE solicitudes SET solicitabge2=0, confirmacion = 1;";
                     $rsolicitud = pg_query($solicitud);
                 }
                 pg_free_result($result);
@@ -917,13 +923,13 @@ while (true){
                     $ar = array(78, 83, 88,$array[3],219,$array[5],$precio3[0],$precio3[1],$precio3[2],$precio3[3],$precio3[4]);
                 }
                 $largo = count($ar);   
-                echo "Array 5: $array[5]\n";
                 $ar[$largo] = verificar_check($ar, ($largo +1));
                 foreach ($ar as &$valor) {
                    $valor = chr($valor);
                 }
                 unset($valor);                                          
                 $envio = implode("", $ar);
+                echo "Array AB: $ar\n";
                 $length = strlen($envio);
                 socket_write($client, $envio,$length);
             break;
