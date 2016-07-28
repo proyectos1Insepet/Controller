@@ -1,5 +1,5 @@
-CREATE TABLE ConfiguracionDispensador(
-	pk_idconfiguraciondispen SERIAl PRIMARY KEY,
+﻿CREATE TABLE ConfiguracionDispensador(
+	pk_idconfiguraciondispen SERIAl UNIQUE PRIMARY KEY,
 	nombre VARCHAR (255),
 	descripcion VARCHAR (255),
 	valor VARCHAR (255),
@@ -126,6 +126,105 @@ CREATE TABLE totales(
     DineroManguera4 FLOAT
 );
 
-CREATE TABLE canasta(
-	serial VARCHAR(20)
+CREATE TABLE venta_canasta(
+    id_canasta SERIAL UNIQUE,
+    serial  VARCHAR(20),
+    cantidad VARCHAR(3),
+    cantidadvendida VARCHAR(3),
+    nombre VARCHAR (20),
+    valor  VARCHAR(8)
 );
+
+CREATE TABLE precios(
+    id_pos INT UNIQUE,
+    nsx1 VARCHAR(5),
+    nsx2 VARCHAR(5),
+    nsx3 VARCHAR(5),
+    disp1 VARCHAR(5),
+    disp2 VARCHAR(5),
+    disp3 VARCHAR(5)    
+);
+
+CREATE TABLE preset(
+    id_pos INT UNIQUE,
+    grado INT,
+    tipo_p  INT,
+    valor_p VARCHAR(7),
+    totalesdin VARCHAR (12),
+    totalesvol VARCHAR (12),
+    ppu VARCHAR(5),
+    kilometraje VARCHAR(10),
+    serial VARCHAR(16),
+    tipo_venta CHAR(1),
+    autorizado VARCHAR(7),
+    mensajep VARCHAR(60),
+);
+
+CREATE TABLE turno(
+    usuario VARCHAR(10),
+    contraseña VARCHAR(8),
+    turno INT,
+    turnonsx INT,
+    totaldin VARCHAR(12),
+    totalvol VARCHAR(12),
+    ppu VARCHAR(5)
+);
+
+CREATE TABLE consignaciones(
+    pk_idconsignacion INT UNIQUE,
+    valorconsignacion INT,
+    mensajeconsignacion VARCHAR (60),
+    confirmacion INT,
+    idpos INT
+);
+
+CREATE TABLE logos(
+    id_logo INT,
+    nombrelogo VARCHAR(30),
+    trama TEXT, 
+    tramakios TEXT
+);
+
+CREATE TABLE botones(
+    id_boton INT UNIQUE,
+    textoboton VARCHAR (8)
+);
+
+CREATE TABLE solicitudes(
+     solicitabge2 INT,
+     tiposolicitud CHAR (1),
+     confirmacion INT
+);
+
+CREATE TABLE formadepago(
+    id_pos INT,
+    numeroventa VARCHAR(8),
+    tipoformadepago VARCHAR(3),
+    ventaconsulta VARCHAR(3)
+);
+
+CREATE TABLE verificapago(
+    id_pos INT,
+    validacion INT,
+    valorventa VARCHAR(8),
+    activateclado INT 
+);
+
+CREATE TABLE discriminapago(
+    id_pos INT,
+    numeroventa2 VARCHAR (8),
+    tipofp CHAR (2),
+    ventaconsulta2 INT,
+    valordiscriminado VARCHAR (8),
+    serialid VARCHAR (20)
+);
+
+
+CREATE FUNCTION limpiar_ventas() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  DELETE FROM venta WHERE id_venta < (SELECT MAX(id_venta) - 1000 FROM venta); 
+  RETURN NULL;
+END;
+$$;

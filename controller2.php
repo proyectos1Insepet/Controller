@@ -1045,8 +1045,7 @@ while (true){
             case b1:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $vturno  = hex2bin($array[5]); 
-                $turno   = "UPDATE turno SET turnonsx = $vturno; ";
+                $turno   = "UPDATE turno SET turnonsx = $array[5]";
                 if ($array[3] == 1){
                     $config  = "UPDATE mapeodispensador SET numerodigitos = $array[6], formatodinero =$array[7], formatovolumen = $array[8], formatoprecio = $array[9], ppux10 = chr$array[36] WHERE pk_idposicion = $array[3]";
                     $resultado = pg_query($config);
@@ -1285,21 +1284,6 @@ while (true){
                         $recupera  = 0;
                     }
                 }
-                if ($ventas <0){
-                    if ($array[3] == 1){
-                        $query2     = "ALTER SEQUENCE venta_pk_idventa_seq RESTART WITH $idnsx;";
-                        $query2    .= "INSERT INTO venta (cantidadtotal,valortotal,idposicion) VALUES(0,0,$array[3]);";
-                        $resultado2 = pg_query($query2);
-                        $recupera  = 0;
-                    }
-                    if ($array[3] ==2){
-                        $query2     = "ALTER SEQUENCE venta_pk_idventa_seq RESTART WITH $idnsx;";
-                        $query2    .= "INSERT INTO venta (cantidadtotal,valortotal,idposicion) VALUES(0,0,$array[3]);";
-                        $resultado2 = pg_query($query2);
-                        $recupera  = 0;
-                    }
-                    
-                }
                 echo "Ventas: $ventas\n";
                 $ar    = array(78,83,88,$array[3],232,$ventas);
                 $largo = count($ar);   
@@ -1321,6 +1305,9 @@ while (true){
                 $consecutivo2 = "select max(pk_idventa) from venta where idposicion = 2";
                 $beaglep     = substr($input,5,9);
                 $beagleimp   = substr($input,14,9);
+                echo "ENTRADA TRAMA: $input\n";
+                echo "Consecutivo par: $beaglep\n";
+                echo "Consecutivo impar: $beagleimp\n";
                 $nbotones    = substr($input,23,3);
                 echo "Cantidad Botones : $nbotones\n";
                 $botones     = substr($input,26,($nbotones*8));
