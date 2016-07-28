@@ -66,7 +66,7 @@ function verificar_check($datos,  $size){
 while (true){
     $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
     or die('Can not connect: ' . \pg_last_error());
-    $sql1    = "TRUNCATE TABLE solicitudes";
+    $sql1    = "TRUNCATE TABLE solicitudes;";
     $res1    = pg_query($sql1); 
     $query   = "INSERT INTO solicitudes (solicitabge2,tiposolicitud,confirmacion) VALUES(1,'T',0)"; 
     $result  = pg_query($query); 
@@ -85,7 +85,8 @@ while (true){
     while ($conexion){
         $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
         or die('Can not connect: ' . \pg_last_error());
-        $query = "SELECT  pos1, pos2 FROM estado WHERE Pk_id_estado = 1";
+        /*$query   = "UPDATE estado SET pos1 = 12;";*/
+        $query  = "SELECT  pos1, pos2 FROM estado WHERE Pk_id_estado = 1;";
         $result = pg_query($query) or die('Query error: ' . \pg_last_error()); 
         $row = pg_fetch_row($result);
         $recibe = $row[0];
@@ -131,6 +132,14 @@ while (true){
             $estado = 18;
         }
         if($recibe == 19){
+            /*$dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
+            or die('Can not connect: ' . \pg_last_error());
+            $sql    = "UPDATE consignaciones SET confirmacion= 2, mensajeconsignacion = '...';"; 
+            $sql2   = "SELECT confirmacion FROM consignaciones";
+            $res    = pg_query($sql);
+            $res2   = pg_query($sql2);
+            $prints = pg_fetch_row($res2);
+            echo "Confirma: $prints[0]\n";*/
             $estado = 19;
         }
         if($recibe == 20){
@@ -177,6 +186,14 @@ while (true){
             $estado2 = 18;
         }
         if($recibe2 == 19){
+            /*$dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
+            or die('Can not connect: ' . \pg_last_error());
+            $sql    = "UPDATE consignaciones SET confirmacion= 2, mensajeconsignacion = '...';"; 
+            $sql2   = "SELECT confirmacion FROM consignaciones";
+            $res    = pg_query($sql);
+            $res2   = pg_query($sql2);
+            $prints = pg_fetch_row($res2);
+            echo "Confirma: $prints[0]\n";*/
             $estado2 = 19;
         }
         if($recibe2 == 20){
@@ -215,8 +232,9 @@ while (true){
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
-                $query = "UPDATE preset SET validacioncredito = 0;";
-                $result = pg_query($query); 
+                $query2 = "UPDATE preset SET validacioncredito = 0;";
+                $result = pg_query($query);
+                $res    = pg_query($query2);
                 $row  = pg_fetch_row($result);
                 $minuto = date("i");
                 $hora   = date("h");
@@ -424,9 +442,10 @@ while (true){
             case a4:   
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $error = hex2bin($array[5]);
+                $error = hexdec($array[5]);
                 echo "Caso A4: $error\n";
-                switch ($array[5]){
+                echo "Caso reset:$error; $array[5]\n";
+                switch ($error){
                     case 1:
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1){
@@ -524,18 +543,43 @@ while (true){
                         $result = pg_query($query);
                         $result2 = pg_query($mensaje);
                     break;
-                    default :
+                    case 10 :
+                        $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                            /*$query    = "UPDATE estado SET pos1 = 22"; // Cierre OK*/
                            $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 1, turnonsx = 0;";
                            $mensaje .= "DELETE FROM consignaciones;";
+                           $mensaje .= "INSERT INTO consignaciones values (1,0,'0',0,0);";
                         }else{
                            /*$query    = "UPDATE estado SET pos2 = 22"; */
                            $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 1, turnonsx = 0;";
                            $mensaje .= "DELETE FROM consignaciones;";
+                           $mensaje .= "INSERT INTO consignaciones values (1,0,'0',0,0);";
                         }
                         /*$result = pg_query($query);*/
                         $result2 = pg_query($mensaje);
+                    break;
+                    case 11:
+                        $ar = array(78, 83, 88,$array[3],212,3);
+                        if($array[3]==1 ){
+                            /*$query    = "UPDATE estado SET pos1 = 22;"; //*/
+                            $mensaje  = "UPDATE consignaciones SET mensajeconsignacion = 'Consignacion  realizada, Lado 1', confirmacion = 1;";
+                            $result2 = pg_query($mensaje);
+                            sleep(2);
+                        }else{
+                            /*$query = " UPDATE estado SET pos2 = 22;"; // 3.*/
+                            $mensaje = "UPDATE consignaciones SET mensajeconsignacion = 'Consignacion  realizada, Lado 2', confirmacion = 1;"; 
+                            $result2 = pg_query($mensaje);
+                            sleep(2);
+                        }
+                        $result = pg_query($query);
+                        /*$confirma = "SELECT recibe FROM consignaciones;";
+                        $borra  = pg_query($confirma);
+                        $rborra = pg_fetch_row($borra);
+                        if($rborra[0] == 1){
+                            $reset  = "UPDATE consignaciones SET valorconsignacion = 0, confirmacion = 0, mensajeconsignacion = '...';";
+                            $rreset = pg_query($reset);
+                        }*/
                     break;
                 }
                 $ar[6] = verificar_check($ar,7);
@@ -1268,8 +1312,14 @@ while (true){
                 $ar = array(78,83,88,$array[3],231);
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $sql    = "SELECT valorconsignacion FROM consignaciones";
-                $result = pg_query($sql) ;
+                $sql    = "UPDATE consignaciones SET confirmacion= 1, mensajeconsignacion = 'Operacion Correcta';"; 
+                $sql   .= "SELECT valorconsignacion FROM consignaciones;";
+                $result = pg_query($sql);
+                if(!$result){
+                    $confirma  = "UPDATE consignaciones SET confirmacion = 0;";
+                    $confirma .= "UPDATE consignaciones SET mensajeconsignacion = 'Consignacion no realizada, Intente nuevamente Caso B7';";
+                    $up        = pg_query($confirma);
+                }
                 $row    = pg_fetch_row($result);
                 $consignacion = sprintf("%-8s",$row[0]);
                 $subar = str_split($consignacion);
@@ -1291,7 +1341,6 @@ while (true){
                 socket_write($client, $envio,$length);
                 pg_free_result($result);
                 pg_close($dbconn); // Cerrando la conexión 
-                
             break;
             
             case b8:
