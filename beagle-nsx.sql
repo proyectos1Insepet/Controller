@@ -154,10 +154,18 @@ CREATE TABLE preset(
     totalesvol VARCHAR (12),
     ppu VARCHAR(5),
     kilometraje VARCHAR(10),
+<<<<<<< HEAD
     serial VARCHAR(16),
     tipo_venta CHAR(1),
     autorizado VARCHAR(7),
     mensajep VARCHAR(60),
+=======
+    serial VARCHAR(20),
+    tipo_venta CHAR(1),
+    autorizado VARCHAR(7),
+	validacioncredito INT,
+    mensajep VARCHAR(60)
+>>>>>>> origin/master
 );
 
 CREATE TABLE turno(
