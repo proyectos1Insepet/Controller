@@ -39,7 +39,7 @@ $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
 $query .= "UPDATE estado SET pos1 = 20;";
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
- `stty -F $impresora 9600`;
+ `stty -F $impresora 19200`;
 
  
 
@@ -61,6 +61,21 @@ function verificar_check($datos,  $size){
     }    
     return $checksum;
 }
+
+/*class hilo extends Thread{
+    public function revisa(){
+        $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
+        or die('Can not connect: ' . \pg_last_error());
+        $revisa     = "SELECT led FROM estado WHERE Pk_id_estado = 1;";
+        $res_revisa = pg_query($revisa); 
+        $fila_led   = pg_fetch_row($result);
+        if($fila_led[0]==0){
+            $estado_pos = "UPDATE estado SET pos1 = 0, pos2 =0;";
+            $res_pos = pg_query($estado_pos); 
+        }
+    }
+        
+}*/
 
 //start loop to listen for incoming connections
 while (true){
@@ -86,12 +101,27 @@ while (true){
         $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
         or die('Can not connect: ' . \pg_last_error());
         /*$query   = "UPDATE estado SET pos1 = 12;";*/
-        $query  = "SELECT  pos1, pos2 FROM estado WHERE Pk_id_estado = 1;";
-        $result = pg_query($query) or die('Query error: ' . \pg_last_error()); 
-        $row = pg_fetch_row($result);
-        $recibe = $row[0];
+        $query   = "SELECT  pos1, pos2,led FROM estado WHERE Pk_id_estado = 1;";
+        $result  = pg_query($query) or die('Query error: ' . \pg_last_error()); 
+        $row     = pg_fetch_row($result);
+        $recibe  = $row[0];
         $recibe2 = $row[1];
+        $led     = $row[2];
+        if($ciclo == 100){
+            $ciclo = 0;
+            if($led ==0){
+                 $estado_pos = "UPDATE estado SET pos1 = 0, pos2 =0;";
+                 $res_pos    = pg_query($estado_pos); 
+            }else{
+                $estado_led = "UPDATE estado SET led =0;";
+                $res_led    = pg_query($estado_led);
+            }
+        }
+       
         //Estados POS 1
+        if($recibe == 0){
+            $estado = 255;
+        }
         if($recibe == 22){
             $estado = 1;
         }
@@ -119,6 +149,9 @@ while (true){
         if($recibe == 9){
             $estado = 9;
         }
+        if($recibe == 10){
+            $estado = 4;
+        }
         if($recibe == 12){
             $estado = 12;
         }
@@ -132,20 +165,15 @@ while (true){
             $estado = 18;
         }
         if($recibe == 19){
-            /*$dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
-            or die('Can not connect: ' . \pg_last_error());
-            $sql    = "UPDATE consignaciones SET confirmacion= 2, mensajeconsignacion = '...';"; 
-            $sql2   = "SELECT confirmacion FROM consignaciones";
-            $res    = pg_query($sql);
-            $res2   = pg_query($sql2);
-            $prints = pg_fetch_row($res2);
-            echo "Confirma: $prints[0]\n";*/
             $estado = 19;
         }
         if($recibe == 20){
             $estado = 20;
         }
-        //Estados POS 2                                
+        //Estados POS 2  
+        if($recibe2 == 0){
+            $estado2 = 255;
+        }
         if($recibe2 == 22){
             $estado2 = 1;
         }
@@ -173,6 +201,9 @@ while (true){
         if($recibe2 == 9){
             $estado2 = 9;
         }
+        if($recibe2 == 10){
+            $estado2 = 4;
+        }
         if($recibe2 == 12){
             $estado2 = 12;
         }
@@ -186,14 +217,6 @@ while (true){
             $estado2 = 18;
         }
         if($recibe2 == 19){
-            /*$dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
-            or die('Can not connect: ' . \pg_last_error());
-            $sql    = "UPDATE consignaciones SET confirmacion= 2, mensajeconsignacion = '...';"; 
-            $sql2   = "SELECT confirmacion FROM consignaciones";
-            $res    = pg_query($sql);
-            $res2   = pg_query($sql2);
-            $prints = pg_fetch_row($res2);
-            echo "Confirma: $prints[0]\n";*/
             $estado2 = 19;
         }
         if($recibe2 == 20){
@@ -213,6 +236,9 @@ while (true){
         
         switch ($array[4]){
             case a1:  //Inicia la consulta del NSX
+                $ciclo++;
+                $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
                 $ar = array(78, 83, 88, 255,209,$CDG,$estado,$estado2);                
                 $ar[6+$CDG] = verificar_check($ar, (7+$CDG));
                 foreach ($ar as &$valor) {
@@ -226,6 +252,7 @@ while (true){
                 socket_write($client, $envio,$length);  
                 pg_free_result($result);
                 pg_close($dbconn); // Cerrando la conexión    
+                
             break;
             
             case a2:
@@ -241,19 +268,23 @@ while (true){
                 $dia    = date("d");
                 $mes    = date("m");
                 $year   = date("y");
-                echo "Tipo Preset:$row[1]";
-                if ($row[1] == 'V '){
+                if ($row[1] == 'V'){
                     $tipo_preset = 1;
+                    echo "Volumen";
                 }
-                if ($row[1] == 'F '){
+                if ($row[1] == 'F'){
                     $tipo_preset = 3;
+                    echo "Full";
                 }
-                if($row[1]=='D '){
+                if($row[1]=='D'){
                     $tipo_preset = 2;
+                    echo "Dinero";
                 }
-                else{
-                    $tipo_preset = $row[1];
+                if($row[1]=='1'||$row[1]=='2'||$row[1]=='3'){
+                    $tipo_preset = 2;
+                    echo "Rapido";
                 }
+                
                 echo "Tipo Preset:$row[1]; Preset: $tipo_preset";
                 $preset    = $row[2];
                 $ppu       = $row[5];
@@ -354,7 +385,12 @@ while (true){
                         $valor = ord($valor);
                     }
                     unset($valor);
-                    $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$row[11],    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8]);  //Borrar $aridventa para quitar consecutivo de venta
+                    if($recibe == 4|| $recibe2==4){
+                        $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$row[11],    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8]);  //Borrar $aridventa para quitar consecutivo de venta
+                    }
+                    if($recibe == 10|| $recibe2==10){
+                        $ar = array(78, 83, 88, $array[3],211,$grado,68,0,0,0,0,0,0,0,    86,0,0,0,0,0,0,0,    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$row[11],    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8]);  //Borrar $aridventa para quitar consecutivo de venta
+                    }
                     $largo = count($ar);                                                
                     $ar[$largo] = verificar_check($ar, ($largo+1));
                     $dato_a3 = implode("-",$ar);
@@ -487,10 +523,10 @@ while (true){
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $query   = "UPDATE estado SET pos1 = 22"; // Usuario contraseña invalida
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario o contraseña invalido'";  
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario o clave invalida',turno = 0";  
                         }else{
                             $query = " UPDATE estado SET pos2 = 22"; // Usuario contraseña invalida
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario o contraseña invalido'";  
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario o clave invalida',turno = 0";  
                         }
                         $result  = pg_query($query);
                         $result2 = pg_query($mensaje);
@@ -499,10 +535,10 @@ while (true){
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $query = " UPDATE estado SET pos1 = 22"; //Cancelado por PC 
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario Invalido'"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario Invalido',turno = 0"; 
                         }else{
                             $query = " UPDATE estado SET pos2 = 22"; // 3.
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario invalido'"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario invalido',turno = 0"; 
                         }
                         $result = pg_query($query);
                         $result2 = pg_query($mensaje);
@@ -1059,7 +1095,7 @@ while (true){
                 }else{
                     $turnonsx=1;
                 }
-                //$sql = "UPDATE estado SET pos2 = 7";
+                $sql = "UPDATE turno SET turno = 0, mensajeturno= 'Operacion Incorrecta';";
                 $resultado = pg_query($sql); 
                 if (!$resultado) {
                     $ACK = 4;  
@@ -1518,7 +1554,13 @@ while (true){
             break;
         }        
     }else{
-        $conexion = false;
+        $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
+        or die('Can not connect: ' . \pg_last_error());
+        $solicitud   = "UPDATE solicitudes SET solicitabge2 = 0, confirmacion = 0;";
+        $rsolicitud  = pg_query($solicitud);
+        pg_close($dbconn); // Cerrando la conexión 
+        $conexion    = false;
+        
     }
     }
         
