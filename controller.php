@@ -222,6 +222,8 @@ while (true){
         if($recibe2 == 20){
             $estado2 = 20;
         }
+        pg_free_result($result);
+        pg_close($dbconn); // Cerrando la conexión  
         $input = socket_read($client, 2048); 
         $array = str_split($input); 
         echo "Cadena entrada: $input\n";
@@ -237,8 +239,6 @@ while (true){
         switch ($array[4]){
             case a1:  //Inicia la consulta del NSX
                 $ciclo++;
-                $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
-                or die('Can not connect: ' . \pg_last_error());
                 $ar = array(78, 83, 88, 255,209,$CDG,$estado,$estado2);                
                 $ar[6+$CDG] = verificar_check($ar, (7+$CDG));
                 foreach ($ar as &$valor) {
@@ -250,17 +250,14 @@ while (true){
                 echo "Salida: $print\n";
                 $length = strlen($envio);                                                
                 socket_write($client, $envio,$length);  
-                pg_free_result($result);
-                pg_close($dbconn); // Cerrando la conexión    
-                
             break;
             
             case a2:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
-                $query2 = "UPDATE preset SET validacioncredito = 0;";
                 $result = pg_query($query);
+                $query2 = "UPDATE preset SET validacioncredito = 0, autorizado ='0' WHERE id_pos = $array[3];";
                 $res    = pg_query($query2);
                 $row  = pg_fetch_row($result);
                 $minuto = date("i");
@@ -500,10 +497,10 @@ while (true){
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $query = " UPDATE estado SET pos1 = 22"; //Cancelado por PC 
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Cancelado por PC'"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Cancelado por PC';"; 
                         }else{
                             $query = " UPDATE estado SET pos2 = 22"; // 3.
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Cancelado por PC'"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Cancelado por PC';"; 
                         }
                         $result = pg_query($query);
                         $result2 = pg_query($mensaje);
@@ -831,7 +828,7 @@ while (true){
                 $autoriza[0] = hexdec($array[13]);
                 $autorizado  = strrev(implode("",$autoriza));
                 echo "Autorizacion: $autorizado\n";
-                $query = "UPDATE preset SET  tipo_p ='$tipo_preset', autorizado ='$autorizado', validacioncredito = 1;"; 
+                $query = "UPDATE preset SET  tipo_p ='$tipo_preset', autorizado ='$autorizado', validacioncredito = 1; WHERE id_pos =$array[3]; "; 
                 $result = pg_query($query);
                 if (!$result) {
                     $ACK = 4;  
