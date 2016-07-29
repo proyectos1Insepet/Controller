@@ -39,7 +39,7 @@ $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
 $query .= "UPDATE estado SET pos1 = 20;";
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
- `stty -F $impresora 19200`;
+ `stty -F $impresora 9600`;
 
  
 
@@ -295,6 +295,7 @@ while (true){
                 
                 $strpreset = sprintf("%0-7s",$revpreset);
                 $strppu    = sprintf("%0-5s",$revppu);
+                echo "PPU : $strppu\n";
                 $stringvol = sprintf("%0-12s",$revvol);
                 $stringdin     = sprintf("%0-12s",$revdinero);
                 
@@ -416,14 +417,14 @@ while (true){
                     $grado       = $row[8]; 
                     $placa       = $row[10];
                     $revimp      = strrev($dinero);
-                    $revcant    = strrev($volumen);
-                    $revidventa = strrev($idventa);
-                    $revppu     = strrev($ppu);
-                    $revpreset  = strrev($preset);   
-                    $revkm      = strrev($kilometraje);
-                    $revdinero  = strrev($row[4]);
-                    $revvol     = strrev(number_format((float)$row[2], 2, '', ''));
-                    $revplaca   = strrev($placa);
+                    $revcant     = strrev($volumen);
+                    $revidventa  = strrev($idventa);
+                    $revppu      = strrev($ppu);
+                    $revpreset   = strrev($preset);   
+                    $revkm       = strrev($kilometraje);
+                    $revdinero   = strrev($row[4]);
+                    $revvol      = strrev(number_format((float)$row[2], 2, '', ''));
+                    $revplaca    = strrev($placa);
                 
                     $stringimp     = sprintf("%0-7s",$revimp);
                     $stringcant    = sprintf("%0-7s",$revcant);
@@ -601,12 +602,12 @@ while (true){
                             /*$query    = "UPDATE estado SET pos1 = 22;"; //*/
                             $mensaje  = "UPDATE consignaciones SET mensajeconsignacion = 'Consignacion  realizada, Lado 1', confirmacion = 1;";
                             $result2 = pg_query($mensaje);
-                            sleep(2);
+                            sleep(3);
                         }else{
                             /*$query = " UPDATE estado SET pos2 = 22;"; // 3.*/
                             $mensaje = "UPDATE consignaciones SET mensajeconsignacion = 'Consignacion  realizada, Lado 2', confirmacion = 1;"; 
                             $result2 = pg_query($mensaje);
-                            sleep(2);
+                            sleep(3);
                         }
                         $result = pg_query($query);
                         /*$confirma = "SELECT recibe FROM consignaciones;";
@@ -1348,9 +1349,10 @@ while (true){
                 $ar = array(78,83,88,$array[3],231);
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $sql    = "UPDATE consignaciones SET confirmacion= 1, mensajeconsignacion = 'Operacion Correcta';"; 
-                $sql   .= "SELECT valorconsignacion FROM consignaciones;";
-                $result = pg_query($sql);
+                $conf     = "UPDATE consignaciones SET confirmacion= 1, mensajeconsignacion = 'Operacion Correcta';";  
+                $res      = pg_query($conf);
+                $sql      = "SELECT valorconsignacion FROM consignaciones;";
+                $result   = pg_query($sql);
                 if(!$result){
                     $confirma  = "UPDATE consignaciones SET confirmacion = 0;";
                     $confirma .= "UPDATE consignaciones SET mensajeconsignacion = 'Consignacion no realizada, Intente nuevamente Caso B7';";
