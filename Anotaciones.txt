@@ -1,38 +1,3 @@
-Estados y peticiones del modulo:		
-0		Sin comunicacion con surtidor
-1		Espera	
-2		Sin Hora
-3		Sin Datos de Estacion
-4		Sin Config de surtidor
-5		Sin Nombre de Producto
-6		Sin Datos de Impresion
-7 		Esperando Reset de venta id recibida
-8		Datos Preset
-9		Datos Preset Id
-10		Esperando Autorizacion ID	//Si el CDG lo pone en estado[pos] es que ya lo autorizo el nsx
-11		Surtiendo
-12		Datos Fin Venta
-13		Solicitud Turno	
-14		Abrir/Cerrar Turno		
-15		Obteniendo datos de turno		//Este estado lo pone el CDG en estado[pos]
-16		Datos Turno			
-17		Esperando respuesta de turno						//Este estado lo pone el CDG en estado[pos]
-18		Respuesta del turno
-19		Pedir Totales
-20		Cambiar Precio
-21		Solicitar Precio
-22		Reset pc
-23		Imprimir
-24		Bloquear
-25		Copia de Recibo
-26              Solicitando placa para recibo
-27		Con Placa para copia recibo
-28		Configuracion inicial
-29 		Venta autoservicio
-30		Sube manija Autoservicio
-31		Listo Autoservicio
-
-
 /******************************************************/
 Estados y peticiones TCP:
 ff		Inactivo
