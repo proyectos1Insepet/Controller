@@ -153,19 +153,14 @@ CREATE TABLE preset(
     totalesdin VARCHAR (12),
     totalesvol VARCHAR (12),
     ppu VARCHAR(5),
-    kilometraje VARCHAR(10),
-<<<<<<< HEAD
-    serial VARCHAR(16),
-    tipo_venta CHAR(1),
-    autorizado VARCHAR(7),
+    kilometraje VARCHAR(10),    
     mensajep VARCHAR(60),
-=======
     serial VARCHAR(20),
     tipo_venta CHAR(1),
     autorizado VARCHAR(7),
 	validacioncredito INT,
     mensajep VARCHAR(60)
->>>>>>> origin/master
+
 );
 
 CREATE TABLE turno(
@@ -173,9 +168,8 @@ CREATE TABLE turno(
     contraseña VARCHAR(8),
     turno INT,
     turnonsx INT,
-    totaldin VARCHAR(12),
-    totalvol VARCHAR(12),
-    ppu VARCHAR(5)
+	habilitalecturaturno INT,
+    mensajeturno VARCHAR(60)
 );
 
 CREATE TABLE consignaciones(
