@@ -272,7 +272,9 @@ while (true){
                 
                 echo "Tipo Preset:$row[1]; Preset: $tipo_preset";
                 $ppu       = $row[5];
-                $revvol    = strrev(number_format((float)$row[4], 2, '', ''));
+                $totalvol  = number_format((float)$row[4], 2, '', '');
+                echo "Volumen enviado:$totalvol\n";
+                $revvol    = strrev($totalvol);
                 $revdinero = strrev($row[3]);
                 $revpreset = strrev(sprintf("%0-7s",$preset));
                 $revppu    = strrev($ppu);
@@ -343,11 +345,13 @@ while (true){
                     $tipo_veh    = $row[7];
                     $kilometraje = $row[8];
                     $idventa     = $row[9];
+                    
+                    $datvol      = number_format((float)$volfinal, 2, '', '');
                      
                     $revimp     = strrev($dinero);
                     $revcant    = strrev($volumen);
                     $revdinero  = strrev($dinfinal);
-                    $revvol     = strrev(number_format((float)$volfinal, 2, '', ''));
+                    $revvol     = strrev($datvol);
                     $revppu     = strrev($ppu);
                     $revplaca   = strrev($placa);
                     //tipo vehiculo
@@ -363,7 +367,7 @@ while (true){
                     $strkm         = sprintf("%0-10s",$revkm);
                     $stringidventa = sprintf("%0-9s",$revidventa);
                     
-                    echo "Importe: $stringimp; Cantidad:$stringcant; Venta: $stringidventa; PPU: $stringppu; Preset: $strpreset; Placa: $strplaca; Tipo Venta: $row[11]\n";
+                    echo "Volumen final: $datvol; Cantidad:$dinero; Venta: $idventa;\n";
                 
                     $arimporte   = str_split($stringimp);
                     $arvolumen   = str_split($stringcant);
@@ -1332,7 +1336,7 @@ while (true){
                 $ar = array(78,83,88,$array[3],231);
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $conf     = "UPDATE consignaciones SET confirmacion = 1, mensajeconsignacion = 'Operacion Incorrecta';";  
+                $conf     = "UPDATE consignaciones SET confirmacion = 0, mensajeconsignacion = 'Operacion Incorrecta';";  
                 $res      = pg_query($conf);
                 $sql      = "SELECT valorconsignacion FROM consignaciones;";
                 $result   = pg_query($sql);
@@ -1552,7 +1556,7 @@ while (true){
                 socket_write($client, $envio,$length);
                 pg_free_result($result);
                 pg_close($dbconn); // Cerrando la conexión 
-            break;
+            break;                       
         }        
     }else{
         $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
@@ -1560,8 +1564,7 @@ while (true){
         $solicitud   = "UPDATE solicitudes SET solicitabge2 = 0, confirmacion = 0;";
         $rsolicitud  = pg_query($solicitud);
         pg_close($dbconn); // Cerrando la conexión 
-        $conexion    = false;
-        
+        $conexion    = false;        
     }
     }
         

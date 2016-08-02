@@ -154,13 +154,15 @@ CREATE TABLE preset(
     totalesvol VARCHAR (12),
     ppu VARCHAR(5),
     kilometraje VARCHAR(10),    
-    mensajep VARCHAR(60),
     serial VARCHAR(20),
     tipo_venta CHAR(1),
     autorizado VARCHAR(7),
 	validacioncredito INT,
     mensajep VARCHAR(60)
+);
 
+CREATE TABLE mensajes(
+	mensaje VARCHAR(60)
 );
 
 CREATE TABLE turno(
