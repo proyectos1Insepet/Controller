@@ -149,7 +149,7 @@ CREATE TABLE preset(
     id_pos INT UNIQUE,
     grado INT,
     tipo_p  INT,
-    valor_p VARCHAR(7),
+    valor_p VARCHAR(8),
     totalesdin VARCHAR (12),
     totalesvol VARCHAR (12),
     ppu VARCHAR(5),

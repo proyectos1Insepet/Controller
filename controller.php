@@ -251,8 +251,10 @@ while (true){
                 $dia    = date("d");
                 $mes    = date("m");
                 $year   = date("y");
-                if ($row[1] == 'V' || $row[1] == 'V'){
+                $preset = $row[2];
+                if ($row[1] == 'V' || $row[1] == 'V '){
                     $tipo_preset = 1;
+                    $preset      = str_replace(",",".",$preset);
                     echo "Volumen";
                 }
                 if ($row[1] == 'F' ||$row[1] == 'F '){
@@ -269,23 +271,27 @@ while (true){
                 }
                 
                 echo "Tipo Preset:$row[1]; Preset: $tipo_preset";
-                $preset    = $row[2];
                 $ppu       = $row[5];
                 $revvol    = strrev(number_format((float)$row[4], 2, '', ''));
                 $revdinero = strrev($row[3]);
-                $revpreset = strrev($preset);
+                $revpreset = strrev(sprintf("%0-7s",$preset));
                 $revppu    = strrev($ppu);
                 
-                $strpreset = sprintf("%0-7s",$revpreset);
+                $strpreset = sprintf($revpreset);
                 $strppu    = sprintf("%0-5s",$revppu);
                 echo "PPU : $strppu\n";
                 $stringvol = sprintf("%0-12s",$revvol);
                 $stringdin     = sprintf("%0-12s",$revdinero);
                 
                 $arvol     = str_split($stringvol);
-                $ardinero    = str_split($stringdin);
+                $ardinero  = str_split($stringdin);
                 $arpreset  = str_split($strpreset);
                 $arppu     = str_split($strppu);
+                print_r ($arpreset);
+                if ($tipo_preset ==1){
+                    $clave = array_search('.', $arpreset); // $clave = 2;
+                    $arpreset[$clave] = 46;
+                }
                 $ar = array(78, 83, 88,$array[3], 210, $row[0], $tipo_preset,  $arpreset[0],$arpreset[1],$arpreset[2],$arpreset[3],$arpreset[4],$arpreset[5],$arpreset[6],  84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],   80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],   72,$minuto,$hora,     70,$dia,$mes,$year );
                 $largo = count($ar);                                                
                 $ar[$largo] = verificar_check($ar, ($largo +1));
