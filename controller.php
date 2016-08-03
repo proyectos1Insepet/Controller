@@ -382,6 +382,7 @@ while (true){
                     }
                     unset($valor);
                     if($recibe == 4|| $recibe2==4){
+                        print_r($ardinero);
                         $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8]);  //Borrar $aridventa para quitar consecutivo de venta
                     }
                     if($recibe == 10|| $recibe2==10){
@@ -482,13 +483,6 @@ while (true){
                 switch ($error){
                     case 1:
                         $ar = array(78, 83, 88,$array[3],212,3);
-                        if($array[3]==1){
-                            $sql = "UPDATE estado set pos1 = 25";
-                        }else{
-                            $sql = "UPDATE estado set pos2 = 25";
-                        }
-                        
-                        $resultado = pg_query($sql);
                     break;
                     case 2:
                         $ar = array(78, 83, 88,$array[3],212,3);
@@ -496,117 +490,109 @@ while (true){
                     case 3:
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
-                            $query = " UPDATE estado SET pos1 = 22"; //Cancelado por PC 
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Cancelado por PC';"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Cancelado por PC', turno = 0;"; 
+                            $result2 = pg_query($mensaje);
                         }else{
-                            $query = " UPDATE estado SET pos2 = 22"; // 3.
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Cancelado por PC';"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Cancelado por PC', turno = 0;"; 
+                            $result2 = pg_query($mensaje);
                         }
+                        $query  = "UPDATE turno SET habilitalecturaturno = 1;";
                         $result = pg_query($query);
-                        $result2 = pg_query($mensaje);
                     break;
                     case 4:
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
-                            $query = " UPDATE estado SET pos1 = 22"; //Cancelado por PC 
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Apertura exitosa', turno = 1, turnonsx = 1, habilitalecturaturno = 1;"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Apertura exitosa', turno = 1, turnonsx = 1;"; 
+                            $result2 = pg_query($mensaje);
                         }else{
-                            $query = " UPDATE estado SET pos2 = 22"; // 3.
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Apertura exitosa', turno = 1, turnonsx = 1, habilitalecturaturno = 1;"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Apertura exitosa', turno = 1, turnonsx = 1;"; 
+                            $result2 = pg_query($mensaje);
                         }
+                        $query  ="UPDATE turno SET habilitalecturaturno = 1;";
                         $result = pg_query($query);
-                        $result2 = pg_query($mensaje);
                     break;
                     case 5:
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
-                            $query   = "UPDATE estado SET pos1 = 22"; // Usuario contraseña invalida
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario o clave invalida',turno = 0";  
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario o clave incorrecta',turno = 0";  
+                            $result2 = pg_query($mensaje);
                         }else{
-                            $query = " UPDATE estado SET pos2 = 22"; // Usuario contraseña invalida
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario o clave invalida',turno = 0";  
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario o clave incorrecta',turno = 0"; 
+                            $result2 = pg_query($mensaje);
                         }
+                        $query  ="UPDATE turno SET habilitalecturaturno = 1;";
                         $result  = pg_query($query);
-                        $result2 = pg_query($mensaje);
                     break;
                     case 6:
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
-                            $query = " UPDATE estado SET pos1 = 22"; //Cancelado por PC 
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario Invalido',turno = 0"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario no valido',turno = 0"; 
+                            $result2 = pg_query($mensaje);
                         }else{
-                            $query = " UPDATE estado SET pos2 = 22"; // 3.
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario invalido',turno = 0"; 
+                            $mensaje = "UPDATE turno SET mensajeturno = 'Usuario no valido',turno = 0"; 
+                            $result2 = pg_query($mensaje);
                         }
+                        $query  ="UPDATE turno SET habilitalecturaturno = 1;";
                         $result = pg_query($query);
-                        $result2 = pg_query($mensaje);
                     break;
                     case 7:
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
-                            $query = " UPDATE estado SET pos1 = 22"; //Cancelado por PC 
                             $mensaje = "UPDATE turno SET mensajeturno = 'Error de operacion'"; 
                         }else{
-                            $query = " UPDATE estado SET pos2 = 22"; // 3.
                             $mensaje = "UPDATE turno SET mensajeturno = 'Error de operacion'"; 
                         }
-                        $result = pg_query($query);
                         $result2 = pg_query($mensaje);
                     break;
                     case 8:
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
-                            $query = " UPDATE estado SET pos1 = 22"; //Cancelado por PC 
                             $mensaje = "UPDATE turno SET mensajeturno = 'Venta en proceso'"; 
                         }else{
-                            $query = " UPDATE estado SET pos2 = 22"; // 3.
                             $mensaje = "UPDATE turno SET mensajeturno = 'Venta en proceso'"; 
                         }
-                        $result = pg_query($query);
                         $result2 = pg_query($mensaje);
                     break;
                     case 9:
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
-                            //$query = " UPDATE estado SET pos1 = 22"; // 
                             $mensaje = "UPDATE turno SET mensajeturno = 'Operacion correcta'"; 
+                            $result2 = pg_query($mensaje);
                         }else{
-                           //$query = " UPDATE estado SET pos2 = 22"; // 
                            $mensaje = "UPDATE turno SET mensajeturno = 'Operacion Correcta'"; 
+                           $result2 = pg_query($mensaje);
                         }
-                        //$result = pg_query($query);
-                        $result2 = pg_query($mensaje);
+                        $query  ="UPDATE turno SET habilitalecturaturno = 1;";
+                        $result = pg_query($query);
                     break;
                     case 10 :
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
-                           /*$query    = "UPDATE estado SET pos1 = 22"; // Cierre OK*/
                            $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 1, turnonsx = 0;";
-                           $mensaje .= "DELETE FROM consignaciones;";
-                           $mensaje .= "INSERT INTO consignaciones values (1,0,'0',0,0);";
+                           $result2 = pg_query($mensaje);
                         }else{
-                           /*$query    = "UPDATE estado SET pos2 = 22"; */
                            $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 1, turnonsx = 0;";
-                           $mensaje .= "DELETE FROM consignaciones;";
-                           $mensaje .= "INSERT INTO consignaciones values (1,0,'0',0,0);";
+                           $result2 = pg_query($mensaje);
                         }
-                        /*$result = pg_query($query);*/
-                        $result2 = pg_query($mensaje);
+                        $query     ="UPDATE turno SET habilitalecturaturno = 1;";
+                        $result    = pg_query($query);
+                        $mensaje1  = "DELETE FROM consignaciones;";
+                        $mensaje2  = "INSERT INTO consignaciones values (1,0,'0',0,0);";
+                        $res1      = pg_query($mensaje1);
+                        $res2      = pg_query($mensaje2);
+                        
                     break;
                     case 11:
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
-                            /*$query    = "UPDATE estado SET pos1 = 22;"; //*/
                             $mensaje  = "UPDATE consignaciones SET  confirmacion = 1;";
                             $result2  = pg_query($mensaje);
-                            sleep(3);
+                            sleep(2);
                         }else{
-                            /*$query = " UPDATE estado SET pos2 = 22;"; // 3.*/
                             $mensaje = "UPDATE consignaciones SET  confirmacion = 1;"; 
                             $result2 = pg_query($mensaje);
-                            sleep(3);
+                            sleep(2);
                         }
-                        $result = pg_query($query);
                     break;
                 }
                 $ar[6] = verificar_check($ar,7);
@@ -937,9 +923,7 @@ while (true){
                 $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query   = "SELECT usuario, contraseña, turnonsx FROM turno;";
-                $query2   = "UPDATE turno SET habilitalecturaturno = 1;";
                 $result  = pg_query($query);
-                $result2  = pg_query($query2);
                 $row     = pg_fetch_row($result);
                 $usuario = $row[0];
                 $pass    = $row[1];
@@ -1556,7 +1540,26 @@ while (true){
                 socket_write($client, $envio,$length);
                 pg_free_result($result);
                 pg_close($dbconn); // Cerrando la conexión 
-            break;                       
+            break;
+            
+            case ba:
+                $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                $mensaje   = substr($input,4);
+                $sql       = "UPDATE mensajes SET mensaje ='$mensaje';";
+                $result    = pg_query($sql) ;
+                $ar = array(78, 83, 88,$array[3],234,3);
+                $ar[6] = verificar_check($ar,7);
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+            break;
+            
+            
         }        
     }else{
         $dbconn = pg_connect("host=localhost dbname=nsx user=db_admin password='12345'")
@@ -1564,7 +1567,8 @@ while (true){
         $solicitud   = "UPDATE solicitudes SET solicitabge2 = 0, confirmacion = 0;";
         $rsolicitud  = pg_query($solicitud);
         pg_close($dbconn); // Cerrando la conexión 
-        $conexion    = false;        
+        $conexion    = false;
+        
     }
     }
         
