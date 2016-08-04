@@ -158,6 +158,7 @@ CREATE TABLE preset(
     tipo_venta CHAR(1),
     autorizado VARCHAR(7),
 	validacioncredito INT,
+	lecturacupocredito INT,
     mensajep VARCHAR(60)
 );
 
