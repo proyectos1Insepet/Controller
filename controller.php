@@ -232,7 +232,7 @@ while (true){
                 }
                 unset($valor);                                                                        
                 $envio = implode("", $ar);
-                $print = implode(":-:", $ar);
+                $print = implode(" - ", $ar);
                 echo "Salida: $print\n";
                 $length = strlen($envio);                                                
                 socket_write($client, $envio,$length);  
@@ -301,7 +301,7 @@ while (true){
                 $largo = count($ar);                                                
                 $ar[$largo] = verificar_check($ar, ($largo +1));
                 $dato_a2 = implode("-",$ar);
-                echo "Dato A2: $dato_a2\n";
+                echo "Dato Preset: $dato_a2\n";
                 foreach ($ar as &$valor) {
                     $valor = chr($valor);
                 }
@@ -398,7 +398,7 @@ while (true){
 		        $largo = count($ar);                                                
 		        $ar[$largo] = verificar_check($ar, ($largo+1));
 		        $dato_a3 = implode("-",$ar);
-		        echo "Dato A3: $dato_a3";
+		        echo "Dato Fin venta: $dato_a3";
 		        foreach ($ar as &$valor) {
 			        $valor = chr($valor);
 		        }
@@ -535,7 +535,7 @@ while (true){
                 }
                 $ar[6] = verificar_check($ar,7);
                 $dato_a4 = implode("-",$ar);
-                echo "Dato A4: $dato_a4\n";
+                echo "Dato Reset: $dato_a4\n";
                 foreach ($ar as &$valor) {
                    $valor = chr($valor);
                 }
@@ -709,7 +709,7 @@ while (true){
                 $ar[$largo] = verificar_check($ar, ($largo +1));
                 echo "Largo A6: $largo\n";
                 $dato_a6 = implode("-",$ar);
-                echo "Dato A6: $dato_a6\n";
+                echo "Dato Preset crédito: $dato_a6\n";
                 foreach ($ar as &$valor) {
                     $valor = chr($valor);
                 }
@@ -982,7 +982,7 @@ while (true){
                 $ar = array(78, 83, 88,$array[3],221,3);
                 $ar[6] = verificar_check($ar, 7);
                 $dato_ad = implode("-",$ar);
-                echo "Dato AD: $dato_ad\n";
+                echo "Dato Totales: $dato_ad\n";
                 foreach ($ar as &$valor) {
                    $valor = chr($valor);
                 }
@@ -1007,7 +1007,7 @@ while (true){
                 $ar = array(78, 83, 88,$array[3],222,$ACK);
                 $ar[6] = verificar_check($ar, 7);
                 $dato_ad = implode("-",$ar);
-                echo "Dato AE: $dato_ad\n";
+                echo "Dato espera datos turno: $dato_ad\n";
                 foreach ($ar as &$valor) {
                    $valor = chr($valor);
                 }
