@@ -111,7 +111,8 @@ GRANT ALL PRIVILEGES ON estado TO db_admin;
 CREATE TABLE estado(
     Pk_id_estado SERIAL PRIMARY KEY,
     pos1 INT,
-    pos2 INT
+    pos2 INT,
+	led  INT
 );
 
 CREATE TABLE totales(
@@ -152,7 +153,7 @@ CREATE TABLE preset(
     valor_p VARCHAR(8),
     totalesdin VARCHAR (12),
     totalesvol VARCHAR (12),
-    ppu VARCHAR(5),
+    ppu VARCHAR(6),
     kilometraje VARCHAR(10),    
     serial VARCHAR(20),
     tipo_venta CHAR(1),

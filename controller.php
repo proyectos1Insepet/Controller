@@ -1436,18 +1436,18 @@ while (true){
                 $prod1       = strpos($input,'B1');
                 $prod2       = strpos($input,'B2');
                 $prod3       = strpos($input,'B3');
-                $prod4       = strpos($input,'B4');
+                //$prod4       = strpos($input,'B4');
                 $finprod     = strpos($input,'A1');
                 
                 $producto1   = substr($input,($prod1+2),($prod2-($prod1+2)));
                 $producto2   = substr($input,($prod2+2),($prod3-($prod2+2)));
-                $producto3   = substr($input,($prod3+2),($prod4-($prod3+2)));
-                $producto4   = substr($input,($prod4+2),($finprod-($prod4+2)));
+                $producto3   = substr($input,($prod3+2),($finprod-($prod3+2)));
+               // $producto4   = substr($input,($prod4+2),($finprod-($prod4+2)));
                 echo "Productos : $producto1 , $producto2, $producto3, $producto4, fin \n ";
                 $productos  ="UPDATE botones SET textoboton = '$producto1' WHERE id_boton = 27;";
                 $productos .="UPDATE botones SET textoboton = '$producto2' WHERE id_boton = 28;";
                 $productos .="UPDATE botones SET textoboton = '$producto3' WHERE id_boton = 29;";
-                $productos .="UPDATE botones SET textoboton = '$producto4' WHERE id_boton = 30;";
+               // $productos .="UPDATE botones SET textoboton = '$producto4' WHERE id_boton = 30;";
                 $rprod      = pg_query($productos);
                 
                 $ar    = array(78,83,88,$array[3],233,$ACK);
