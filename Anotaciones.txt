@@ -22,6 +22,10 @@ ff		Inactivo
 18		FIN Venta canasta	
 19		Consignaciones
 20		Configuracion inicial (una vez)
+21    Estado falso
+22    Forma de pago
+23    Autorización Calibración
+24    Listo calibracion
 
 /******************************************************/
 ACK  = 3

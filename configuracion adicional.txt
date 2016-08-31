@@ -1,3 +1,4 @@
+apt-get update && apt-get install debian-keyring debian-archive-keyring
 Configuracion adicional beagle controler
 sudo dpkg -i connman_1.0-1.1+wheezy1+b1_armhf.deb
 sudo chmod +x /etc/init.d/servicio_controler
@@ -7,3 +8,4 @@ sudo apt-get install sysv-rc-conf
 sudo  sysv-rc-conf (verifica que el servicio esté instalado)
 /usr/sbin/ntpdate -b -s -u ie.pool.ntp.org (actualizar hora)
 npm install exec -g (npm para comando por consola)
+>/var/log/syslog

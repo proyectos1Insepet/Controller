@@ -119,6 +119,8 @@ while (true){
         //Estados POS 1
         if($fp1 == 1 && $fpago == 1){
             $estado = 22;
+            $actfp  = "UPDATE estado SET fp1 = 0";
+            $resact = pg_query($actfp);
             $fpago  = 0;
         }
         if($fp1 == 0){
@@ -144,7 +146,8 @@ while (true){
             if($recibe == 25){
                 $estado = 3;
                 $estado_espera = 0;
-                $pos1 =1;                
+                $pos1 =1;
+                /*$pos2 =0;*/
                 $venta_cero = 0;
             }
             if($recibe == 4){
@@ -185,7 +188,10 @@ while (true){
             }
             if($recibe == 20){
                 $estado = 20;
-            }			          
+            }
+            if($recibe == 3){
+                $estado = 22;
+            }
             if($recibe == 2){
                 $estado = 23;
             }
@@ -197,6 +203,8 @@ while (true){
         //Estados POS 2  
         if($fp2 == 1 && $fpago2 == 1){
             $estado2 = 22;
+            $actfp  = "UPDATE estado SET fp2 = 0";
+            $resact = pg_query($actfp);
             $fpago2  = 0;
         }
         if($fp2 == 0){
@@ -221,7 +229,8 @@ while (true){
             }
             if($recibe2 == 25){
                 $estado2 = 3;
-                $estado_espera2 = 0;               
+                $estado_espera2 = 0;
+                /*$pos1 =0;*/
                 $pos2 =1;
                 $venta_cero2 = 0;
             }
@@ -263,6 +272,9 @@ while (true){
             }
             if($recibe2 == 20){
                 $estado2 = 20;
+            }
+             if($recibe2 == 3){
+                $estado2 = 22;
             }
             if($recibe2 == 2){
                 $estado2 = 23;
@@ -307,7 +319,7 @@ while (true){
                     $ar = array(78, 83, 88, 255,209,$CDG,$estado,$estado2); 
                     echo "Estado normal: $estado, $estado2\n";
                 }
-				if($estado_espera !=0 && $estado_espera2 !=0){
+                if($estado_espera !=0 && $estado_espera2 !=0){
                     $ar = array(78, 83, 88, 255,209,$CDG,$estado_ee,$estado_ee2); 
                     echo "Estado fake 3 - imprime normales: $estado, $estado2\n";
                 }
@@ -324,7 +336,7 @@ while (true){
                 echo "EstadoFK 1 = $estado_ee:: EstadoFK 2 = $estado_ee2\n";
                 echo "Posicion 1 = $pos1:: Posicion 2 = $pos2\n";
                 echo "Estado espera 1 = $estado_espera:: Estado espera 2 = $estado_espera2\n";
-                socket_write($client, $envio,$length); 
+                socket_write($client, $envio,$length);  
             break;
             
             case a2:
@@ -438,10 +450,10 @@ while (true){
 		            pg_free_result($res);
 		            pg_free_result($finv);
 		        }
-		        $query       = "SELECT grado,valortotal,cantidadtotal,volumenfinal,dinerofinal, ppu,placaefectivo,tipovehiculo,kilometrajecliente,pk_idventa,nombreefectivo from venta where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3]);"; 
-		        $result      = pg_query($query); 
-		        $row         = pg_fetch_row($result);
-		        $grado       = $row[0];
+		        $query  = "SELECT grado,valortotal,cantidadtotal,volumenfinal,dinerofinal, ppu,placaefectivo,tipovehiculo,kilometrajecliente,pk_idventa,nombreefectivo from venta where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3]);"; 
+		        $result = pg_query($query); 
+		        $row    = pg_fetch_row($result);
+		        $grado  = $row[0];
 		        $dinero      = $row[1];
 		        $num2dec     = $row[2];
 		        $volumen     = number_format((float)$num2dec, 3, '', '');
@@ -1111,8 +1123,8 @@ while (true){
                 $impresion = substr($input,8);
                 echo "Recibo: \n";
                 echo "$impresion";
-                
-                /*fwrite($f,$f_logo);
+                /*
+                fwrite($f,$f_logo);
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
@@ -1122,8 +1134,8 @@ while (true){
                 fwrite($f,chr(0x01));
                 fwrite($f,chr(0x1B));
                 fwrite($f,chr(0x51));
-                fwrite($f,chr(0x01));*/
-                
+                fwrite($f,chr(0x01));
+                */
                 fwrite($f, $impresion);
                 $ar = array(78, 83, 88,$array[3],220,3);
                 $ar[6] = verificar_check($ar, 7);
@@ -1675,28 +1687,20 @@ while (true){
             break;
             
             case bc:
+                $fpago  = 0;
+                $fpago2 = 0;
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                if ($array[3] == 1){
-                    $fpago  = 0;
-                    $actfp  = "UPDATE estado SET fp1 = 0";
-                    $resact = pg_query($actfp);
-                }
-                if ($array[3] == 2){
-                    $fpago2  = 0;
-                    $actfp  = "UPDATE estado SET fp2 = 0";
-                    $resact = pg_query($actfp);
-                }
                 $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
                 $rfpago    = pg_query($fpago);
                 $datos     = pg_fetch_row($rfpago); 
-                $identificadorfp = $datos[4];
-                $stringid  = sprintf("%-20s",$identificadorfp);
-                $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
+                $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],$datos[4]);";
                 $rhispago  = pg_query($hispago);
                 $disfp     = $datos[2]*100;
+                $identificadorfp = $datos[4];
                 echo "Discriminado ajustado:$disfp";
                 $stringaj  = sprintf("%8s",$disfp);
+                $stringid  = sprintf("%-20s",$identificadorfp);
                 $arvdiscr  = str_split($stringaj);
                 $aridforma = str_split($stringid);
                 foreach ($arvdiscr as &$valor) {

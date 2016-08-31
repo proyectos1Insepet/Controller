@@ -1,0 +1,51 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:             servicio_controler
+# Required-Start:       $local_fs $network
+# Required-Stop:        $local_fs $network 
+# Should-Start:	        $local_fs
+# Should-Stop:		$local_fs
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description: Start/stop controler
+### END INIT INFO
+
+NAME=servicio_controler
+DESC="Demonio del servicio_controler"
+PIDFILE="/var/run/${NAME}.pid" LOGFILE="/var/log/${NAME}.log"
+ 
+#indicamos que vamos a ejecutar un archivo PHP
+DAEMON="/usr/bin/php"
+#Ruta del archivo
+DAEMON_OPTS="/var/lib/cloud9/index.php"
+ 
+START_OPTS="--start --background --make-pidfile --pidfile ${PIDFILE} --exec ${DAEMON} ${DAEMON_OPTS}" STOP_OPTS="--stop --pidfile ${PIDFILE}" 
+test -x $DAEMON || exit 0 
+set -e
+ 
+case "$1" in
+    start)
+        echo -n "Starting ${DESC}: "
+        start-stop-daemon $START_OPTS >> $LOGFILE
+        echo "$NAME."
+        ;;
+    stop)
+        echo -n "Stopping $DESC: "
+        start-stop-daemon $STOP_OPTS
+        echo "$NAME."
+        rm -f $PIDFILE
+        ;;
+    restart|force-reload)
+        echo -n "Restarting $DESC: "
+        start-stop-daemon $STOP_OPTS
+        sleep 1
+        start-stop-daemon $START_OPTS >> $LOGFILE
+        echo "$NAME."
+        ;;
+    *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;; esac
+ 
+exit 0

@@ -61,8 +61,14 @@ CREATE TABLE venta(
 	DineroInicial FLOAT,
 	DineroFinal FLOAT,
 	Fk_IdProducto INT,
-	ValorProgramado FLOAT
+	ValorProgramado FLOAT,
+	ppu VARCHAR(7),
+	idposicion INT,
+	grado INT,
+	tipovehiculo INT,
+	tipopreset CHAR(2)	
 );
+ 
 
 CREATE TABLE copiaderecibo(	
 	Pk_IdCopiaRecibo SERIAL PRIMARY KEY,
@@ -112,6 +118,8 @@ CREATE TABLE estado(
     Pk_id_estado SERIAL PRIMARY KEY,
     pos1 INT,
     pos2 INT,
+	fp1 INT,
+	fp2 INT,
 	led  INT
 );
 
@@ -129,12 +137,44 @@ CREATE TABLE totales(
 
 CREATE TABLE venta_canasta(
     id_canasta SERIAL UNIQUE,
+	idposicionc INT,
+	validacioncanasta INT,
+	lecturacanasta INT,
+	tipoventacanasta INT,
     serial  VARCHAR(20),
     cantidad VARCHAR(3),
     cantidadvendida VARCHAR(3),
     nombre VARCHAR (20),
-    valor  VARCHAR(8)
+    valor  VARCHAR(8),
+	valormux VARCHAR(8)
 );
+
+CREATE TABLE finventacanasta(
+    id_canasta SERIAL UNIQUE,
+	idposicionc INT,
+	validacioncanasta INT,
+	lecturacanasta INT,
+	tipoventacanasta INT,
+    serial  VARCHAR(20),
+    cantidad VARCHAR(3),
+    cantidadvendida VARCHAR(3),
+    nombre VARCHAR (20),
+    valor  VARCHAR(8),
+	valormux VARCHAR(8)
+);
+
+CREATE TABLE historicoventacanasta(
+    idventacanasta SERIAL UNIQUE,
+	idposicionc INT,	     
+	dineroventa VARCHAR(8)
+);
+
+CREATE TABLE mantenimiento(
+    idposicion  INT,
+	grado INT,	     
+	autorizacion INT
+);
+
 
 CREATE TABLE precios(
     id_pos INT UNIQUE,
@@ -164,6 +204,8 @@ CREATE TABLE preset(
 );
 
 CREATE TABLE mensajes(
+    id_mensaje INT,
+	lecturacalibracion INT,
 	mensaje VARCHAR(60)
 );
 
@@ -203,26 +245,24 @@ CREATE TABLE solicitudes(
 );
 
 CREATE TABLE formadepago(
+    pkformapago SERIAL UNIQUE,
     id_pos INT,
     numeroventa VARCHAR(8),
     tipoformadepago VARCHAR(3),
-    ventaconsulta VARCHAR(3)
+	valorventa VARCHAR(8),
+	valordiscriminado VARCHAR (8),
+	identificadorfp VARCHAR(20),
+    ventaconsulta VARCHAR(3)/*combustible 1 canasta 2*/
 );
 
-CREATE TABLE verificapago(
+CREATE TABLE historicoformapago(
+	pkidformapago SERIAL UNIQUE,
     id_pos INT,
-    validacion INT,
-    valorventa VARCHAR(8),
-    activateclado INT 
-);
-
-CREATE TABLE discriminapago(
-    id_pos INT,
-    numeroventa2 VARCHAR (8),
-    tipofp CHAR (2),
-    ventaconsulta2 INT,
-    valordiscriminado VARCHAR (8),
-    serialid VARCHAR (20)
+    numeroventa VARCHAR(8),
+    tipoformadepago VARCHAR(3),
+	valordiscriminado VARCHAR (8),
+	identificadorfp VARCHAR(20),
+    ventaconsulta VARCHAR(3)/*combustible 1 canasta 2*/
 );
 
 
@@ -234,3 +274,26 @@ BEGIN
   RETURN NULL;
 END;
 $$;
+
+
+CREATE FUNCTION limpiar_historicocanasta() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  DELETE FROM historicoventacanasta WHERE idventacanasta < (SELECT MAX(idventacanasta) - 1000 FROM historicoventacanasta); 
+  RETURN NULL;
+END;
+$$;
+
+
+CREATE FUNCTION limpiar_historicoformasdepago() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  DELETE FROM historicoformapago WHERE pkidformapago < (SELECT MAX(pkidformapago) - 1000 FROM historicoformapago); 
+  RETURN NULL;
+END;
+$$;
+
+
+
