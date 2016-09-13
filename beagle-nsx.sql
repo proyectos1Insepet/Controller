@@ -163,6 +163,22 @@ CREATE TABLE finventacanasta(
 	valormux VARCHAR(8)
 );
 
+CREATE TABLE finventacanastacredito(
+    id_canasta SERIAL UNIQUE,
+	idposicionc INT,
+	validacioncanasta INT,
+	lecturacanasta INT,
+	tipoventacanasta INT,
+    serial  VARCHAR(20),
+    cantidad VARCHAR(3),
+    cantidadvendida VARCHAR(3),
+    nombre VARCHAR (20),
+    valor  VARCHAR(8),
+	tipoidentificacion VARCHAR(2),
+	serialid VARCHAR(20),
+	valormux VARCHAR(8)
+);
+
 CREATE TABLE historicoventacanasta(
     idventacanasta SERIAL UNIQUE,
 	idposicionc INT,	     

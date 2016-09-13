@@ -90,6 +90,8 @@ while (true){
     $venta_cero2 = 0;
     $fpago   = 1;
     $fpago2  = 1;
+    $fallacanasta  = 0;
+    $fallacanasta2 = 0;
     pg_close($dbconn); // Cerrando la conexión  
     //read data from the incoming socket     
     while ($conexion){
@@ -131,12 +133,29 @@ while (true){
                     $estado = 4;
                     $pos1 = 0;
                     $estado_espera =0;
+                    if($fallacanasta == 1){
+                        $query   = "DELETE FROM venta_canasta;";
+                        $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "DELETE FROM finventacanasta;";
+                        $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                        $result= pg_query($query) ;
+                        $fallacanasta = 0;
+                    }
                 }
                 if ($venta_cero == 0){
                     $estado = 1;
                     $pos1 = 0;
                     $estado_espera =0;
+                    if($fallacanasta == 1){
+                        $query   = "DELETE FROM venta_canasta;";
+                        $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "DELETE FROM finventacanasta;";
+                        $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                        $result= pg_query($query) ;
+                        $fallacanasta = 0;
+                    }
                 }
+                
             }
             if($recibe == 23){
                 $estado = 2;
@@ -192,11 +211,15 @@ while (true){
             if($recibe == 1){
                 $estado = 24;
             }
-            
+            if($recibe == 30){
+                $estado = 25;
+            }
         }
         //Estados POS 2  
         if($fp2 == 1 && $fpago2 == 1){
             $estado2 = 22;
+
+
             $fpago2  = 0;
         }
         if($fp2 == 0){
@@ -209,12 +232,29 @@ while (true){
                     $estado2 = 4;
                     $pos2 = 0;
                     $estado_espera2 =0;
+                    if($fallacanasta2 == 1){
+                        $query   = "DELETE FROM venta_canasta;";
+                        $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "DELETE FROM finventacanasta;";
+                        $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                        $result= pg_query($query) ;
+                        $fallacanasta2 = 0;
+                }
                 }
                 if ($venta_cero2 == 0){
                     $estado2 = 1;
                     $pos2 = 0;
                     $estado_espera2 =0;
+                    if($fallacanasta2 == 1){
+                        $query   = "DELETE FROM venta_canasta;";
+                        $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "DELETE FROM finventacanasta;";
+                        $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                        $result= pg_query($query) ;
+                        $fallacanasta2 = 0;
+                    }
                 }
+                
             }
             if($recibe2 == 23){
                 $estado2 = 2;
@@ -269,6 +309,9 @@ while (true){
             }
             if($recibe2 == 1){
                 $estado2 = 24;
+            }
+            if($recibe2 == 30){
+                $estado2 = 25;
             }
         }
         pg_free_result($result);
@@ -1111,6 +1154,7 @@ while (true){
                 $impresion = substr($input,8);
                 echo "Recibo: \n";
                 echo "$impresion";
+
                 
                 /*fwrite($f,$f_logo);
                 fwrite($f,chr(0x0A));
@@ -1123,6 +1167,7 @@ while (true){
                 fwrite($f,chr(0x1B));
                 fwrite($f,chr(0x51));
                 fwrite($f,chr(0x01));*/
+
                 
                 fwrite($f, $impresion);
                 $ar = array(78, 83, 88,$array[3],220,3);
@@ -1301,6 +1346,12 @@ while (true){
             case b4:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
+                if($array[3] ==1){
+                    $fallaventacanasta  = 1;
+                }
+                if($array[3] ==2){
+                    $fallaventacanasta2 = 1;
+                }
                 for($x=0; $x<19; $x++){
                     $resultadoar[$x] = hex2bin($array[$x+6]);                        
                 }                                      
@@ -1331,7 +1382,7 @@ while (true){
                 pg_close($dbconn); // Cerrando la conexión 
             break;
             
-             case b5:
+            case b5:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $sql            = "SELECT COUNT(*) FROM finventacanasta WHERE cantidadvendida !='000';";
@@ -1343,7 +1394,6 @@ while (true){
                 $guarda = "INSERT INTO historicoventacanasta (idposicionc,dineroventa)VALUES ($array[3],$suma);";
                 $ar = array(78,83,88,$array[3],229);
                 $ar[] = $row[0];
-                
                 for($x=0; $x<$row[0];$x++){
                     $consulta = "SELECT serial,cantidadvendida FROM finventacanasta WHERE id_canasta = ($row[0]-$x)";
                     $res       = pg_query($consulta);  
@@ -1408,7 +1458,6 @@ while (true){
                 pg_free_result($result);
                 pg_free_result($resultado);
                 pg_close($dbconn); // Cerrando la conexión 
-                
             break;      
             
             case b7:
@@ -1695,8 +1744,10 @@ while (true){
                 $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
                 $rhispago  = pg_query($hispago);
                 $disfp     = $datos[2]*100;
+
                 echo "Discriminado ajustado:$disfp";
                 $stringaj  = sprintf("%8s",$disfp);
+                
                 $arvdiscr  = str_split($stringaj);
                 $aridforma = str_split($stringid);
                 foreach ($arvdiscr as &$valor) {
@@ -1704,7 +1755,7 @@ while (true){
                 }
                 unset($valor);
                 foreach ($aridforma as &$valor) {
-                      $valor = bin2hex($valor);
+                      $valor = ord($valor);
                 }
                 unset($valor);
                 print_r($aridforma);
@@ -1786,7 +1837,7 @@ while (true){
                     $tipo_preset = 3;
                     echo "Full";
                 }
-                if($row[1]=='D'|| $row[1]=='D '){
+                if($row[1] =='D'|| $row[1] =='D '){
                     $tipo_preset = 2;
                     echo "Dinero";
                 }
@@ -1837,6 +1888,96 @@ while (true){
                 pg_free_result($result);
                 pg_close($dbconn); // Cerrando la conexión  
             break;
+            
+            case c1:
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                $sql            = "SELECT COUNT(*) FROM finventacanastacredito WHERE cantidadvendida !='000';";
+                $ventacanasta   = "SELECT SUM (CAST(valormux AS INT)) FROM finventacanastacredito WHERE cantidadvendida !='000';";
+                $serialcanasta  = "SELECT serialid FROM finventacanastacredito WHERE id_canasta = 1;";
+                $result = pg_query($sql);
+                $res    = pg_query($ventacanasta);
+                $res2    = pg_query($serialcanasta);
+                $row    = pg_fetch_row($result);
+                $suma   = pg_fetch_row($res);
+                $fid    = pg_fetch_row($res2);
+                $ar = array(78,83,88,$array[3],241);
+                $ar[] = $row[0];
+                $idcliente = $fid[0];
+                $strserial = substr($idcliente,-16);
+                $serial    = str_split($strserial);
+                print_r($serial);
+                foreach ($serial as &$valor) {
+                   $valor = ord($valor);
+                }
+                unset($valor);
+                $array  = array_merge_recursive($ar,$serial);
+                $ar     = $array;
+                print_r($ar);
+                for($x=0; $x<$row[0];$x++){
+                    $consulta = "SELECT serial,cantidadvendida FROM finventacanastacredito WHERE id_canasta = ($row[0]-$x)";
+                    $res       = pg_query($consulta);  
+                    $row2      = pg_fetch_row($res);
+                    $strserial = sprintf("%-20s",$row2[0]);
+                    $strcanv   = sprintf("%-3s",$row2[1]);
+                    $subar1 = str_split($strserial);
+                    $subar2 = str_split($strcanv);
+                    foreach ($subar1 as &$valor) {
+                       $valor = bin2hex($valor);
+                    }
+                    unset($valor); 
+                    foreach ($subar2 as &$valor) {
+                      $valor = bin2hex($valor);
+                    }
+                    unset($valor); 
+                    $array  = array_merge_recursive($ar,$subar1,$subar2);
+                    $ar     = $array;
+                }
+                $largo = count($ar);   
+                $ar[$largo] = verificar_check($ar, ($largo +1));
+                print_r($ar);
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                pg_free_result($result);
+                pg_close($dbconn); // Cerrando la conexión 
+            break;
+            
+            case c2:
+                if($array[5]==3){
+                    $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                    or die('Can not connect: ' . \pg_last_error());
+                    $query   = "DELETE FROM venta_canasta;";
+                    $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
+                    $query  .= "DELETE FROM finventacanastacredito;";
+                    $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
+                    $result= pg_query($sql) ;
+                    $resultado = pg_query($query);
+                }
+                if (!$result) {
+                    $ACK = 4;  
+                }else{
+                    $ACK = 3;
+                }
+                $ACK =3;
+                $ar = array(78,83,88,$array[3],242,$ACK);
+                $largo = count($ar);   
+                $ar[$largo] = verificar_check($ar, ($largo +1));
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                pg_free_result($result);
+                pg_free_result($resultado);
+                pg_close($dbconn); // Cerrando la conexión 
+            break;      
 
         }        
     }else{
@@ -1848,6 +1989,4 @@ while (true){
         pg_close($dbconn); // Cerrando la conexión 
     }
     }
-    
-        
 }
