@@ -76,12 +76,13 @@ while (true){
     //Accept incoming connection - This is a blocking call
     $client =  socket_accept($sock);     
     //display information about the client who is connected
-    if(socket_getpeername($client , $address , $port))
-    {
+    if(socket_getpeername($client , $address , $port)){
         echo "Cliente $address : $port está conectado. \n";
         $conexion = true;
         echo "Estado conexión:$conexion\n";
-    }   
+    }else{
+		$conexion = false;
+	}   
     $estado_espera =0;
     $venta_cero = 0;
     $venta_cero2 = 0;
