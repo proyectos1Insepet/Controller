@@ -238,8 +238,9 @@ CREATE TABLE consignaciones(
     pk_idconsignacion INT UNIQUE,
     valorconsignacion INT,
     mensajeconsignacion VARCHAR (60),
-    confirmacion INT,
-    idpos INT
+	idpos INT,
+    confirmacion INT,	
+    recibe INT
 );
 
 CREATE TABLE logos(

@@ -42,7 +42,7 @@ $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
 /*$query .= "UPDATE estado SET pos1 = 20;";*/
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
- `stty -F $impresora 9600`;
+ `stty -F $impresora 115200`;
 
  
 
@@ -323,7 +323,7 @@ while (true){
             $valor = bin2hex($valor);
         }
         unset($valor);
-        $imprime_ar = implode("-",$array);
+        $imprime_ar = implode(" ",$array);
         echo "Cadena entrada hex: $imprime_ar\n";        
         $CDG = 2;
         if($array[0]==43 && $array[1]==44 && $array[2]==47){
@@ -1154,7 +1154,11 @@ while (true){
                 $impresion = substr($input,8);
                 echo "Recibo: \n";
                 echo "$impresion";
-
+                if ($fila[0] == 2){
+                    $impresion   = bin2hex($impresion);
+                    $impresion   = str_replace("0a","",$impresion);
+                    $impresion   = hex2bin($impresion);
+                }
                 
                 /*fwrite($f,$f_logo);
                 fwrite($f,chr(0x0A));
@@ -1169,7 +1173,7 @@ while (true){
                 fwrite($f,chr(0x01));*/
 
                 
-                fwrite($f, $impresion);
+                fwrite($f,$impresion);
                 $ar = array(78, 83, 88,$array[3],220,3);
                 $ar[6] = verificar_check($ar, 7);
                 foreach ($ar as &$valor) {
@@ -1186,7 +1190,7 @@ while (true){
             case ad:
                 $ar = array(78, 83, 88,$array[3],221,3);
                 $ar[6] = verificar_check($ar, 7);
-                $dato_ad = implode("-",$ar);
+                $dato_ad = implode(" ",$ar);
                 echo "Dato AD: $dato_ad\n";
                 foreach ($ar as &$valor) {
                    $valor = chr($valor);
