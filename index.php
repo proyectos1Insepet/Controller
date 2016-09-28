@@ -1,39 +1,7 @@
 <?php
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
-$address = "0.0.0.0";
-$port = 1002;
-$localIP = gethostbyname(trim('localhost'));
-echo "IP LOCAL: $localIP\n";
-print_r($localIP);
 
- //Creación del socket
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0)))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);     
-    die("No se puede crear el socket: [$errorcode] $errormsg \n");
-}
- 
-echo "Socket creado \n";
- 
-// Bind the source address
-if( !socket_bind($sock, $address , $port) )
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-     
-    die("No se puede atar el socket : [$errorcode] $errormsg \n");
-} 
-echo "Socket bind OK \n"; 
-if(!socket_listen ($sock , 10))
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);     
-    die("Could not listen on socket : [$errorcode] $errormsg \n");
-} 
-echo "Socket listen OK \n";
-echo "Esperando conexiones entrantes... \n";
 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
     or die('Can not connect: ' . \pg_last_error());
 $sql   = "TRUNCATE TABLE solicitudes"; 
@@ -68,6 +36,39 @@ function verificar_check($datos,  $size){
 
 //start loop to listen for incoming connections
 while (true){
+    $address = "0.0.0.0";
+$port = 1002;
+$localIP = gethostbyname(trim('localhost'));
+echo "IP LOCAL: $localIP\n";
+print_r($localIP);
+
+ //Creación del socket
+if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0)))
+{
+    $errorcode = socket_last_error();
+    $errormsg = socket_strerror($errorcode);     
+    die("No se puede crear el socket: [$errorcode] $errormsg \n");
+}
+ 
+echo "Socket creado \n";
+ 
+// Bind the source address
+if( !socket_bind($sock, $address , $port) )
+{
+    $errorcode = socket_last_error();
+    $errormsg = socket_strerror($errorcode);
+     
+    die("No se puede atar el socket : [$errorcode] $errormsg \n");
+} 
+echo "Socket bind OK \n"; 
+if(!socket_listen ($sock , 10))
+{
+    $errorcode = socket_last_error();
+    $errormsg = socket_strerror($errorcode);     
+    die("Could not listen on socket : [$errorcode] $errormsg \n");
+} 
+echo "Socket listen OK \n";
+echo "Esperando conexiones entrantes... \n";
     $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
     or die('Can not connect: ' . \pg_last_error());
     $sql1    = "TRUNCATE TABLE solicitudes;";
@@ -79,12 +80,13 @@ while (true){
     //Accept incoming connection - This is a blocking call
     $client =  socket_accept($sock);     
     //display information about the client who is connected
-    if(socket_getpeername($client , $address , $port))
-    {
+    if(socket_getpeername($client , $address , $port)){
         echo "Cliente $address : $port está conectado. \n";
         $conexion = true;
         echo "Estado conexión:$conexion\n";
-    }   
+    }else{
+		$conexion = false;
+	}   
     $estado_espera =0;
     $venta_cero = 0;
     $venta_cero2 = 0;
@@ -124,24 +126,31 @@ while (true){
             $fpago  = 0;
         }
         if($fp1 == 0){
-            $fpago   = 1;
-            if($recibe == 0){
-                $estado = 255;
+            if ($controlfpago == 1){
+                $estado = 26; 
             }
-            if($recibe == 22){
-                if($venta_cero ==1){
-                    $estado = 4;
-                    $pos1 = 0;
-                    $estado_espera =0;
-                    if($fallacanasta == 1){
-                        $query   = "DELETE FROM venta_canasta;";
-                        $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
-                        $query  .= "DELETE FROM finventacanasta;";
-                        $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
-                        $result= pg_query($query) ;
-                        $fallacanasta = 0;
-                    }
+            if($controlfpago == 2){
+                $estado = 27;
+            }
+            if($controlfpago ==0){
+                $fpago   = 1;
+                if($recibe == 0){
+                    $estado = 255;
                 }
+                if($recibe == 22){
+                    if($venta_cero ==1){
+                        $estado = 4;
+                        $pos1 = 0;
+                        $estado_espera =0;
+                        if($fallacanasta == 1){
+                            $query   = "DELETE FROM venta_canasta;";
+                            $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
+                            $query  .= "DELETE FROM finventacanasta;";
+                            $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                            $result= pg_query($query) ;
+                            $fallacanasta = 0;
+                        }
+                    }
                 if ($venta_cero == 0){
                     $estado = 1;
                     $pos1 = 0;
@@ -215,14 +224,20 @@ while (true){
                 $estado = 25;
             }
         }
+        }
         //Estados POS 2  
         if($fp2 == 1 && $fpago2 == 1){
             $estado2 = 22;
-
-
             $fpago2  = 0;
         }
         if($fp2 == 0){
+            if ($controlfpago == 1){
+                $estado = 26; 
+            }
+            if($controlfpago == 2){
+                $estado = 27;
+            }
+            if($controlfpago ==0){
             $fpago2  = 1;
             if($recibe2 == 0){
                 $estado2 = 255;
@@ -312,6 +327,7 @@ while (true){
             }
             if($recibe2 == 30){
                 $estado2 = 25;
+            }
             }
         }
         pg_free_result($result);
@@ -1122,12 +1138,18 @@ while (true){
                 $sql         = "SELECT tipoimpresora FROM mapeodispensador where pk_idposicion = $array[3]";
                 $print       = pg_query($sql);
                 $fila        = pg_fetch_row($print);
+                if($array[3] == 1){
+                        $controlfpago = 0;
+                    }
+                if($array[3] == 2){
+                        $controlfpago2 = 0;
+                }
                 echo "Fila: $fila[0]\n";
-                if ($fila[0] == 1){
+                if ($fila[0] == 2){
                     $query       = "SELECT tramakios FROM logos WHERE id_logo = 1";
                     echo "Kiosko";
                 }
-                if ($fila[0] == 2){
+                if ($fila[0] == 1){
                     $query       = "SELECT trama FROM logos WHERE id_logo = 2";
                 }
                 if ($credito ==1){
@@ -1154,13 +1176,22 @@ while (true){
                 $impresion = substr($input,8);
                 echo "Recibo: \n";
                 echo "$impresion";
+<<<<<<< HEAD
                 if ($fila[0] == 2){
+=======
+
+                if ($fila[0] == 1){
+>>>>>>> origin/master
                     $impresion   = bin2hex($impresion);
                     $impresion   = str_replace("0a","",$impresion);
                     $impresion   = hex2bin($impresion);
                 }
+<<<<<<< HEAD
                 
                 /*fwrite($f,$f_logo);
+=======
+                fwrite($f,$f_logo);
+>>>>>>> origin/master
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
@@ -1170,7 +1201,7 @@ while (true){
                 fwrite($f,chr(0x01));
                 fwrite($f,chr(0x1B));
                 fwrite($f,chr(0x51));
-                fwrite($f,chr(0x01));*/
+                fwrite($f,chr(0x01));
 
                 
                 fwrite($f,$impresion);
@@ -1732,12 +1763,14 @@ while (true){
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 if ($array[3] == 1){
-                    $fpago  = 0;
+                    $fpago        = 0;
+                    $controlfpago = 1;
                     $actfp  = "UPDATE estado SET fp1 = 0";
                     $resact = pg_query($actfp);
                 }
                 if ($array[3] == 2){
-                    $fpago2  = 0;
+                    $fpago2        = 0;
+                    $controlfpago2 = 1;
                     $actfp  = "UPDATE estado SET fp2 = 0";
                     $resact = pg_query($actfp);
                 }
@@ -1746,8 +1779,8 @@ while (true){
                 $datos     = pg_fetch_row($rfpago); 
                 $identificadorfp = $datos[4];
                 $stringid  = sprintf("%-20s",$identificadorfp);
-                $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
-                $rhispago  = pg_query($hispago);
+                //$hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
+                //$rhispago  = pg_query($hispago);
                 $disfp     = $datos[2]*100;
 
                 echo "Discriminado ajustado:$disfp";
@@ -1983,15 +2016,57 @@ while (true){
                 pg_free_result($resultado);
                 pg_close($dbconn); // Cerrando la conexión 
             break;      
+            
+            case c3:
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                if($array[5]==3){
+                    $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
+                    $rfpago    = pg_query($fpago);
+                    $datos     = pg_fetch_row($rfpago); 
+                    $identificadorfp = $datos[4];
+                    $stringid  = sprintf("%-20s",$identificadorfp);
+                    $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
+                    $rhispago  = pg_query($hispago);
+                    if($array[3] == 1){
+                        $controlfpago = 2;
+                    }
+                    if($array[3] == 2){
+                        $controlfpago2 = 2;
+                    }
+                }
+                if($array[5]==4){
+                    $fpago     = "DELETE FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
+                    $rfpago    = pg_query($fpago);
+                    if($array[3] == 1){
+                        $controlfpago = 0;
+                    }
+                    if($array[3] == 2){
+                        $controlfpago2 = 0;
+                    }
+                }
+                $ACK = 3;
+                $ar = array(78,83,88,$array[3],243,$ACK);
+                $largo = count($ar);   
+                $ar[$largo] = verificar_check($ar, ($largo +1));
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                pg_close($dbconn); // Cerrando la conexión 
+            break;
 
         }        
-    }else{
-        $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
-        or die('Can not connect: ' . \pg_last_error());
-        $conexion    = false;
-        $solicitud   = "UPDATE solicitudes SET solicitabge2 = 0, confirmacion = 1;";
-        $rsolicitud  = pg_query($solicitud);
-        pg_close($dbconn); // Cerrando la conexión 
     }
     }
+    $conexion    = false;
+	socket_close($sock);
+	$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+	or die('Can not connect: ' . \pg_last_error());	
+	$solicitud   = "UPDATE solicitudes SET solicitabge2 = 0, confirmacion = 1;";
+	$rsolicitud  = pg_query($solicitud);
+	pg_close($dbconn); // Cerrando la conexión 
 }

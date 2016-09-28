@@ -27,6 +27,7 @@ ff		Inactivo
 23      Autorización Calibración
 24      Listo calibracion
 25      Credito canasta
+26      Respuesta forma de pago 
 
 /******************************************************/
 ACK  = 3
