@@ -36,7 +36,7 @@ function verificar_check($datos,  $size){
 
 //start loop to listen for incoming connections
 while (true){
-    $address = "0.0.0.0";
+$address = "0.0.0.0";
 $port = 1002;
 $localIP = gethostbyname(trim('localhost'));
 echo "IP LOCAL: $localIP\n";
@@ -97,6 +97,7 @@ echo "Esperando conexiones entrantes... \n";
     pg_close($dbconn); // Cerrando la conexión  
     //read data from the incoming socket     
     while ($conexion){
+        
         $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
         or die('Can not connect: ' . \pg_last_error());
         /*$query   = "UPDATE estado SET pos1 = 12;";*/
@@ -333,6 +334,9 @@ echo "Esperando conexiones entrantes... \n";
         pg_free_result($result);
         pg_close($dbconn); // Cerrando la conexión  
         $input = socket_read($client, 6096); 
+        if ($input ==''){
+            $conexion = false;
+        }
         $array = str_split($input); 
         echo "Cadena entrada: $input\n";
         foreach ($array as &$valor) {
@@ -1735,6 +1739,8 @@ echo "Esperando conexiones entrantes... \n";
                 $estado_espera = 0;
             break;
             case bb: //estado crédito espera
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
                 if($array[3] ==1){
                     $estado_ee = 21;
                     $estado_espera = 1;
@@ -1748,6 +1754,9 @@ echo "Esperando conexiones entrantes... \n";
                     $venta_cero2 =1;
                 } 
                 echo "Venta 1 = $venta_cero:: Venta 2 = $venta_cero2\n";
+                $sql    = "UPDATE preset SET serial = '0';";
+				$result = pg_query($sql) ;
+                pg_close($dbconn); // Cerrando la conexión 
             break;
             
             case bc: //forma de pago
@@ -2054,7 +2063,7 @@ echo "Esperando conexiones entrantes... \n";
     }
     }
     $conexion    = false;
-	socket_close($sock);
+	socket_close($client);
 	$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 	or die('Can not connect: ' . \pg_last_error());	
 	$solicitud   = "UPDATE solicitudes SET solicitabge2 = 0, confirmacion = 1;";
