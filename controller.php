@@ -1284,6 +1284,7 @@ echo "Esperando conexiones entrantes... \n";
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $vturno  = hex2bin($array[5]); 
+				$larray  = count($array);
                 $turno   = "UPDATE turno SET turnonsx = $vturno; ";
                 $prt1        = strpos($input,'C1');
                 $prt2        = strpos($input,'C2');
@@ -1305,12 +1306,13 @@ echo "Esperando conexiones entrantes... \n";
                 $formatovolumen = hex2bin($array[8]);
                 $formatoprecio  = hex2bin($array[9]);
                 $ppux10         = hex2bin($array[36]);
+				$tipoimp        = hex2bin($array[$larray-2]); 
                 if ($array[3] == 1){
-                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10  WHERE pk_idposicion = $array[3]";
+                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10, tipoimpresora = $tipoimp  WHERE pk_idposicion = $array[3]";
                     $resultado = pg_query($config);
                 }
                 if ($array[3] ==2){
-                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10  WHERE pk_idposicion = $array[3]";
+                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10, tipoimpresora = $tipoimp  WHERE pk_idposicion = $array[3]";
                     $resultado = pg_query($config);
                 }
                 $rturno  = pg_query($turno);
@@ -1935,7 +1937,7 @@ echo "Esperando conexiones entrantes... \n";
                 $serialcanasta  = "SELECT serialid FROM finventacanastacredito WHERE id_canasta = 1;";
                 $result = pg_query($sql);
                 $res    = pg_query($ventacanasta);
-                $res2    = pg_query($serialcanasta);
+                $res2   = pg_query($serialcanasta);
                 $row    = pg_fetch_row($result);
                 $suma   = pg_fetch_row($res);
                 $fid    = pg_fetch_row($res2);
