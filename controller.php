@@ -7,7 +7,7 @@ $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'"
 $sql   = "TRUNCATE TABLE solicitudes"; 
 $res = pg_query($sql); 
 $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
-/*$query .= "UPDATE estado SET pos1 = 20;";*/
+$query .= "UPDATE estado SET pos1 = 20;";
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
  `stty -F $impresora 9600`;
