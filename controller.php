@@ -7,10 +7,10 @@ $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'"
 $sql   = "TRUNCATE TABLE solicitudes"; 
 $res = pg_query($sql); 
 $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
-$query .= "UPDATE estado SET pos1 = 20;";
+/*$query .= "UPDATE estado SET pos1 = 20;";*/
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
- `stty -F $impresora 9600`;
+ `stty -F $impresora 115200`;
 
  
 
@@ -1186,7 +1186,7 @@ echo "Esperando conexiones entrantes... \n";
                     $impresion   = str_replace("0a","",$impresion);
                     $impresion   = hex2bin($impresion);
                 }
-                fwrite($f,$f_logo);
+                /*fwrite($f,$f_logo);
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
@@ -1196,7 +1196,7 @@ echo "Esperando conexiones entrantes... \n";
                 fwrite($f,chr(0x01));
                 fwrite($f,chr(0x1B));
                 fwrite($f,chr(0x51));
-                fwrite($f,chr(0x01));
+                fwrite($f,chr(0x01));*/
 
                 
                 fwrite($f, $impresion);
@@ -1308,11 +1308,11 @@ echo "Esperando conexiones entrantes... \n";
                 $ppux10         = hex2bin($array[36]);
 				$tipoimp        = hex2bin($array[$larray-2]); 
                 if ($array[3] == 1){
-                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10  WHERE pk_idposicion = $array[3]";
+                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10, tipoimpresora = $tipoimp  WHERE pk_idposicion = $array[3]";
                     $resultado = pg_query($config);
                 }
                 if ($array[3] ==2){
-                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10  WHERE pk_idposicion = $array[3]";
+                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10, tipoimpresora = $tipoimp  WHERE pk_idposicion = $array[3]";
                     $resultado = pg_query($config);
                 }
                 $rturno  = pg_query($turno);
@@ -1692,12 +1692,12 @@ echo "Esperando conexiones entrantes... \n";
                 $producto1   = substr($input,($prod1+2),($prod2-($prod1+2)));
                 $producto2   = substr($input,($prod2+2),($prod3-($prod2+2)));
                 $producto3   = substr($input,($prod3+2),($prod4-($prod3+2)));
-                $producto4   = substr($input,($prod4+2),($finprod-($prod4+2)));
+                //s$producto4   = substr($input,($prod4+2),($finprod-($prod4+2)));
                 echo "Productos : $producto1 , $producto2, $producto3, $producto4, fin \n ";
                 $productos  ="UPDATE botones SET textoboton = '$producto1' WHERE id_boton = 27;";
                 $productos .="UPDATE botones SET textoboton = '$producto2' WHERE id_boton = 28;";
                 $productos .="UPDATE botones SET textoboton = '$producto3' WHERE id_boton = 29;";
-                $productos .="UPDATE botones SET textoboton = '$producto4' WHERE id_boton = 30;";
+                //$productos .="UPDATE botones SET textoboton = '$producto4' WHERE id_boton = 30;";
                 $rprod      = pg_query($productos);
                 
                 $ar    = array(78,83,88,$array[3],233,$ACK);
@@ -2072,3 +2072,4 @@ echo "Esperando conexiones entrantes... \n";
 	$rsolicitud  = pg_query($solicitud);
 	pg_close($dbconn); // Cerrando la conexión 
 }
+
