@@ -1308,11 +1308,11 @@ echo "Esperando conexiones entrantes... \n";
                 $ppux10         = hex2bin($array[36]);
 				$tipoimp        = hex2bin($array[$larray-2]); 
                 if ($array[3] == 1){
-                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10, tipoimpresora = $tipoimp  WHERE pk_idposicion = $array[3]";
+                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10  WHERE pk_idposicion = $array[3]";
                     $resultado = pg_query($config);
                 }
                 if ($array[3] ==2){
-                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10, tipoimpresora = $tipoimp  WHERE pk_idposicion = $array[3]";
+                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10  WHERE pk_idposicion = $array[3]";
                     $resultado = pg_query($config);
                 }
                 $rturno  = pg_query($turno);
