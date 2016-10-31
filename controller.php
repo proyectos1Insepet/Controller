@@ -7,7 +7,7 @@ $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'"
 $sql   = "TRUNCATE TABLE solicitudes"; 
 $res = pg_query($sql); 
 $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
-$query .= "UPDATE estado SET pos1 = 20;";
+/*$query .= "UPDATE estado SET pos1 = 20;";*/
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
  `stty -F $impresora 9600`;
@@ -40,7 +40,6 @@ $address = "0.0.0.0";
 $port = 1002;
 $localIP = gethostbyname(trim('localhost'));
 echo "IP LOCAL: $localIP\n";
-print_r($localIP);
 
  //Creación del socket
 if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0)))
@@ -51,14 +50,18 @@ if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0)))
 }
  
 echo "Socket creado \n";
- 
+if (!socket_set_option($sock, SOL_SOCKET, SO_REUSEADDR, 1)) {
+    echo socket_strerror(socket_last_error($sock));
+    exit;
+}
+
 // Bind the source address
 if( !socket_bind($sock, $address , $port) )
 {
     $errorcode = socket_last_error();
     $errormsg = socket_strerror($errorcode);
-     
-    die("No se puede atar el socket : [$errorcode] $errormsg \n");
+    socket_close($client); 
+    echo"No se puede atar el socket : [$errorcode] $errormsg \n";
 } 
 echo "Socket bind OK \n"; 
 if(!socket_listen ($sock , 10))
@@ -69,6 +72,7 @@ if(!socket_listen ($sock , 10))
 } 
 echo "Socket listen OK \n";
 echo "Esperando conexiones entrantes... \n";
+socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
     $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
     or die('Can not connect: ' . \pg_last_error());
     $sql1    = "TRUNCATE TABLE solicitudes;";
@@ -97,7 +101,7 @@ echo "Esperando conexiones entrantes... \n";
     pg_close($dbconn); // Cerrando la conexión  
     //read data from the incoming socket     
     while ($conexion){
-        
+        //$conexion = false;
         $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
         or die('Can not connect: ' . \pg_last_error());
         /*$query   = "UPDATE estado SET pos1 = 12;";*/
@@ -116,7 +120,7 @@ echo "Esperando conexiones entrantes... \n";
                  $estado_pos = "UPDATE estado SET pos1 = 0, pos2 =0;";
                  $res_pos    = pg_query($estado_pos); 
             }else{
-                $estado_led = "UPDATE estado SET led =0;";
+                $estado_led = "UPDATE estado SET led = 0, nsxonline = 1;";
                 $res_led    = pg_query($estado_led);
             }
         }
@@ -331,11 +335,12 @@ echo "Esperando conexiones entrantes... \n";
             }
             }
         }
-        pg_free_result($result);
-        pg_close($dbconn); // Cerrando la conexión  
         $input = socket_read($client, 6096); 
         if ($input ==''){
             $conexion = false;
+            socket_close($client);
+            $query   = "UPDATE estado SET nsxonline = 0;";
+            $result  = pg_query($query) ;
         }
         $array = str_split($input); 
         echo "Cadena entrada: $input\n";
@@ -346,11 +351,11 @@ echo "Esperando conexiones entrantes... \n";
         $imprime_ar = implode("-",$array);
         echo "Cadena entrada hex: $imprime_ar\n";        
         $CDG = 2;
+        pg_free_result($result);
+        pg_close($dbconn); // Cerrando la conexión 
         if($array[0]==43 && $array[1]==44 && $array[2]==47){
-        
         switch ($array[4]){
             case a1:  //Inicia la consulta del NSX
-                echo "Estado : $estado_espera\n";
                 $ciclo++;
                 if($estado_espera ==1 && $pos1 ==1){
                     $ar = array(78, 83, 88, 255,209,$CDG,$estado_ee,$estado2); 
@@ -385,9 +390,8 @@ echo "Esperando conexiones entrantes... \n";
                 $length = strlen($envio);                                                
                 echo "Estado 1 = $estado:: Estado 2 = $estado2\n";
                 echo "EstadoFK 1 = $estado_ee:: EstadoFK 2 = $estado_ee2\n";
-                echo "Posicion 1 = $pos1:: Posicion 2 = $pos2\n";
                 echo "Estado espera 1 = $estado_espera:: Estado espera 2 = $estado_espera2\n";
-                socket_write($client, $envio,$length); 
+                socket_write($client, $envio,$length);
             break;
             
             case a2:
@@ -1306,13 +1310,13 @@ echo "Esperando conexiones entrantes... \n";
                 $formatovolumen = hex2bin($array[8]);
                 $formatoprecio  = hex2bin($array[9]);
                 $ppux10         = hex2bin($array[36]);
-				$tipoimp        = hex2bin($array[$larray-1]); 
+				$tipoimp        = hex2bin($array[$larray-2]); 
                 if ($array[3] == 1){
-                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10, tipoimpresora=$tipoimp  WHERE pk_idposicion = $array[3]";
+                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10, tipoimpresora = $tipoimp  WHERE pk_idposicion = $array[3]";
                     $resultado = pg_query($config);
                 }
                 if ($array[3] ==2){
-                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10,tipoimpresora=$tipoimp  WHERE pk_idposicion = $array[3]";
+                    $config  = "UPDATE mapeodispensador SET numerodigitos = $numerodigitos , formatodinero = $formatodinero, formatovolumen = $formatovolumen , formatoprecio = $formatoprecio , ppux10 = $ppux10, tipoimpresora = $tipoimp  WHERE pk_idposicion = $array[3]";
                     $resultado = pg_query($config);
                 }
                 $rturno  = pg_query($turno);
@@ -2061,11 +2065,11 @@ echo "Esperando conexiones entrantes... \n";
                 pg_close($dbconn); // Cerrando la conexión 
             break;
 
-        }        
+        } 
+        
     }
+    
     }
-    $conexion    = false;
-	socket_close($client);
 	$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 	or die('Can not connect: ' . \pg_last_error());	
 	$solicitud   = "UPDATE solicitudes SET solicitabge2 = 0, confirmacion = 1;";
