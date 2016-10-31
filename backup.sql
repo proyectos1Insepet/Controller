@@ -1,4 +1,4 @@
-﻿--
+--
 -- PostgreSQL database dump
 --
 
@@ -251,7 +251,8 @@ CREATE TABLE estado (
     pos2 integer,
     led integer,
     fp1 integer,
-    fp2 integer
+    fp2 integer,
+    nsxonline integer
 );
 
 
@@ -1143,9 +1144,9 @@ COPY configuraciondispensador (pk_idconfiguraciondispen, nombre, descripcion, va
 9	Pie	Pie	GRACIAS POR SU COMPRA	t
 10	Pie	Pie	VUELVA PRONTO	t
 11	Pie	Pie	U	t
-25	Preset1	Preset rapido	20000	t
-26	Preset2	Preset rapido	50000	t
-27	Preset3	Preset rapido	100000	t
+25	Preset1	Preset rapido	10000	t
+26	Preset2	Preset rapido	20000	t
+27	Preset3	Preset rapido	50000	t
 \.
 
 
@@ -1192,8 +1193,8 @@ COPY discriminapago (id_pos, numeroventa2, tipofp, ventaconsulta2, valordiscrimi
 -- Data for Name: estado; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY estado (pk_id_estado, pos1, pos2, led, fp1, fp2) FROM stdin;
-1	22	22	1	0	0
+COPY estado (pk_id_estado, pos1, pos2, led, fp1, fp2, nsxonline) FROM stdin;
+1	22	22	1	0	0	0
 \.
 
 
@@ -1225,6 +1226,8 @@ SELECT pg_catalog.setval('finventacanasta_id_canasta_seq', 1, false);
 
 COPY finventacanastacredito (id_canasta, idposicionc, validacioncanasta, lecturacanasta, tipoventacanasta, serial, cantidad, cantidadvendida, nombre, valor, tipoidentificacion, serialid, valormux) FROM stdin;
 1	1	\N	\N	2	                 321	\N	001	\N	\N	1	    07000000C413AF02	00015000
+2	1	\N	\N	\N	00000000000000000000	\N	000	\N	\N	\N	\N	00000000
+3	1	\N	\N	\N	00000000000000000000	\N	000	\N	\N	\N	\N	00000000
 \.
 
 
@@ -1240,8 +1243,6 @@ SELECT pg_catalog.setval('finventacanastacredito_id_canasta_seq', 1, false);
 --
 
 COPY formadepago (pkformapago, id_pos, numeroventa, tipoformadepago, valorventa, valordiscriminado, identificadorfp, ventaconsulta) FROM stdin;
-1	1	1	01	11915	00000000	00000000000000000000	1
-
 \.
 
 
@@ -1273,8 +1274,6 @@ SELECT pg_catalog.setval('historicoformapago_pkidformapago_seq', 1, true);
 --
 
 COPY historicoventacanasta (idventacanasta, idposicionc, dineroventa) FROM stdin;
-1	1	0
-
 \.
 
 
@@ -1308,8 +1307,8 @@ COPY mantenimiento (idposicion, grado, autorizacion) FROM stdin;
 --
 
 COPY mapeodispensador (pk_idposicion, numeromangueras, formatodinero, formatovolumen, formatoprecio, ppux10, numerodigitos, isla, tipoimpresora) FROM stdin;
-1	2	0	3	0	1	6	1	1
-2	2	0	3	0	1	6	1	1
+1	2	0	3	0	0	6	1	1
+2	2	0	3	0	0	6	1	1
 \.
 
 
@@ -1325,7 +1324,7 @@ SELECT pg_catalog.setval('mapeodispensador_pk_idposicion_seq', 1, false);
 --
 
 COPY mensajes (mensaje, id_mensaje, lecturacalibracion) FROM stdin;
-El  vehiculo  	1	0
+El  vehiculo  placa  TITO123, ha sido   autorizado	1	0
 El  vehiculo  	2	0
 \.
 
@@ -1358,8 +1357,8 @@ SELECT pg_catalog.setval('moneda_pk_idmoneda_seq', 8, true);
 --
 
 COPY precios (id_pos, nsx1, nsx2, nsx3, disp1, disp2, disp3) FROM stdin;
-1	00789	00759	00000	00789	00759	00000
-2	00789	00759	00000	00789	00759	00000
+1	07555	07390	00000	07555	07390	00000
+2	07555	07390	00000	07555	07390	00000
 \.
 
 
@@ -1368,7 +1367,7 @@ COPY precios (id_pos, nsx1, nsx2, nsx3, disp1, disp2, disp3) FROM stdin;
 --
 
 COPY preset (id_pos, tipo_p, valor_p, totalesdin, totalesvol, ppu, grado, kilometraje, serial, autorizado, tipo_venta, mensajep, validacioncredito, lecturacupocredito, calibracion) FROM stdin;
-1	1 	00020000	1521723	390.1	000780	1	0	0	0	1	\N	0	0	1
+1	F 	00008000	2133575	489.69	008120	1	0	0	0008000	1	\N	0	0	1
 2	2 	00050000	688263	105.72	007890	1	0	0	0	1	Felicidades, tiene cupo	0	0	1
 \.
 
@@ -1418,8 +1417,8 @@ SELECT pg_catalog.setval('tipotransaccion_pk_idtipotransaccion_seq', 1, false);
 --
 
 COPY totales (pk_id_posicion, totalmanguera1, totalmanguera2, totalmanguera3, totalmanguera4, dineromanguera1, dineromanguera2, dineromanguera3, dineromanguera4) FROM stdin;
-1	390.660000000000025	0	0	0	1521767	0	0	0
-2	107.079999999999998	0	0	0	689340	0	0	0
+1	489.930000000000007	0	0	0	2135475	0	0	0
+2	130.419999999999987	0	0	0	759878	0	0	0
 \.
 
 
@@ -1435,7 +1434,7 @@ SELECT pg_catalog.setval('totales_pk_id_posicion_seq', 3, true);
 --
 
 COPY turno (usuario, "contraseña", turno, turnonsx, mensajeturno, habilitalecturaturno) FROM stdin;
-123	0123	1	1	Apertura exitosa	1
+123	0000	1	1	Apertura exitosa	1
 \.
 
 
@@ -1444,7 +1443,13 @@ COPY turno (usuario, "contraseña", turno, turnonsx, mensajeturno, habilitalectu
 --
 
 COPY venta (pk_idventa, fechainicial, fechafinal, cantidadtotal, valortotal, fk_idtipotransaccion, serialibutton, identificadorweb, volumeninicial, volumenfinal, placaefectivo, nombreefectivo, dineroinicial, dinerofinal, fk_idproducto, valorprogramado, ppu, idposicion, grado, tipovehiculo, tipopreset, kilometrajecliente) FROM stdin;
-1	2015-11-13 06:50:08.842989-05	2015-11-13 06:50:08.842989-05	0.560000000000000053	44	\N	\N	\N	390.100000000000023	390.660000000000025	         J	0	1521723	1521767	\N	20000	780	1	1	1	1 	0000000000
+1	2015-11-13 11:50:08.842989+00	2015-11-13 11:50:08.842989+00	0.560000000000000053	44	\N	\N	\N	390.100000000000023	390.660000000000025	         J	0	1521723	1521767	\N	20000	780	1	1	1	1 	0000000000
+2	2014-05-15 02:31:55.223726+00	2014-05-15 02:31:55.223726+00	0.459000000000000019	3468	\N	\N	\N	484.860000000000014	485.319999999999993	          	0	2096352	2099820	\N	10000	7555	1	1	1	1 	0000000000
+3	2014-05-15 02:52:08.766989+00	2014-05-15 02:52:08.766989+00	1.27000000000000002	10312	\N	\N	\N	485.319999999999993	486.589999999999975	          	0	2099820	2110132	\N	8000	8120	1	1	1	F 	0000000001
+4	2014-05-15 02:52:50.656323+00	2014-05-15 02:52:50.656323+00	0.369999999999999996	2795	\N	\N	\N	486.589999999999975	486.95999999999998	          	0	2110132	2112927	\N	10000	7555	1	1	1	1 	0000000000
+5	2014-05-15 04:15:10.527881+00	2014-05-15 04:15:10.527881+00	0.892000000000000015	6739	\N	\N	\N	487.319999999999993	488.20999999999998	          	0	2115647	2122386	\N	999900	7555	1	1	1	F 	0000000000
+6	2014-05-15 04:20:29.010059+00	2014-05-15 04:20:29.010059+00	1.48100000000000009	11189	\N	\N	\N	488.20999999999998	489.689999999999998	          	0	2122386	2133575	\N	10000	7555	1	1	1	1 	0000000000
+7	2016-10-28 19:21:11.206327+00	2016-10-28 19:21:11.206327+00	0.234000000000000014	1900	\N	\N	\N	489.689999999999998	489.930000000000007	          	0	2133575	2135475	\N	8000	8120	1	1	1	F 	0000000012
 \.
 
 
@@ -1453,6 +1458,19 @@ COPY venta (pk_idventa, fechainicial, fechafinal, cantidadtotal, valortotal, fk_
 --
 
 COPY venta_canasta (id_canasta, idposicionc, validacioncanasta, lecturacanasta, tipoventacanasta, serial, cantidad, cantidadvendida, nombre, valor, valormux) FROM stdin;
+13	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+9	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+8	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+3	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+1	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+2	1	\N	0	\N	                 321	\N	\N	\N	\N	\N
+4	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+5	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+7	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+6	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+10	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+11	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
+12	1	\N	0	\N	                 321	-15	\N	Aw40Motor          	15000   	\N
 \.
 
 
@@ -1460,14 +1478,14 @@ COPY venta_canasta (id_canasta, idposicionc, validacioncanasta, lecturacanasta, 
 -- Name: venta_canasta_id_canasta_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('venta_canasta_id_canasta_seq', 1, false);
+SELECT pg_catalog.setval('venta_canasta_id_canasta_seq', 13, true);
 
 
 --
 -- Name: venta_pk_idventa_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('venta_pk_idventa_seq', 1, true);
+SELECT pg_catalog.setval('venta_pk_idventa_seq', 7, true);
 
 
 --
