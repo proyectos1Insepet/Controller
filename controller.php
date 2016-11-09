@@ -1,7 +1,7 @@
 <?php
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
-
+$consultacierrasocket=0;
 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
     or die('Can not connect: ' . \pg_last_error());
 $sql   = "TRUNCATE TABLE solicitudes"; 
@@ -40,10 +40,9 @@ $address = "0.0.0.0";
 $port = 1002;
 $localIP = gethostbyname(trim('localhost'));
 echo "IP LOCAL: $localIP\n";
-
+$soltotales = 0;
  //Creación del socket
-if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0)))
-{
+if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0))){
     $errorcode = socket_last_error();
     $errormsg = socket_strerror($errorcode);     
     die("No se puede crear el socket: [$errorcode] $errormsg \n");
@@ -56,49 +55,53 @@ if (!socket_set_option($sock, SOL_SOCKET, SO_REUSEADDR, 1)) {
 }
 
 // Bind the source address
-if( !socket_bind($sock, $address , $port) )
-{
+if( !socket_bind($sock, $address , $port) ){
     $errorcode = socket_last_error();
     $errormsg = socket_strerror($errorcode);
-    socket_close($client); 
     echo"No se puede atar el socket : [$errorcode] $errormsg \n";
+}else{
+    echo "Socket bind OK \n";     
 } 
-echo "Socket bind OK \n"; 
-if(!socket_listen ($sock , 10))
-{
+
+if(!socket_listen ($sock , 10)){
     $errorcode = socket_last_error();
     $errormsg = socket_strerror($errorcode);     
-    die("Could not listen on socket : [$errorcode] $errormsg \n");
+    "Could not listen on socket : [$errorcode] $errormsg \n";
+}else{
+    echo "Socket listen OK \n";
+    echo "Esperando conexiones entrantes... \n";
 } 
-echo "Socket listen OK \n";
-echo "Esperando conexiones entrantes... \n";
 socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
-    $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
-    or die('Can not connect: ' . \pg_last_error());
+$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+or die('Can not connect: ' . \pg_last_error());
+if ($consultacierrasocket == 0){
     $sql1    = "TRUNCATE TABLE solicitudes;";
     $res1    = pg_query($sql1); 
-    $query   = "INSERT INTO solicitudes (solicitabge2,tiposolicitud,confirmacion) VALUES(1,'T',0)"; 
+    $query   = "INSERT INTO solicitudes (solicitabge2,tiposolicitud,confirmacion) VALUES(0,'T',1)"; 
     $result  = pg_query($query); 
     pg_free_result($result);
-    sleep(1);
-    //Accept incoming connection - This is a blocking call
-    $client =  socket_accept($sock);     
-    //display information about the client who is connected
-    if(socket_getpeername($client , $address , $port)){
-        echo "Cliente $address : $port está conectado. \n";
-        $conexion = true;
-        echo "Estado conexión:$conexion\n";
-    }else{
-		$conexion = false;
-	}   
-    $estado_espera =0;
-    $venta_cero = 0;
-    $venta_cero2 = 0;
-    $fpago   = 1;
-    $fpago2  = 1;
-    $fallacanasta  = 0;
-    $fallacanasta2 = 0;
-    pg_close($dbconn); // Cerrando la conexión  
+    $consultacierrasocket =1;
+}
+
+//Accept incoming connection - This is a blocking call
+$client =  socket_accept($sock);     
+//display information about the client who is connected
+if(socket_getpeername($client , $address , $port)){
+    echo "Cliente $address : $port está conectado. \n";
+    $conexion = true;
+    echo "Estado conexión:$conexion\n";
+}else{
+	$conexion = false;
+}   
+$estado_espera =0;
+$venta_cero = 0;
+$venta_cero2 = 0;
+$fpago   = 1;
+$fpago2  = 1;
+$fallacanasta  = 0;
+$fallacanasta2 = 0;
+echo "Conexion: $conexion\n";
+pg_close($dbconn); // Cerrando la conexión  
     //read data from the incoming socket     
     while ($conexion){
         //$conexion = false;
@@ -120,7 +123,7 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                  $estado_pos = "UPDATE estado SET pos1 = 0, pos2 =0;";
                  $res_pos    = pg_query($estado_pos); 
             }else{
-                $estado_led = "UPDATE estado SET led = 0, nsxonline = 1;";
+                $estado_led = "UPDATE estado SET led = 0, nsxonline = 1, bloqueocorte =2;";
                 $res_led    = pg_query($estado_led);
             }
         }
@@ -151,7 +154,9 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                             $query   = "DELETE FROM venta_canasta;";
                             $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
                             $query  .= "DELETE FROM finventacanasta;";
+                            $query  .= "DELETE FROM finventacanastafinventacanastacredito;";
                             $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                            $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
                             $result= pg_query($query) ;
                             $fallacanasta = 0;
                         }
@@ -164,7 +169,9 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                         $query   = "DELETE FROM venta_canasta;";
                         $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
                         $query  .= "DELETE FROM finventacanasta;";
+                        $query  .= "DELETE FROM finventacanastafinventacanastacredito;";
                         $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
                         $result= pg_query($query) ;
                         $fallacanasta = 0;
                     }
@@ -256,7 +263,9 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                         $query   = "DELETE FROM venta_canasta;";
                         $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
                         $query  .= "DELETE FROM finventacanasta;";
+                        $query  .= "DELETE FROM finventacanastafinventacanastacredito;";
                         $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
                         $result= pg_query($query) ;
                         $fallacanasta2 = 0;
                 }
@@ -269,7 +278,9 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                         $query   = "DELETE FROM venta_canasta;";
                         $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
                         $query  .= "DELETE FROM finventacanasta;";
+                        $query  .= "DELETE FROM finventacanastafinventacanastacredito;";
                         $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
                         $result= pg_query($query) ;
                         $fallacanasta2 = 0;
                     }
@@ -337,9 +348,11 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
         }
         $input = socket_read($client, 6096); 
         if ($input ==''){
-            $conexion = false;
+            $conexion   = false;
+            $soltotales = 1;
             socket_close($client);
             $query   = "UPDATE estado SET nsxonline = 0;";
+            $query  .= "UPDATE solicitudes SET solicitabge2 = 0,confirmacion = 1";
             $result  = pg_query($query) ;
         }
         $array = str_split($input); 
@@ -391,6 +404,7 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                 echo "Estado 1 = $estado:: Estado 2 = $estado2\n";
                 echo "EstadoFK 1 = $estado_ee:: EstadoFK 2 = $estado_ee2\n";
                 echo "Estado espera 1 = $estado_espera:: Estado espera 2 = $estado_espera2\n";
+                $consultacierrasocket=0;
                 socket_write($client, $envio,$length);
             break;
             
@@ -690,13 +704,6 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                     break;
                     case 9:
                         $ar = array(78, 83, 88,$array[3],212,3);
-                        if($array[3]==1 ){
-                            $mensaje = "UPDATE turno SET mensajeturno = 'Operacion correcta'"; 
-                            $result2 = pg_query($mensaje);
-                        }else{
-                           $mensaje = "UPDATE turno SET mensajeturno = 'Operacion Correcta'"; 
-                           $result2 = pg_query($mensaje);
-                        }
                         $query  ="UPDATE turno SET habilitalecturaturno = 1;";
                         $result = pg_query($query);
                     break;
@@ -1158,7 +1165,7 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                     echo "Kiosko";
                 }
                 if ($fila[0] == 1){
-                    $query       = "SELECT trama FROM logos WHERE id_logo = 2";
+                    $query       = "SELECT trama FROM logos WHERE id_logo = 1";
                 }
                 if ($credito ==1){
                     $creditolec   = "UPDATE preset SET validacioncredito =0, lecturacupocredito =1;"; 
@@ -1383,10 +1390,10 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 if($array[3] ==1){
-                    $fallaventacanasta  = 1;
+                    $fallacanasta  = 1;
                 }
                 if($array[3] ==2){
-                    $fallaventacanasta2 = 1;
+                    $fallacanasta2 = 1;
                 }
                 for($x=0; $x<19; $x++){
                     $resultadoar[$x] = hex2bin($array[$x+6]);                        
@@ -2064,6 +2071,22 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexión 
             break;
+            
+            case c4:
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                $query     = "UPDATE estado SET bloqueocorte =1;";
+                $resultado = pg_query($query);
+                $ar        = array(78,83,88,$array[3],244,$ACK);
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                pg_close($dbconn); // Cerrando la conexión 
+            break;
 
         } 
         
@@ -2072,7 +2095,9 @@ socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
     }
 	$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 	or die('Can not connect: ' . \pg_last_error());	
-	$solicitud   = "UPDATE solicitudes SET solicitabge2 = 0, confirmacion = 1;";
-	$rsolicitud  = pg_query($solicitud);
-	pg_close($dbconn); // Cerrando la conexión 
+	if($soltotales ==1){
+	    $solicitud   = "UPDATE solicitudes SET solicitabge2 = 0, confirmacion = 1;";
+	    $rsolicitud  = pg_query($solicitud);
+	    pg_close($dbconn); // Cerrando la conexión 
+	}
 }
