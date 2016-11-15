@@ -10,7 +10,7 @@ $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
 /*$query .= "UPDATE estado SET pos1 = 20;";*/
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
- `stty -F $impresora 9600`;
+ `stty -F $impresora 115200`;
 
  
 
@@ -176,7 +176,9 @@ pg_close($dbconn); // Cerrando la conexión
                         $fallacanasta = 0;
                     }
                 }
-                
+                if ($surtiendo == 1){
+                    $recibe = 4;
+                }
             }
             if($recibe == 23){
                 $estado = 2;
@@ -186,8 +188,10 @@ pg_close($dbconn); // Cerrando la conexión
                 $estado_espera = 0;
                 $pos1 =1;                
                 $venta_cero = 0;
+                $surtiendo = 1;
             }
             if($recibe == 4){
+                $surtiendo = 0;
                 $estado = 4;
             }
             if($recibe == 5){
@@ -1697,18 +1701,17 @@ pg_close($dbconn); // Cerrando la conexión
                 $prod1       = strpos($input,'B1');
                 $prod2       = strpos($input,'B2');
                 $prod3       = strpos($input,'B3');
-                $prod4       = strpos($input,'B4');
                 $finprod     = strpos($input,'A1');
                 
                 $producto1   = substr($input,($prod1+2),($prod2-($prod1+2)));
                 $producto2   = substr($input,($prod2+2),($prod3-($prod2+2)));
-                $producto3   = substr($input,($prod3+2),($prod4-($prod3+2)));
-                $producto4   = substr($input,($prod4+2),($finprod-($prod4+2)));
+                $producto3   = substr($input,($prod3+2),($finprod-($prod3+2)));
+                
                 echo "Productos : $producto1 , $producto2, $producto3, $producto4, fin \n ";
                 $productos  ="UPDATE botones SET textoboton = '$producto1' WHERE id_boton = 27;";
                 $productos .="UPDATE botones SET textoboton = '$producto2' WHERE id_boton = 28;";
                 $productos .="UPDATE botones SET textoboton = '$producto3' WHERE id_boton = 29;";
-                $productos .="UPDATE botones SET textoboton = '$producto4' WHERE id_boton = 30;";
+                
                 $rprod      = pg_query($productos);
                 
                 $ar    = array(78,83,88,$array[3],233,$ACK);
@@ -2078,6 +2081,39 @@ pg_close($dbconn); // Cerrando la conexión
                 $query     = "UPDATE estado SET bloqueocorte =1;";
                 $resultado = pg_query($query);
                 $ar        = array(78,83,88,$array[3],244,$ACK);
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                pg_close($dbconn); // Cerrando la conexión 
+            break;
+            case c5:
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                $query     = "UPDATE estado SET bloqueocorte =1;";
+                $resultado = pg_query($query);
+                $ACK =3;
+                $ar        = array(78,83,88,$array[3],245,$ACK);
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                pg_close($dbconn); // Cerrando la conexión 
+            break;
+            
+            case c6:
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                $query     = "UPDATE estado SET bloqueocorte =2;";
+                $resultado = pg_query($query);
+                $ACK =3;
+                $ar        = array(78,83,88,$array[3],246,$ACK);
                 foreach ($ar as &$valor) {
                    $valor = chr($valor);
                 }
