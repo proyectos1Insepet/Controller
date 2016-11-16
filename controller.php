@@ -12,7 +12,8 @@ $result = pg_query($query);
 $impresora ='/dev/ttyO1';
  `stty -F $impresora 115200`;
 
- 
+$impresora2 ='/dev/ttyO2';
+ `stty -F $impresora2 115200`;
 
 
 function verificar_check($datos,  $size){
@@ -154,7 +155,7 @@ pg_close($dbconn); // Cerrando la conexión
                             $query   = "DELETE FROM venta_canasta;";
                             $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
                             $query  .= "DELETE FROM finventacanasta;";
-                            $query  .= "DELETE FROM finventacanastafinventacanastacredito;";
+                            $query  .= "DELETE FROM finventacanastacredito;";
                             $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
                             $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
                             $result= pg_query($query) ;
@@ -1187,7 +1188,12 @@ pg_close($dbconn); // Cerrando la conexión
                 }
                 unset($valor);
                 $f_logo = implode("",$arlogo);
-                $f = fopen("$impresora","r+");
+                if($array[3] == 1){
+                    $f = fopen("$impresora","r+");
+                }
+                if($array[3] == 2){
+                    $f = fopen("$impresora2","r+");
+                }
                 if(!$f) {
                     echo "Error al abrir\n";
                     exit;
