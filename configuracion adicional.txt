@@ -39,3 +39,8 @@ psql nsx
 alter user db_admin with password '12345';
 psql -U db_admin -W -h localhost nsx < backup.sql
 sed -i -e 's/\r//g' /etc/init.d/servicio_controler
+
+sudo chmod +x /var/www/hora.php
+sudo visudo
+www-data ALL=NOPASSWD: ALL
+sudo chown -R www-data:www-data /var/www

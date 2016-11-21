@@ -170,7 +170,7 @@ pg_close($dbconn); // Cerrando la conexión
                         $query   = "DELETE FROM venta_canasta;";
                         $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
                         $query  .= "DELETE FROM finventacanasta;";
-                        $query  .= "DELETE FROM finventacanastafinventacanastacredito;";
+                        $query  .= "DELETE FROM finventacanastacredito;";
                         $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
                         $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
                         $result= pg_query($query) ;
@@ -268,7 +268,7 @@ pg_close($dbconn); // Cerrando la conexión
                         $query   = "DELETE FROM venta_canasta;";
                         $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
                         $query  .= "DELETE FROM finventacanasta;";
-                        $query  .= "DELETE FROM finventacanastafinventacanastacredito;";
+                        $query  .= "DELETE FROM finventacanastacredito;";
                         $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
                         $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
                         $result= pg_query($query) ;
@@ -283,7 +283,7 @@ pg_close($dbconn); // Cerrando la conexión
                         $query   = "DELETE FROM venta_canasta;";
                         $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
                         $query  .= "DELETE FROM finventacanasta;";
-                        $query  .= "DELETE FROM finventacanastafinventacanastacredito;";
+                        $query  .= "DELETE FROM finventacanastacredito;";
                         $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
                         $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
                         $result= pg_query($query) ;
@@ -885,19 +885,23 @@ pg_close($dbconn); // Cerrando la conexión
                     $row  = pg_fetch_row($result);
                     echo "Tipo Preset:$row[1]";
                     if($row[0]==1){
-                        $totales = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3]";
+                        $totales  = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3];";
+                        $totales .= "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
                         echo "Entra 1\n";
                     }
                     if($row[0]==2){
-                        $totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3]";
+                        $totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3];";
+                        $totales .= "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
                         echo "Entra 2\n";
                     }
                     if($row[0]==3){
-                        $totales = "SELECT dineromanguera3,totalmanguera3 FROM totales WHERE pk_id_posicion = $array[3]";
+                        $totales = "SELECT dineromanguera3,totalmanguera3 FROM totales WHERE pk_id_posicion = $array[3];";
+                        $totales .= "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
                         echo "Entra 3\n";
                     }
                     if($row[0]==4){
-                        $totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3]";
+                        $totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3];";
+                        $totales .= "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
                         echo "Entra 4\n";
                     }
                     $restot  = pg_query($totales);
@@ -1689,7 +1693,8 @@ pg_close($dbconn); // Cerrando la conexión
                 
                 $data_pie         = "UPDATE configuraciondispensador SET (nombre,descripcion,valor,activa) = ('Pie','Pie','$footer1','1') WHERE pk_idconfiguraciondispen=9;";
                 $data_pie        .= "UPDATE configuraciondispensador SET (nombre,descripcion,valor,activa) = ('Pie','Pie','$footer2','1') WHERE pk_idconfiguraciondispen=10;";
-                $data_pie        .= "UPDATE configuraciondispensador SET (nombre,descripcion,valor,activa) = ('Pie','Pie','$footer3','1') WHERE pk_idconfiguraciondispen=11;";
+                //Están enviando último dato mal
+                //$data_pie        .= "UPDATE configuraciondispensador SET (nombre,descripcion,valor,activa) = ('Pie','Pie','$footer3','1') WHERE pk_idconfiguraciondispen=11;";
                 $rqpie            = pg_query($data_pie);
                 $i = 1;
                 foreach($array_btn as $v){
