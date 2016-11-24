@@ -72,7 +72,7 @@ if(!socket_listen ($sock , 10)){
     echo "Socket listen OK \n";
     echo "Esperando conexiones entrantes... \n";
 } 
-socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
+//socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>20,"usec"=>0));
 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 or die('Can not connect: ' . \pg_last_error());
 if ($consultacierrasocket == 0){
@@ -135,15 +135,9 @@ pg_close($dbconn); // Cerrando la conexión
             $fpago  = 0;
         }
         if($fp1 == 0){
-            if ($controlfpago == 1){
-                $estado = 26; 
-            }
-            if($controlfpago == 2){
-                $estado = 27;
-            }
             if($controlfpago ==0){
                 $fpago   = 1;
-                if($recibe == 0){
+                if($recibe == 0 || $recibe == 31){
                     $estado = 255;
                 }
                 if($recibe == 22){
@@ -240,7 +234,16 @@ pg_close($dbconn); // Cerrando la conexión
             if($recibe == 30){
                 $estado = 25;
             }
+            if($recibe == 32){
+                $estado = 32;
+            }
         }
+            if ($controlfpago == 1){
+                $estado = 26; 
+            }
+            if($controlfpago == 2){
+                $estado = 27;
+            }
         }
         //Estados POS 2  
         if($fp2 == 1 && $fpago2 == 1){
@@ -248,15 +251,9 @@ pg_close($dbconn); // Cerrando la conexión
             $fpago2  = 0;
         }
         if($fp2 == 0){
-            if ($controlfpago == 1){
-                $estado = 26; 
-            }
-            if($controlfpago == 2){
-                $estado = 27;
-            }
-            if($controlfpago ==0){
+            if($controlfpago2 ==0){
             $fpago2  = 1;
-            if($recibe2 == 0){
+            if($recibe2 == 0 || $recibe2 == 31){
                 $estado2 = 255;
             }
             if($recibe2 == 22){
@@ -349,9 +346,19 @@ pg_close($dbconn); // Cerrando la conexión
             if($recibe2 == 30){
                 $estado2 = 25;
             }
+            if($recibe2 == 32){
+                $estado2 = 32;
             }
+            }
+            if ($controlfpago2 == 1){
+                $estado2 = 26; 
+            }
+            if($controlfpago2 == 2){
+                $estado2 = 27;
+            }
+           
         }
-        $input = socket_read($client, 6096); 
+        $input = socket_read($client, 4096); 
         if ($input ==''){
             $conexion   = false;
             $soltotales = 1;
@@ -1159,14 +1166,14 @@ pg_close($dbconn); // Cerrando la conexión
             case ac:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $sql         = "SELECT tipoimpresora FROM mapeodispensador where pk_idposicion = $array[3]";
+                $sql         = "SELECT tipoimpresora, impresora FROM mapeodispensador where pk_idposicion = $array[3]";
                 $print       = pg_query($sql);
                 $fila        = pg_fetch_row($print);
                 if($array[3] == 1){
                         $controlfpago = 0;
-                    }
+                }
                 if($array[3] == 2){
-                        $controlfpago2 = 0;
+                        $controlfpago2 =0;
                 }
                 echo "Fila: $fila[0]\n";
                 if ($fila[0] == 2){
@@ -1192,11 +1199,17 @@ pg_close($dbconn); // Cerrando la conexión
                 }
                 unset($valor);
                 $f_logo = implode("",$arlogo);
-                if($array[3] == 1){
+                if($array[3] == 1 && $fila[1] ==1){
                     $f = fopen("$impresora","r+");
                 }
-                if($array[3] == 2){
+                if($array[3] == 2 && $fila[1] ==1){
                     $f = fopen("$impresora2","r+");
+                }
+                if($array[3] == 1 && $fila[1] ==0){
+                    $f = fopen("$impresora2","r+");
+                }
+                if($array[3] == 2 && $fila[1] ==0){
+                    $f = fopen("$impresora","r+");
                 }
                 if(!$f) {
                     echo "Error al abrir\n";
@@ -2083,7 +2096,7 @@ pg_close($dbconn); // Cerrando la conexión
                 $envio = implode("", $ar);
                 $length = strlen($envio);
                 socket_write($client, $envio,$length);
-                pg_close($dbconn); // Cerrando la conexión 
+                pg_close($dbconn); // Cerrando la conexi��n 
             break;
             
             case c4:

@@ -23,7 +23,7 @@ sudo update-rc.d servicio_controler defaults
 sudo insserv servicio_controler 
 sudo apt-get install sysv-rc-conf
 sudo  sysv-rc-conf (verifica que el servicio esté instalado)
-/usr/sbin/ntpdate -b -s -u ie.pool.ntp.org (actualizar hora)
+/usr/sbin/ntpdate -b -s -u ie.pool.ntp.org(actualizar hora)
 npm install exec -g (npm para comando por consola)
 >/var/log/daemon.log
 sudo nano /etc/network/interfaces
