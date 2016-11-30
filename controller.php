@@ -2174,22 +2174,7 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexi��n 
             break;
-            
-            case c4:
-                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
-                or die('Can not connect: ' . \pg_last_error());
-                $query     = "UPDATE estado SET bloqueocorte =1;";
-                $resultado = pg_query($query);
-                $ar        = array(78,83,88,$array[3],244,$ACK);
-                foreach ($ar as &$valor) {
-                   $valor = chr($valor);
-                }
-                unset($valor);                                          
-                $envio = implode("", $ar);
-                $length = strlen($envio);
-                socket_write($client, $envio,$length);
-                pg_close($dbconn); // Cerrando la conexión 
-            break;
+                        
             case c5:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
