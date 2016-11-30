@@ -2134,7 +2134,83 @@ pg_close($dbconn); // Cerrando la conexión
             case c6:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $query     = "UPDATE estado SET bloqueocorte =2;";
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                if($array[5]==3){
+                    $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
+                    $rfpago    = pg_query($fpago);
+                    $datos     = pg_fetch_row($rfpago); 
+                    $identificadorfp = $datos[4];
+                    $stringid  = sprintf("%-20s",$identificadorfp);
+                    $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
+                    $rhispago  = pg_query($hispago);
+                    if($array[3] == 1){
+                        $controlfpago = 2;
+                    }
+                    if($array[3] == 2){
+                        $controlfpago2 = 2;
+                    }
+                }
+                if($array[5]==4){
+                    $fpago     = "DELETE FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
+                    $rfpago    = pg_query($fpago);
+                    if($array[3] == 1){
+                        $controlfpago = 0;
+                    }
+                    if($array[3] == 2){
+                        $controlfpago2 = 0;
+                    }
+                }
+                $ACK = 3;
+                $ar = array(78,83,88,$array[3],243,$ACK);
+                $largo = count($ar);   
+                $ar[$largo] = verificar_check($ar, ($largo +1));
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                pg_close($dbconn); // Cerrando la conexi��n 
+            break;
+            
+            case c4:
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                $query     = "UPDATE estado SET bloqueocorte =1;";
+                $resultado = pg_query($query);
+                $ar        = array(78,83,88,$array[3],244,$ACK);
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                pg_close($dbconn); // Cerrando la conexión 
+            break;
+            case c5:
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                $query     = "UPDATE estado SET bloqueocorte =1;";
+                $resultado = pg_query($query);
+                $ACK =3;
+                $ar        = array(78,83,88,$array[3],245,$ACK);
+                foreach ($ar as &$valor) {
+                   $valor = chr($valor);
+                }
+                unset($valor);                                          
+                $envio = implode("", $ar);
+                $length = strlen($envio);
+                socket_write($client, $envio,$length);
+                pg_close($dbconn); // Cerrando la conexión 
+            break;
+            
+            case c6:
+                $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+                or die('Can not connect: ' . \pg_last_error());
+                $query     = "UPDATE estado SET bloqueocorte =0;";
                 $resultado = pg_query($query);
                 $ACK =3;
                 $ar        = array(78,83,88,$array[3],246,$ACK);
