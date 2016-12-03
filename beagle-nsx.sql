@@ -227,7 +227,7 @@ CREATE TABLE mensajes(
 
 CREATE TABLE turno(
     usuario VARCHAR(10),
-    contraseña VARCHAR(8),
+    contrasena VARCHAR(8),
     turno INT,
     turnonsx INT,
 	habilitalecturaturno INT,

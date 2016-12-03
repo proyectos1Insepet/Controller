@@ -171,7 +171,7 @@ pg_close($dbconn); // Cerrando la conexión
                         $fallacanasta = 0;
                     }
                 }
-                if ($surtiendo == 1){
+                if ($surtiendo == 1 || $recupera == 1){
                     $recibe = 4;
                 }
             }
@@ -287,6 +287,9 @@ pg_close($dbconn); // Cerrando la conexión
                         $fallacanasta2 = 0;
                     }
                 }
+                if ($surtiendo2 == 1 || $recupera2 == 1){
+                    $recibe2 = 4;
+                }
                 
             }
             if($recibe2 == 23){
@@ -299,6 +302,7 @@ pg_close($dbconn); // Cerrando la conexión
                 $venta_cero2 = 0;
             }
             if($recibe2 == 4){
+                $surtiendo2 = 0;
                 $estado2 = 4;
             }
             if($recibe2 == 5){
@@ -384,25 +388,25 @@ pg_close($dbconn); // Cerrando la conexión
                 $ciclo++;
                 if($estado_espera ==1 && $pos1 ==1){
                     $ar = array(78, 83, 88, 255,209,$CDG,$estado_ee,$estado2); 
-                    echo "Estado fake pos1: $estado_ee, $estado2\n";
+                    //echo "Estado fake pos1: $estado_ee, $estado2\n";
                     if($estado == 1){
                         $estado_espera = 0;
                     }
                 }
                 if($estado_espera2 ==2 && $pos2 ==1){
                     $ar = array(78, 83, 88, 255,209,$CDG,$estado,$estado_ee2);  
-                    echo "Estado fake pos2: $estado, $estado_ee2\n";
+                    //echo "Estado fake pos2: $estado, $estado_ee2\n";
                     if($estado2 == 1){
                         $estado_espera2 = 0;
                     }
                 }             
                 if($estado_espera ==0 && $estado_espera2 ==0){
                     $ar = array(78, 83, 88, 255,209,$CDG,$estado,$estado2); 
-                    echo "Estado normal: $estado, $estado2\n";
+                    //echo "Estado normal: $estado, $estado2\n";
                 }
 				if($estado_espera !=0 && $estado_espera2 !=0){
                     $ar = array(78, 83, 88, 255,209,$CDG,$estado_ee,$estado_ee2); 
-                    echo "Estado fake 3 - imprime normales: $estado, $estado2\n";
+                    //echo "Estado fake 3 - imprime normales: $estado, $estado2\n";
                 }
                 $ar[6+$CDG] = verificar_check($ar, (7+$CDG));
                 foreach ($ar as &$valor) {
@@ -480,7 +484,7 @@ pg_close($dbconn); // Cerrando la conexión
                 
                 $strpreset = sprintf($revpreset);
                 $strppu    = sprintf("%0-5s",$revppu);
-                echo "PPU : $strppu\n";
+                
                 $stringvol = sprintf("%0-12s",$revvol);
                 $stringdin     = sprintf("%0-12s",$revdinero);
                 
@@ -570,7 +574,6 @@ pg_close($dbconn); // Cerrando la conexión
 		        $strnit        = sprintf("%-10s",$revnit);
 		        $stringidventa = sprintf("%0-9s",$revidventa);
 		
-		        echo "Volumen final: $datvol; Cantidad:$dinero; Venta: $idventa;\n";
 		
 		        $arimporte   = str_split($stringimp);
 		        $arvolumen   = str_split($stringcant);
@@ -865,7 +868,7 @@ pg_close($dbconn); // Cerrando la conexión
                     $ar = array(78, 83,88,$array[3],213,49,$ardinero1[0],$ardinero1[1],$ardinero1[2],$ardinero1[3],$ardinero1[4],$ardinero1[5],$ardinero1[6],$ardinero1[7],$ardinero1[8],$ardinero1[9],$ardinero1[10],$ardinero1[11],$arvol1[0],$arvol1[1],$arvol1[3],$arvol1[4],$arvol1[5],$arvol1[6],$arvol1[7],$arvol1[8],$arvol1[9],$arvol1[10],$arvol1[11],$arvol1[12]);
                 }
                 if($manguera == 2){
-                    echo "Manguera 2";
+                    
                     $query = "SELECT totalmanguera1, dineromanguera1,totalmanguera2, dineromanguera2 from totales where pk_id_posicion  = $array[3]"; 
                     $result  = pg_query($query); 
                     $row  = pg_fetch_row($result);
@@ -1163,7 +1166,7 @@ pg_close($dbconn); // Cerrando la conexión
             case aa:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $query   = "SELECT usuario, contraseña, turnonsx FROM turno;";
+                $query   = "SELECT usuario, passwd, turnonsx FROM turno;";
                 $result  = pg_query($query);
                 $row     = pg_fetch_row($result);
                 $usuario = $row[0];
@@ -1294,7 +1297,7 @@ pg_close($dbconn); // Cerrando la conexión
                     $impresion   = str_replace("0a","",$impresion);
                     $impresion   = hex2bin($impresion);
                 }
-                fwrite($f,$f_logo);
+                /*fwrite($f,$f_logo);
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
@@ -1304,7 +1307,7 @@ pg_close($dbconn); // Cerrando la conexión
                 fwrite($f,chr(0x01));
                 fwrite($f,chr(0x1B));
                 fwrite($f,chr(0x51));
-                fwrite($f,chr(0x01));
+                fwrite($f,chr(0x01));*/
 
                 
                 fwrite($f, $impresion);
@@ -1673,7 +1676,7 @@ pg_close($dbconn); // Cerrando la conexión
                     if ($array[3] ==2){
                         $query     = "UPDATE estado SET pos2 = 4";
                         $resultado = pg_query($query);
-                        $recupera  = 1;
+                        $recupera2  = 1;
                     }
                 }
                 if($ventas == 0){
@@ -1685,7 +1688,7 @@ pg_close($dbconn); // Cerrando la conexión
                     if ($array[3] ==2){
                         $query     = "UPDATE estado SET pos2 = 22";
                         $resultado = pg_query($query);
-                        $recupera  = 0;
+                        $recupera2  = 0;
                     }
                 }
                 if ($ventas <0){
@@ -1699,7 +1702,7 @@ pg_close($dbconn); // Cerrando la conexión
                         $query2     = "ALTER SEQUENCE venta_pk_idventa_seq RESTART WITH $idnsx;";
                         $query2    .= "INSERT INTO venta (cantidadtotal,valortotal,idposicion) VALUES(0,0,$array[3]);";
                         $resultado2 = pg_query($query2);
-                        $recupera  = 0;
+                        $recupera2  = 0;
                     }
                     
                 }

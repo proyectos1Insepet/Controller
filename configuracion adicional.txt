@@ -18,13 +18,13 @@ sudo /etc/init.d/apache2 restart
 
 Configuracion adicional beagle
 sudo apt-get install connman (solo autogas)
+sed -i -e 's/\r//g' /etc/init.d/servicio_controler
 sudo chmod +x /etc/init.d/servicio_controler
 sudo update-rc.d servicio_controler defaults
 sudo insserv servicio_controler 
 sudo apt-get install sysv-rc-conf
 sudo  sysv-rc-conf (verifica que el servicio esté instalado)
 /usr/sbin/ntpdate -b -s -u ie.pool.ntp.org(actualizar hora)
-npm install exec -g (npm para comando por consola)
 >/var/log/daemon.log
 sudo nano /etc/network/interfaces
 auto eth0
@@ -32,13 +32,12 @@ allow-hotplug eth0
 sudo apt-get install ntp
 
 Base de datos
-createuser db_admin
-createuser php_admin
+createuser db_admin -W
+createuser php_admin -W
 createdb nsx
 psql nsx
 alter user db_admin with password '12345';
 psql -U db_admin -W -h localhost nsx < backup.sql
-sed -i -e 's/\r//g' /etc/init.d/servicio_controler
 
 sudo chmod +x /var/www/hora.php
 sudo visudo
