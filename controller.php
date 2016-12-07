@@ -40,6 +40,8 @@ while (true){
 $address = "0.0.0.0";
 $port = 1002;
 $localIP = gethostbyname(trim('localhost'));
+$recupera = 0;
+$recupera2 = 0;
 echo "IP LOCAL: $localIP\n";
 $soltotales = 0;
  //Creación del socket
@@ -171,9 +173,9 @@ pg_close($dbconn); // Cerrando la conexión
                         $fallacanasta = 0;
                     }
                 }
-                if ($surtiendo == 1 || $recupera == 1){
-                    $recibe = 4;
-                }
+                //if ($surtiendo == 1 || $recupera == 1){
+                  //  $recibe = 4;
+                //}
             }
             if($recibe == 23){
                 $estado = 2;
@@ -270,7 +272,7 @@ pg_close($dbconn); // Cerrando la conexión
                         $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
                         $result= pg_query($query) ;
                         $fallacanasta2 = 0;
-                }
+                    }
                 }
                 if ($venta_cero2 == 0){
                     $estado2 = 1;
@@ -287,10 +289,6 @@ pg_close($dbconn); // Cerrando la conexión
                         $fallacanasta2 = 0;
                     }
                 }
-                if ($surtiendo2 == 1 || $recupera2 == 1){
-                    $recibe2 = 4;
-                }
-                
             }
             if($recibe2 == 23){
                 $estado2 = 2;
@@ -2133,7 +2131,7 @@ pg_close($dbconn); // Cerrando la conexión
             case c3:
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                if($array[5]==3){
+                if($array[5]==3 && $controlfpago !=2 && $array[3] == 1){
                     $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
                     $rfpago    = pg_query($fpago);
                     $datos     = pg_fetch_row($rfpago); 
@@ -2144,6 +2142,15 @@ pg_close($dbconn); // Cerrando la conexión
                     if($array[3] == 1){
                         $controlfpago = 2;
                     }
+                }
+                if($array[5]==3 && $controlfpago2 !=2 && $array[3] == 2){
+                    $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
+                    $rfpago    = pg_query($fpago);
+                    $datos     = pg_fetch_row($rfpago); 
+                    $identificadorfp = $datos[4];
+                    $stringid  = sprintf("%-20s",$identificadorfp);
+                    $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
+                    $rhispago  = pg_query($hispago);
                     if($array[3] == 2){
                         $controlfpago2 = 2;
                     }
@@ -2171,6 +2178,7 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexi��n 
             break;
+            
             
             
             case c5:
