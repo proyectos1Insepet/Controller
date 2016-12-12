@@ -101,6 +101,8 @@ $venta_cero = 0;
 $venta_cero2 = 0;
 $fpago   = 1;
 $fpago2  = 1;
+$listo   = 0;
+$listo2  = 0;
 $fallacanasta  = 0;
 $fallacanasta2 = 0;
 echo "Conexion: $conexion\n";
@@ -159,25 +161,22 @@ pg_close($dbconn); // Cerrando la conexión
                         $credito = 0;
                     }
                 }
-                if(!$surtiendo){
-                    if ($venta_cero == 0){
-                        $estado = 1;
-                        $pos1 = 0;
-                        $estado_espera =0;
-                        if($fallacanasta == 1){
-                            $query   = "DELETE FROM venta_canasta;";
-                            $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
-                            $query  .= "DELETE FROM finventacanasta;";
-                            $query  .= "DELETE FROM finventacanastacredito;";
-                            $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
-                            $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
-                            $result= pg_query($query) ;
-                            $fallacanasta = 0;
-                            $credito = 0;
-                        }
+                
+                if ($venta_cero == 0){
+                    $estado = 1;
+                    $pos1 = 0;
+                    $estado_espera =0;
+                    if($fallacanasta == 1){
+                        $query   = "DELETE FROM venta_canasta;";
+                        $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "DELETE FROM finventacanasta;";
+                        $query  .= "DELETE FROM finventacanastacredito;";
+                        $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
+                        $result= pg_query($query) ;
+                        $fallacanasta = 0;
+                        $credito = 0;
                     }
-                }else{
-                    $estado =4;
                 }
             }
             
@@ -191,7 +190,6 @@ pg_close($dbconn); // Cerrando la conexión
                     $estado_espera = 0;
                     $pos1 =1;                
                     $venta_cero = 0;
-                    $surtiendo = 1;
                 }
                 if($listo && $credito == 0){
                     $estado = 2;
@@ -284,26 +282,24 @@ pg_close($dbconn); // Cerrando la conexión
                         $credito2 = 0;
                     }
                 }
-                if(!$surtiendo2){
-                    if ($venta_cero2 == 0){
-                        $estado2 = 1;
-                        $pos2 = 0;
-                        $estado_espera2 =0;
-                        if($fallacanasta2 == 1){
-                            $query   = "DELETE FROM venta_canasta;";
-                            $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
-                            $query  .= "DELETE FROM finventacanasta;";
-                            $query  .= "DELETE FROM finventacanastacredito;";
-                            $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
-                            $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
-                            $result= pg_query($query) ;
-                            $fallacanasta2 = 0;
-                            $credito2 = 0;
-                        }
+                
+                if ($venta_cero2 == 0){
+                    $estado2 = 1;
+                    $pos2 = 0;
+                    $estado_espera2 =0;
+                    if($fallacanasta2 == 1){
+                        $query   = "DELETE FROM venta_canasta;";
+                        $query  .= "ALTER SEQUENCE venta_canasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "DELETE FROM finventacanasta;";
+                        $query  .= "DELETE FROM finventacanastacredito;";
+                        $query  .= "ALTER SEQUENCE finventacanasta_id_canasta_seq RESTART WITH 1;";
+                        $query  .= "ALTER SEQUENCE finventacanastacredito_id_canasta_seq RESTART WITH 1;";
+                        $result= pg_query($query) ;
+                        $fallacanasta2 = 0;
+                        $credito2 = 0;
                     }
-                }else{
-                    $estado2 = 4;
                 }
+                
             }
             if($recibe2 == 23){
                 $estado2 = 2;
@@ -315,7 +311,6 @@ pg_close($dbconn); // Cerrando la conexión
                     $estado_espera2 = 0;
                     $pos2 =1;                
                     $venta_cero2 = 0;
-                    $surtiendo2 = 1;
                 }
                 if($listo2 && $credito2 == 0){
                     $estado2 = 2;
@@ -637,12 +632,6 @@ pg_close($dbconn); // Cerrando la conexión
                 }
                 if($venta_cero == 0){
                     $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
-                    if($array[3] == 1){
-                        $surtiendo = 0;
-                    }
-                    if($array[3] == 2){
-                        $surtiendo2 = 0;
-                    }
                 }
                 echo "Venta cero:$venta_cero, $venta_cero2\n";
                 if ($recupera == 1){
@@ -746,12 +735,6 @@ pg_close($dbconn); // Cerrando la conexión
                         $ar    = array(78, 83, 88,$array[3],212,3);
                         $cupo  = "UPDATE preset SET lecturacupocredito = 1 WHERE id_pos =$array[3]; "; 
                         $rcupo = pg_query($cupo);
-                        if($array[3] == 1){
-                            $listo = 0;
-                        }
-                        if($array[3] == 2){
-                            $listo2 = 0;
-                        }
                     break;
                     
                     case 2:
@@ -1551,6 +1534,12 @@ pg_close($dbconn); // Cerrando la conexión
                 echo " Canasta: $resultado, $cantidad, $resulvalor\n";
                 $query = "UPDATE venta_canasta SET nombre = '$resultado',valor ='$resulvalor',cantidad ='$cantidad',lecturacanasta = 1 WHERE id_canasta= (SELECT MAX(id_canasta) FROM venta_canasta);";
                 $result2= pg_query($query);
+                if($array[3] == 1){
+                    $autorizacanasta = 1;
+                }
+                if($array[3] == 2){
+                    $autorizacanasta2 = 1;
+                }
                 $ar =array(78,83,88,$array[3],228,3);
                 $largo = count($ar);   
                 $ar[$largo] = verificar_check($ar, ($largo +1));
@@ -1574,8 +1563,16 @@ pg_close($dbconn); // Cerrando la conexión
                 $res      = pg_query($ventacanasta);
                 $row      = pg_fetch_row($result);
                 $suma     = pg_fetch_row($res);
-                $guarda   = "INSERT INTO historicoventacanasta (idposicionc,dineroventa)VALUES ($array[3],'$suma[0]');";
-                $resventa = pg_query($guarda);
+                if($array[3] == 1 && $autorizacanasta ==1){
+                    $guarda   = "INSERT INTO historicoventacanasta (idposicionc,dineroventa)VALUES ($array[3],'$suma[0]');";
+                    $resventa = pg_query($guarda);
+                    $autorizacanasta = 0;
+                }
+                if($array[3] == 2 && $autorizacanasta2 ==1){
+                    $guarda   = "INSERT INTO historicoventacanasta (idposicionc,dineroventa)VALUES ($array[3],'$suma[0]');";
+                    $resventa = pg_query($guarda);
+                    $autorizacanasta2 = 0;
+                }
                 $ar = array(78,83,88,$array[3],229);
                 $ar[] = $row[0];
                 for($x=0; $x<$row[0];$x++){
