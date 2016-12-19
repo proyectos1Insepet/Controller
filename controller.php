@@ -1,4 +1,8 @@
 <?php
+//======================================================================
+// 					PHP CONTROLLER, INSEPET 2016
+// 						Versión  19-12-2016
+//======================================================================
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
 $consultacierrasocket=0;
@@ -7,16 +11,15 @@ $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'"
 $sql   = "TRUNCATE TABLE solicitudes"; 
 $res = pg_query($sql); 
 $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
-/*$query .= "UPDATE estado SET pos1 = 20;";*/
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
- `stty -F $impresora 115200`;
+ `stty -F $impresora 115200`;  //velocidad de las impresoras y puertos de comunicación
 
 $impresora2 ='/dev/ttyO2';
  `stty -F $impresora2 115200`;
 
 
-function verificar_check($datos,  $size){
+function verificar_check($datos,  $size){  //Función para enviar checksum
     $table=array( 
     0, 94,188,226, 97, 63,221,131,194,156,126, 32,163,253, 31, 65,157,195, 33,127,252,162, 64, 30, 95,  1,227,189, 62, 96,130,220,
     35,125,159,193, 66, 28,254,160,225,191, 93,  3,128,222, 60, 98,190,224,  2, 92,223,129, 99, 61,124, 34,192,158, 29, 67,161,255,
@@ -35,14 +38,12 @@ function verificar_check($datos,  $size){
 }
 
 
-//start loop to listen for incoming connections
+//inicia ciclo infinito del programa
 while (true){
 $address = "0.0.0.0";
 $port = 1002;
-$localIP = gethostbyname(trim('localhost'));
 $recupera = 0;
 $recupera2 = 0;
-echo "IP LOCAL: $localIP\n";
 $soltotales = 0;
  //Creación del socket
 if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0))){
@@ -57,7 +58,7 @@ if (!socket_set_option($sock, SOL_SOCKET, SO_REUSEADDR, 1)) {
     exit;
 }
 
-// Bind the source address
+// Ata la dirección y puerto
 if( !socket_bind($sock, $address , $port) ){
     $errorcode = socket_last_error();
     $errormsg = socket_strerror($errorcode);
@@ -74,8 +75,8 @@ if(!socket_listen ($sock , 10)){
     echo "Socket listen OK \n";
     echo "Esperando conexiones entrantes... \n";
 } 
-socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>30,"usec"=>0));
-$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>30,"usec"=>0)); //Tiempo de desconexión por no entrada de datos
+$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'") // conexión a base de datos
 or die('Can not connect: ' . \pg_last_error());
 if ($consultacierrasocket == 0){
     $sql1    = "TRUNCATE TABLE solicitudes;";
@@ -86,7 +87,7 @@ if ($consultacierrasocket == 0){
     $consultacierrasocket =1;
 }
 
-//Accept incoming connection - This is a blocking call
+//Accepta conexiones entrantes
 $client =  socket_accept($sock);     
 //display information about the client who is connected
 if(socket_getpeername($client , $address , $port)){
@@ -106,13 +107,10 @@ $listo2  = 0;
 $fallacanasta  = 0;
 $fallacanasta2 = 0;
 echo "Conexion: $conexion\n";
-pg_close($dbconn); // Cerrando la conexión  
-    //read data from the incoming socket     
-    while ($conexion){
-        //$conexion = false;
+pg_close($dbconn); // Cerrando la conexión de la base de datos    
+    while ($conexion){  //ciclo mientras hay conexión con nsx
         $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
-        or die('Can not connect: ' . \pg_last_error());
-        /*$query   = "UPDATE estado SET pos1 = 12;";*/
+        or die('Can not connect: ' . \pg_last_error());        
         $query   = "SELECT  pos1, pos2,led,fp1,fp2 FROM estado WHERE Pk_id_estado = 1;";
         $result  = pg_query($query) or die('Query error: ' . \pg_last_error()); 
         $row     = pg_fetch_row($result);
@@ -122,7 +120,7 @@ pg_close($dbconn); // Cerrando la conexión
         $fp1     = $row[3];
         $fp2     = $row[4];
         
-        if($ciclo == 50){
+        if($ciclo == 50){  //ciclo para comprobar actividad Beagle-MUX
             $ciclo = 0;
             if($led ==0){
                  $estado_pos = "UPDATE estado SET pos1 = 0, pos2 =0;";
@@ -134,17 +132,17 @@ pg_close($dbconn); // Cerrando la conexión
         }
        
         //Estados POS 1
-        if($fp1 == 1 && $fpago == 1){
+        if($fp1 == 1 && $fpago == 1){ //comprobación formas de pago
             $estado = 22;
             $fpago  = 0;
         }
         if($fp1 == 0){
-            if($controlfpago ==0){
+            if($controlfpago ==0){ //si no hay forma de pago
                 $fpago   = 1;
                 if($recibe == 0 || $recibe == 31){
-                    $estado = 255;
+                    $estado = 255;  //inactivo
                 }
-            if($recibe == 22){
+            if($recibe == 22){ //espera
                 if($venta_cero ==1){
                     $estado = 4;
                     $pos1 = 0;
@@ -180,11 +178,11 @@ pg_close($dbconn); // Cerrando la conexión
                 }
             }
             
-            if($recibe == 23){
+            if($recibe == 23){ //listo
                 $estado = 2;
                 $listo = 1;
             }
-            if($recibe == 25){
+            if($recibe == 25){ //surtiendo
                 if(!$listo || $credito ==1){
                     $estado = 3;    
                     $estado_espera = 0;
@@ -195,55 +193,55 @@ pg_close($dbconn); // Cerrando la conexión
                     $estado = 2;
                 }
             }
-            if($recibe == 4){
+            if($recibe == 4){ //fin venta
                 $estado = 4;
             }
-            if($recibe == 5){
+            if($recibe == 5){ //preset con identificador 
                 $estado = 5;
             }
-            if($recibe == 6){
+            if($recibe == 6){ //peticion turno
                 $estado = 6;
             }
-            if($recibe == 7){
+            if($recibe == 7){ //Obteniendo datos turno
                 $estado = 7;
             }
-            if($recibe == 8){
+            if($recibe == 8){ //Datos turno
                 $estado = 8;
             }
-            if($recibe == 9){
+            if($recibe == 9){ //Solicitud de copia de Recibo
                 $estado = 9;
             }
-            if($recibe == 10){
+            if($recibe == 10){ //Fin venta cero
                 $estado = 4;
             }
-            if($recibe == 12){
+            if($recibe == 12){//Configuraciones iniciales
                 $estado = 12;
             }
             if($recibe == 16){
-                $estado = 16; /* 16 venta canasta*/
+                $estado = 16; //venta canasta
             }
             if($recibe == 17){
-                $estado = 17;  /* 17 venta canasta*/
+                $estado = 17;  //venta canasta
             }
-            if($recibe == 18){
+            if($recibe == 18){//FIN Venta canasta
                 $estado = 18;
             }
-            if($recibe == 19){
+            if($recibe == 19){//Consignaciones
                 $estado = 19;
             }
-            if($recibe == 20){
+            if($recibe == 20){//Configuracion inicial (larga)
                 $estado = 20;
             }			          
-            if($recibe == 2){
+            if($recibe == 2){//Autorización Calibración
                 $estado = 23;
             }
-            if($recibe == 1){
+            if($recibe == 1){//Listo calibracion
                 $estado = 24;
             }
-            if($recibe == 30){
+            if($recibe == 30){ //Credito canasta
                 $estado = 25;
             }
-            if($recibe == 32){
+            if($recibe == 32){//Posicion bloqueada
                 $estado = 32;
             }
         }
@@ -377,7 +375,7 @@ pg_close($dbconn); // Cerrando la conexión
            
         }
         $input = socket_read($client, 4096); 
-        if ($input ==''){
+        if ($input ==''){//respuesta vacía, cierra el socket
             $conexion   = false;
             $soltotales = 1;
             socket_close($client);
@@ -398,29 +396,25 @@ pg_close($dbconn); // Cerrando la conexión
         pg_close($dbconn); // Cerrando la conexión 
         if($array[0]==43 && $array[1]==44 && $array[2]==47){
         switch ($array[4]){
-            case a1:  //Inicia la consulta del NSX
+            case a1:  //Envia estado de posición a NSX
                 $ciclo++;
                 if($estado_espera ==1 && $pos1 ==1){
-                    $ar = array(78, 83, 88, 255,209,$CDG,$estado_ee,$estado2); 
-                    //echo "Estado fake pos1: $estado_ee, $estado2\n";
+                    $ar = array(78, 83, 88, 255,209,$CDG,$estado_ee,$estado2);                     
                     if($estado == 1){
                         $estado_espera = 0;
                     }
                 }
                 if($estado_espera2 ==2 && $pos2 ==1){
-                    $ar = array(78, 83, 88, 255,209,$CDG,$estado,$estado_ee2);  
-                    //echo "Estado fake pos2: $estado, $estado_ee2\n";
+                    $ar = array(78, 83, 88, 255,209,$CDG,$estado,$estado_ee2);                      
                     if($estado2 == 1){
                         $estado_espera2 = 0;
                     }
                 }             
                 if($estado_espera ==0 && $estado_espera2 ==0){
-                    $ar = array(78, 83, 88, 255,209,$CDG,$estado,$estado2); 
-                    //echo "Estado normal: $estado, $estado2\n";
+                    $ar = array(78, 83, 88, 255,209,$CDG,$estado,$estado2);                     
                 }
 				if($estado_espera !=0 && $estado_espera2 !=0){
-                    $ar = array(78, 83, 88, 255,209,$CDG,$estado_ee,$estado_ee2); 
-                    //echo "Estado fake 3 - imprime normales: $estado, $estado2\n";
+                    $ar = array(78, 83, 88, 255,209,$CDG,$estado_ee,$estado_ee2);                     
                 }
                 $ar[6+$CDG] = verificar_check($ar, (7+$CDG));
                 foreach ($ar as &$valor) {
@@ -431,15 +425,11 @@ pg_close($dbconn); // Cerrando la conexión
                 $print = implode(" - ", $ar);
                 echo "Consulta A1: $print\n";
                 $length = strlen($envio);                                                
-                echo "Estado 1 = $estado:: Estado 2 = $estado2\n";
-                echo "EstadoFK 1 = $estado_ee:: EstadoFK 2 = $estado_ee2\n";
-                echo "Estado espera 1 = $estado_espera:: Estado espera 2 = $estado_espera2\n";
-                echo "LISTO: $listo\n";
                 $consultacierrasocket=0;
                 socket_write($client, $envio,$length);
             break;
             
-            case a2:
+            case a2: //Envía preset
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
@@ -541,7 +531,7 @@ pg_close($dbconn); // Cerrando la conexión
                 pg_close($dbconn); // Cerrando la conexión  
             break;
             
-            case a3:
+            case a3: //Envía fin venta
 		        $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 		        or die('Can not connect: ' . \pg_last_error());
 		        $minuto = date("i");
@@ -616,25 +606,25 @@ pg_close($dbconn); // Cerrando la conexión
 		        }
 		        unset($valor);
 
-                if ($venta_cero ==1){
+                if ($venta_cero ==1){ //Venta cero pos1
                     $qgrado = "SELECT grado FROM preset WHERE id_pos = 1";
                     $rgrado = pg_query($qgrado);
                     $rowgrado = pg_fetch_row($rgrado);
                     $ar = array(78, 83, 88, 1,211,$rowgrado[0],68,0,0,0,0,0,0,0,    86,0,0,0,0,0,0,0,    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                     pg_free_result($rgrado);
                 }
-                if ($venta_cero2 ==1){
+                if ($venta_cero2 ==1){ //venta cero pos2
                     $qgrado = "SELECT grado FROM preset WHERE id_pos = 2";
                     $rgrado = pg_query($qgrado);
                     $rowgrado = pg_fetch_row($rgrado);
                     $ar = array(78, 83, 88, 2,211,$grado,68,0,0,0,0,0,0,0,    86,0,0,0,0,0,0,0,    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                     pg_free_result($rgrado);
                 }
-                if($venta_cero == 0){
+                if($venta_cero == 0){ // venta normal
                     $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                 }
                 echo "Venta cero:$venta_cero, $venta_cero2\n";
-                if ($recupera == 1){
+                if ($recupera == 1){ //para recuperacion 1-1
                     $query = "SELECT pk_idventa,volumeninicial, volumenfinal, dineroinicial,dinerofinal, ppu,valorprogramado,kilometrajecliente,grado,nombreefectivo,placaefectivo,tipovehiculo,cantidadtotal from venta where pk_idventa = ($idnsx+1);"; 
                     $result      = pg_query($query); 
                     $row         = pg_fetch_row($result);
@@ -724,7 +714,7 @@ pg_close($dbconn); // Cerrando la conexión
 		        $venta_cero2 = 0;
             break;
             
-            case a4:   
+            case a4:   //Casos de reset
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $error = hexdec($array[5]);
@@ -836,12 +826,10 @@ pg_close($dbconn); // Cerrando la conexión
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $mensaje  = "UPDATE consignaciones SET  confirmacion = 1;";
-                            $result2  = pg_query($mensaje);
-                            //sleep(2);
+                            $result2  = pg_query($mensaje);                            
                         }else{
                             $mensaje = "UPDATE consignaciones SET  confirmacion = 1;"; 
-                            $result2 = pg_query($mensaje);
-                            //sleep(2);
+                            $result2 = pg_query($mensaje);                            
                         }
                     break;
                 }
@@ -904,6 +892,10 @@ pg_close($dbconn); // Cerrando la conexión
                     //Formato
                     $formatvol1 = sprintf("%01.2f", $voltotal1);
                     $formatvol2 = sprintf("%01.2f", $voltotal2);
+					$revdin1 = strrev($dintotal1);
+                    $revvol1 = strrev($formatvol1);
+					$revdin2 = strrev($dintotal2);
+                    $revvol2 = strrev($formatvol2);
                     //Invierte la t rama para tran cadena y formatea para envío
                     $stringdin1 = sprintf("%0-12s",$revdin1);
                     $stringvol1 = sprintf("%0-13s",$revvol1);
@@ -980,7 +972,7 @@ pg_close($dbconn); // Cerrando la conexión
                 print_r(ar);
             break;
                 
-            case a6:
+            case a6: //preset cliente ibutton, tag o similar
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query   = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu, kilometraje, serial, lecturacupocredito,validacioncredito FROM preset WHERE id_pos = $array[3];"; 
@@ -1057,7 +1049,7 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);                    
             break;
             
-            case a7:
+            case a7: //envío de cantidad autorizada a cliente
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $autoriza    = array();
@@ -1096,7 +1088,7 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length); 
             break;
             
-            case a8:
+            case a8: //cambio de precios
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $precio     = array(5);
@@ -1186,7 +1178,7 @@ pg_close($dbconn); // Cerrando la conexión
                 pg_close($dbconn); // Cerrando la conexión   
                 break;
             
-            case aa:
+            case aa: // envío de datos de turno
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query   = "SELECT usuario, passwd, turnonsx FROM turno;";
@@ -1259,7 +1251,7 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
             break;
             
-            case ac:
+            case ac: //impresión
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $sql         = "SELECT tipoimpresora, impresora FROM mapeodispensador where pk_idposicion = $array[3]";
@@ -1347,7 +1339,7 @@ pg_close($dbconn); // Cerrando la conexión
             break;
                 
             
-            case ad:
+            case ad://
                 $ar = array(78, 83, 88,$array[3],221,3);
                 $ar[6] = verificar_check($ar, 7);
                 $dato_ad = implode("-",$ar);
@@ -1361,7 +1353,7 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
             break;
             
-            case ae:
+            case ae:// bloqueo turno
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $sql = "UPDATE turno SET turno = 0, mensajeturno= 'Operacion Incorrecta', habilitalecturaturno =0;";
@@ -1387,7 +1379,7 @@ pg_close($dbconn); // Cerrando la conexión
                 $resultado = pg_query($sql);
             break;
             
-            case af:
+            case af://
                 $ar = array(78, 83, 88,$array[3],223,3);
                 $ar[6] = verificar_check($ar, 7);
                 $dato_ad = implode("-",$ar);
@@ -1401,7 +1393,7 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
             break;
             
-            case b0:
+            case b0://
                 $ar = array(78, 83, 88,$array[3],224,   80,0,0,0,0,0,0,0);
                 $largo = count($ar);   
                 $ar[$largo] = verificar_check($ar, ($largo +1));
@@ -1414,7 +1406,7 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
             break;
             
-            case b1:
+            case b1://apertura de turno
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $vturno  = hex2bin($array[5]); 
@@ -1479,11 +1471,9 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
             break;
             
-            case b3:
+            case b3: // venta canasta, envía datos para ver en pantalla
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                /*$lectura_c     = "UPDATE venta_canasta SET lecturacanasta =0;";
-                $res           = pg_query($lectura_c); */
                 $query         = "SELECT serial from venta_canasta WHERE id_canasta = (SELECT MAX(id_canasta) FROM venta_canasta);"; 
                 $result        = pg_query($query); 
                 $row           = pg_fetch_row($result);
@@ -1509,7 +1499,7 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
             break;
             
-            case b4:
+            case b4://venta canasta, datos en pantalla
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 if($array[3] ==1){
@@ -1554,7 +1544,7 @@ pg_close($dbconn); // Cerrando la conexión
                 pg_close($dbconn); // Cerrando la conexión 
             break;
             
-            case b5:
+            case b5:// envía venta canasta a NSX
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $sql            = "SELECT COUNT(*) FROM finventacanasta WHERE cantidadvendida !='000';";
@@ -1609,7 +1599,7 @@ pg_close($dbconn); // Cerrando la conexión
                 
             break;
             
-            case b6:
+            case b6: //fin venta canasta
                 if($array[5]==3){
                     $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                     or die('Can not connect: ' . \pg_last_error());
@@ -1667,13 +1657,11 @@ pg_close($dbconn); // Cerrando la conexión
                 $confir = "SELECT recibe FROM consignaciones;";
                 $borra  = pg_query($confir);
                 $rborra = pg_fetch_row($borra);
-                if($rborra[0] == 0){
-                    //socket_write($client, $envio,$length);
+                if($rborra[0] == 0){                    
                     $ACK =3;
                     $conf     = "UPDATE consignaciones SET recibe = 1;";  
                     $res      = pg_query($conf);
-                }else{
-                    //socket_write($client, $envio,$length);
+                }else{                    
                     $ACK = 4;
                 }
                 $ar[] = $ACK;
@@ -1686,8 +1674,7 @@ pg_close($dbconn); // Cerrando la conexión
                 }
                 unset($valor);                                          
                 $envio = implode("", $ar);
-                $length = strlen($envio);
-                //----
+                $length = strlen($envio);                
                 pg_free_result($borra);
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexión 
@@ -1931,8 +1918,6 @@ pg_close($dbconn); // Cerrando la conexión
                 $datos     = pg_fetch_row($rfpago); 
                 $identificadorfp = $datos[4];
                 $stringid  = sprintf("%-20s",$identificadorfp);
-                //$hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
-                //$rhispago  = pg_query($hispago);
                 $disfp     = $datos[2]*100;
 
                 echo "Discriminado ajustado:$disfp";
@@ -2004,7 +1989,7 @@ pg_close($dbconn); // Cerrando la conexión
                 pg_close($dbconn); // Cerrando la conexión 
             break; 
             
-            case bf:
+            case bf:  //preset calibracion
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
@@ -2079,7 +2064,7 @@ pg_close($dbconn); // Cerrando la conexión
                 pg_close($dbconn); // Cerrando la conexión  
             break;
             
-            case c1:
+            case c1: //fin venta canasta crédito
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $sql            = "SELECT COUNT(*) FROM finventacanastacredito WHERE cantidadvendida !='000';";
@@ -2137,7 +2122,7 @@ pg_close($dbconn); // Cerrando la conexión
                 pg_close($dbconn); // Cerrando la conexión 
             break;
             
-            case c2:
+            case c2: //borra temporales canasta
                 if($array[5]==3){
                     $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                     or die('Can not connect: ' . \pg_last_error());
@@ -2169,7 +2154,7 @@ pg_close($dbconn); // Cerrando la conexión
                 pg_close($dbconn); // Cerrando la conexión 
             break;      
             
-            case c3:
+            case c3: //forma de pago
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 if($array[5]==3 && $controlfpago !=2 && $array[3] == 1){
@@ -2215,10 +2200,8 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexi��n 
             break;
-            
-            
-            
-            case c5:
+                                   
+            case c5: //bloqueo corte
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query     = "UPDATE estado SET bloqueocorte =1;";
@@ -2235,7 +2218,7 @@ pg_close($dbconn); // Cerrando la conexión
                 pg_close($dbconn); // Cerrando la conexión 
             break;
             
-            case c6:
+            case c6: //desbloqueo corte
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query     = "UPDATE estado SET bloqueocorte =0;";
@@ -2251,11 +2234,8 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexión 
             break;
-
-        } 
-        
-    }
-    
+        }        
+    }    
     }
 	$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 	or die('Can not connect: ' . \pg_last_error());	
