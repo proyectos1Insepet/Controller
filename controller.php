@@ -1822,11 +1822,13 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $prod1       = strpos($input,'B1');
                 $prod2       = strpos($input,'B2');
                 $prod3       = strpos($input,'B3');
+				$prod4       = strpos($input,'B4');
                 $finprod     = strpos($input,'A1');
                 
                 $producto1   = substr($input,($prod1+2),($prod2-($prod1+2)));
                 $producto2   = substr($input,($prod2+2),($prod3-($prod2+2)));
                 $producto3   = substr($input,($prod3+2),($finprod-($prod3+2)));
+				
                 
                 echo "Productos : $producto1 , $producto2, $producto3, $producto4, fin \n ";
                 $productos  ="UPDATE botones SET textoboton = '$producto1' WHERE id_boton = 27;";
