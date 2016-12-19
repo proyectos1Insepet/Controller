@@ -13,7 +13,7 @@ cape_enable=capemgr.enable_partno=BB-UART1,BB-UART2,BB-UART4,BB-UART5
 sudo apt-get install postgresql
 sudo apt-get install postgresql-client
 sudo apt-get install libapache2-mod-php5 php5 php5-mcrypt
-apt-get install php5-pgsql
+sudo apt-get install php5-pgsql
 sudo /etc/init.d/apache2 restart
 
 Configuracion adicional beagle
