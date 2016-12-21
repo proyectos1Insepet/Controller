@@ -1097,7 +1097,7 @@ COPY configuraciondispensador (pk_idconfiguraciondispen, nombre, descripcion, va
 8	Encabezados	Encabezados		t
 9	Pie	Pie	GRACIAS POR SU COMPRA	t
 10	Pie	Pie	VUELVA PRONTO	t
-11	Pie	Pie	ð	t
+11	Pie	Pie	FIN	t
 \.
 
 

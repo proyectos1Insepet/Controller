@@ -13,13 +13,13 @@ $res = pg_query($sql);
 $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
- `stty -F $impresora 115200`;  //velocidad de las impresoras y puertos de comunicación
+ `stty -F $impresora 115200`; //velocidad de las impresoras y puertos de comunicación
 
 $impresora2 ='/dev/ttyO2';
  `stty -F $impresora2 115200`;
 
 
-function verificar_check($datos,  $size){  //Función para enviar checksum
+function verificar_check($datos,  $size){ //Función para enviar checksum
     $table=array( 
     0, 94,188,226, 97, 63,221,131,194,156,126, 32,163,253, 31, 65,157,195, 33,127,252,162, 64, 30, 95,  1,227,189, 62, 96,130,220,
     35,125,159,193, 66, 28,254,160,225,191, 93,  3,128,222, 60, 98,190,224,  2, 92,223,129, 99, 61,124, 34,192,158, 29, 67,161,255,
@@ -76,7 +76,7 @@ if(!socket_listen ($sock , 10)){
     echo "Esperando conexiones entrantes... \n";
 } 
 socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>30,"usec"=>0)); //Tiempo de desconexión por no entrada de datos
-$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'") // conexión a base de datos
+$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 or die('Can not connect: ' . \pg_last_error());
 if ($consultacierrasocket == 0){
     $sql1    = "TRUNCATE TABLE solicitudes;";
@@ -89,7 +89,6 @@ if ($consultacierrasocket == 0){
 
 //Accepta conexiones entrantes
 $client =  socket_accept($sock);     
-//display information about the client who is connected
 if(socket_getpeername($client , $address , $port)){
     echo "Cliente $address : $port está conectado. \n";
     $conexion = true;
@@ -107,8 +106,9 @@ $listo2  = 0;
 $fallacanasta  = 0;
 $fallacanasta2 = 0;
 echo "Conexion: $conexion\n";
-pg_close($dbconn); // Cerrando la conexión de la base de datos    
-    while ($conexion){  //ciclo mientras hay conexión con nsx
+pg_close($dbconn); // Cerrando la conexión  
+    //read data from the incoming socket     
+    while ($conexion){ //ciclo mientras hay conexión con nsx        
         $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
         or die('Can not connect: ' . \pg_last_error());        
         $query   = "SELECT  pos1, pos2,led,fp1,fp2 FROM estado WHERE Pk_id_estado = 1;";
@@ -196,7 +196,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             if($recibe == 4){ //fin venta
                 $estado = 4;
             }
-            if($recibe == 5){ //preset con identificador 
+            if($recibe == 5){ //preset con identificador
                 $estado = 5;
             }
             if($recibe == 6){ //peticion turno
@@ -374,7 +374,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             }
            
         }
-        $input = socket_read($client, 4096); 
+        $input = socket_read($client, 6096); 
         if ($input ==''){//respuesta vacía, cierra el socket
             $conexion   = false;
             $soltotales = 1;
@@ -424,7 +424,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $envio = implode("", $ar);
                 $print = implode(" - ", $ar);
                 echo "Consulta A1: $print\n";
-                $length = strlen($envio);                                                
+                $length = strlen($envio);                                                                
                 $consultacierrasocket=0;
                 socket_write($client, $envio,$length);
             break;
@@ -1471,7 +1471,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 socket_write($client, $envio,$length);
             break;
             
-            case b3: // venta canasta, envía datos para ver en pantalla
+            case b3:// venta canasta, envía datos para ver en pantalla
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query         = "SELECT serial from venta_canasta WHERE id_canasta = (SELECT MAX(id_canasta) FROM venta_canasta);"; 
@@ -1553,16 +1553,9 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $res      = pg_query($ventacanasta);
                 $row      = pg_fetch_row($result);
                 $suma     = pg_fetch_row($res);
-                if($array[3] == 1 && $autorizacanasta ==1){
-                    $guarda   = "INSERT INTO historicoventacanasta (idposicionc,dineroventa)VALUES ($array[3],'$suma[0]');";
-                    $resventa = pg_query($guarda);
-                    $autorizacanasta = 0;
-                }
-                if($array[3] == 2 && $autorizacanasta2 ==1){
-                    $guarda   = "INSERT INTO historicoventacanasta (idposicionc,dineroventa)VALUES ($array[3],'$suma[0]');";
-                    $resventa = pg_query($guarda);
-                    $autorizacanasta2 = 0;
-                }
+                $guarda   = "INSERT INTO historicoventacanasta (idposicionc,dineroventa)VALUES ($array[3],'$suma[0]');";
+                $resventa = pg_query($guarda);                
+                echo "Guarda Canasta";
                 $ar = array(78,83,88,$array[3],229);
                 $ar[] = $row[0];
                 for($x=0; $x<$row[0];$x++){
@@ -1674,7 +1667,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 }
                 unset($valor);                                          
                 $envio = implode("", $ar);
-                $length = strlen($envio);                
+                $length = strlen($envio);
+                //----
                 pg_free_result($borra);
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexión 
@@ -1822,13 +1816,11 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $prod1       = strpos($input,'B1');
                 $prod2       = strpos($input,'B2');
                 $prod3       = strpos($input,'B3');
-				$prod4       = strpos($input,'B4');
                 $finprod     = strpos($input,'A1');
                 
                 $producto1   = substr($input,($prod1+2),($prod2-($prod1+2)));
                 $producto2   = substr($input,($prod2+2),($prod3-($prod2+2)));
                 $producto3   = substr($input,($prod3+2),($finprod-($prod3+2)));
-				
                 
                 echo "Productos : $producto1 , $producto2, $producto3, $producto4, fin \n ";
                 $productos  ="UPDATE botones SET textoboton = '$producto1' WHERE id_boton = 27;";
@@ -1919,7 +1911,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $rfpago    = pg_query($fpago);
                 $datos     = pg_fetch_row($rfpago); 
                 $identificadorfp = $datos[4];
-                $stringid  = sprintf("%-20s",$identificadorfp);
+                $stringid  = sprintf("%-20s",$identificadorfp);                
                 $disfp     = $datos[2]*100;
 
                 echo "Discriminado ajustado:$disfp";
@@ -2201,8 +2193,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $length = strlen($envio);
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexi��n 
-            break;
-                                   
+            break;                       
+            
             case c5: //bloqueo corte
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
@@ -2236,8 +2228,11 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexión 
             break;
-        }        
-    }    
+
+        } 
+        
+    }
+    
     }
 	$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 	or die('Can not connect: ' . \pg_last_error());	
