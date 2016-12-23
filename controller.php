@@ -76,7 +76,8 @@ if(!socket_listen ($sock , 10)){
     echo "Esperando conexiones entrantes... \n";
 } 
 socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>30,"usec"=>0)); //Tiempo de desconexión por no entrada de datos
-$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
+socket_set_option($sock, SOL_SOCKET, SO_SNDTIMEO, array("sec"=>30,"usec"=>0)); //Tiempo de desconexión por no entrada de datos
+$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'") // conexión a base de datos
 or die('Can not connect: ' . \pg_last_error());
 if ($consultacierrasocket == 0){
     $sql1    = "TRUNCATE TABLE solicitudes;";
@@ -89,6 +90,7 @@ if ($consultacierrasocket == 0){
 
 //Accepta conexiones entrantes
 $client =  socket_accept($sock);     
+//display information about the client who is connected
 if(socket_getpeername($client , $address , $port)){
     echo "Cliente $address : $port está conectado. \n";
     $conexion = true;
@@ -106,9 +108,8 @@ $listo2  = 0;
 $fallacanasta  = 0;
 $fallacanasta2 = 0;
 echo "Conexion: $conexion\n";
-pg_close($dbconn); // Cerrando la conexión  
-    //read data from the incoming socket     
-    while ($conexion){ //ciclo mientras hay conexión con nsx        
+pg_close($dbconn); // Cerrando la conexión de la base de datos    
+    while ($conexion){  //ciclo mientras hay conexión con nsx
         $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
         or die('Can not connect: ' . \pg_last_error());        
         $query   = "SELECT  pos1, pos2,led,fp1,fp2 FROM estado WHERE Pk_id_estado = 1;";
@@ -374,7 +375,7 @@ pg_close($dbconn); // Cerrando la conexión
             }
            
         }
-        $input = socket_read($client, 6096); 
+        $input = socket_read($client, 6144);
         if ($input ==''){//respuesta vacía, cierra el socket
             $conexion   = false;
             $soltotales = 1;
@@ -424,7 +425,7 @@ pg_close($dbconn); // Cerrando la conexión
                 $envio = implode("", $ar);
                 $print = implode(" - ", $ar);
                 echo "Consulta A1: $print\n";
-                $length = strlen($envio);                                                                
+                $length = strlen($envio);                                                
                 $consultacierrasocket=0;
                 socket_write($client, $envio,$length);
             break;
@@ -958,7 +959,7 @@ pg_close($dbconn); // Cerrando la conexión
                 $envio = implode("", $ar);
                 $imprime = implode("-",$ar);
                 $length = strlen($envio);
-                socket_write($client, $envio);
+                
                 echo "Envio totales: $imprime\n";
                 print_r($ardinero1);
                 print_r($arvol1);
@@ -970,6 +971,7 @@ pg_close($dbconn); // Cerrando la conexión
                 pg_free_result($res);
                 pg_close($dbconn); // Cerrando la conexión    
                 print_r(ar);
+                socket_write($client, $envio);
             break;
                 
             case a6: //preset cliente ibutton, tag o similar
@@ -1667,8 +1669,7 @@ pg_close($dbconn); // Cerrando la conexión
                 }
                 unset($valor);                                          
                 $envio = implode("", $ar);
-                $length = strlen($envio);
-                //----
+                $length = strlen($envio);                
                 pg_free_result($borra);
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexión 
@@ -1816,11 +1817,13 @@ pg_close($dbconn); // Cerrando la conexión
                 $prod1       = strpos($input,'B1');
                 $prod2       = strpos($input,'B2');
                 $prod3       = strpos($input,'B3');
+				//$prod4       = strpos($input,'B4');
                 $finprod     = strpos($input,'A1');
                 
                 $producto1   = substr($input,($prod1+2),($prod2-($prod1+2)));
                 $producto2   = substr($input,($prod2+2),($prod3-($prod2+2)));
                 $producto3   = substr($input,($prod3+2),($finprod-($prod3+2)));
+				
                 
                 echo "Productos : $producto1 , $producto2, $producto3, $producto4, fin \n ";
                 $productos  ="UPDATE botones SET textoboton = '$producto1' WHERE id_boton = 27;";
@@ -1911,7 +1914,7 @@ pg_close($dbconn); // Cerrando la conexión
                 $rfpago    = pg_query($fpago);
                 $datos     = pg_fetch_row($rfpago); 
                 $identificadorfp = $datos[4];
-                $stringid  = sprintf("%-20s",$identificadorfp);                
+                $stringid  = sprintf("%-20s",$identificadorfp);
                 $disfp     = $datos[2]*100;
 
                 echo "Discriminado ajustado:$disfp";
@@ -2193,8 +2196,8 @@ pg_close($dbconn); // Cerrando la conexión
                 $length = strlen($envio);
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexi��n 
-            break;                       
-            
+            break;
+                                   
             case c5: //bloqueo corte
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
@@ -2228,11 +2231,8 @@ pg_close($dbconn); // Cerrando la conexión
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexión 
             break;
-
-        } 
-        
-    }
-    
+        }        
+    }    
     }
 	$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 	or die('Can not connect: ' . \pg_last_error());	
