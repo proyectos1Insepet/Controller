@@ -17,6 +17,7 @@ sudo apt-get install php5-pgsql
 sudo /etc/init.d/apache2 restart
 
 Configuracion adicional beagle
+ls /dev/ttyO*
 sudo apt-get install connman (solo autogas)
 sed -i -e 's/\r//g' /etc/init.d/servicio_controler
 sudo chmod +x /etc/init.d/servicio_controler
