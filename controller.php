@@ -397,7 +397,9 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
         pg_close($dbconn); // Cerrando la conexión 
         if($array[0]==43 && $array[1]==44 && $array[2]==47){
         switch ($array[4]){
-            case a1:  //Envia estado de posición a NSX
+			//Pregunta por los estados de las posiciones del dispensador o surtidor, es una consulta continua para
+			//conocer el estado actual de las caras del equipo
+            case a1:  
                 $ciclo++;
                 if($estado_espera ==1 && $pos1 ==1){
                     $ar = array(78, 83, 88, 255,209,$CDG,$estado_ee,$estado2);                     
@@ -430,7 +432,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 socket_write($client, $envio,$length);
             break;
             
-            case a2: //Envía preset
+            case a2: //Envía preset, solicita la programación que se hace al equipo
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
@@ -532,7 +534,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 pg_close($dbconn); // Cerrando la conexión  
             break;
             
-            case a3: //Envía fin venta
+            case a3: //Envía fin venta, Gnesys solicita los datos de fin venta si recibe un estado 4
 		        $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
 		        or die('Can not connect: ' . \pg_last_error());
 		        $minuto = date("i");
@@ -715,23 +717,23 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        $venta_cero2 = 0;
             break;
             
-            case a4:   //Casos de reset
+            case a4:   //Casos de reset, Gnesys responde con diversos reset según el proceso, para negarlo o para confirmarlo
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $error = hexdec($array[5]);
 
                 echo "Caso reset:$error; $array[5]\n";
                 switch ($error){
-                    case 1:
+                    case 1: //Gnesys recibió los datos de A2
                         $ar    = array(78, 83, 88,$array[3],212,3);
                         $cupo  = "UPDATE preset SET lecturacupocredito = 1 WHERE id_pos =$array[3]; "; 
                         $rcupo = pg_query($cupo);
                     break;
                     
-                    case 2:
+                    case 2: //Gnesys no recibió los datos de programación
                         $ar = array(78, 83, 88,$array[3],212,3);
                     break;
-                    case 3:
+                    case 3: //Cancelado por PC, no aprobó la solicitud
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $mensaje  = "UPDATE turno SET mensajeturno = 'Cancelado por PC', turno = 0;"; 
@@ -747,7 +749,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                         $query  = "UPDATE turno SET habilitalecturaturno = 1;";
                         $result = pg_query($query);
                     break;
-                    case 4:
+                    case 4: //realizó apertura de turno, actualiza mensaje en pantalla
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $mensaje = "UPDATE turno SET mensajeturno = 'Apertura exitosa', turno = 1, turnonsx = 1;"; 
@@ -759,7 +761,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                         $query  ="UPDATE turno SET habilitalecturaturno = 1;";
                         $result = pg_query($query);
                     break;
-                    case 5:
+                    case 5: //envió el usuario o la clave incorrecta
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $mensaje = "UPDATE turno SET mensajeturno = 'Usuario o clave incorrecta',turno = 0";  
@@ -771,7 +773,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                         $query  ="UPDATE turno SET habilitalecturaturno = 1;";
                         $result  = pg_query($query);
                     break;
-                    case 6:
+                    case 6: //el usuario no es válido para abrir turno
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $mensaje = "UPDATE turno SET mensajeturno = 'Usuario no valido',turno = 0"; 
@@ -783,7 +785,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                         $query  ="UPDATE turno SET habilitalecturaturno = 1;";
                         $result = pg_query($query);
                     break;
-                    case 7:
+                    case 7: //error en el Gnesys
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $mensaje = "UPDATE turno SET mensajeturno = 'Error de operacion'"; 
@@ -792,7 +794,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                         }
                         $result2 = pg_query($mensaje);
                     break;
-                    case 8:
+                    case 8: //venta en proceso
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $mensaje = "UPDATE turno SET mensajeturno = 'Venta en proceso'"; 
@@ -801,12 +803,12 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                         }
                         $result2 = pg_query($mensaje);
                     break;
-                    case 9:
+                    case 9: //están solicitando cambio de turno
                         $ar = array(78, 83, 88,$array[3],212,3);
                         $query  ="UPDATE turno SET habilitalecturaturno = 1;";
                         $result = pg_query($query);
                     break;
-                    case 10 :
+                    case 10 ://cierre correcto
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                            $mensaje  = "UPDATE turno SET mensajeturno = 'Cierre OK', turno = 1, turnonsx = 0;";
@@ -823,7 +825,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                         $res2      = pg_query($mensaje2);
                         
                     break;
-                    case 11:
+                    case 11: //confirmación consignación
                         $ar = array(78, 83, 88,$array[3],212,3);
                         if($array[3]==1 ){
                             $mensaje  = "UPDATE consignaciones SET  confirmacion = 1;";
@@ -835,8 +837,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     break;
                 }
                 $ar[6] = verificar_check($ar,7);
-
-
                 foreach ($ar as &$valor) {
                    $valor = chr($valor);
                 }
@@ -1090,7 +1090,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 socket_write($client, $envio,$length); 
             break;
             
-            case a8: //cambio de precios
+            case a8: //cambio de precios, Gnesys envía los precios de los productos para que el MUX los procese y programe el equipo
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $precio     = array(5);
@@ -1180,7 +1180,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 pg_close($dbconn); // Cerrando la conexión   
                 break;
             
-            case aa: // envío de datos de turno
+            case aa: // envío de datos de turno, usuario y contraseña
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query   = "SELECT usuario, passwd, turnonsx FROM turno;";
@@ -1253,7 +1253,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 socket_write($client, $envio,$length);
             break;
             
-            case ac: //impresión
+            case ac: //impresión,Gnesys envía esta consulta seguida de los datos que va a imprimir
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $sql         = "SELECT tipoimpresora, impresora FROM mapeodispensador where pk_idposicion = $array[3]";
@@ -1318,7 +1318,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
                 fwrite($f,chr(0x0A));
-                fwrite($f,chr(0x0A));
+                fwrite($f,chr(0x0A));     //Descomentar para logo
                 fwrite($f,chr(0x1B));
                 fwrite($f,chr(0x6C));
                 fwrite($f,chr(0x01));
@@ -1408,7 +1408,10 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 socket_write($client, $envio,$length);
             break;
             
-            case b1://apertura de turno
+			
+            case b1:
+				//apertura de turno, Gnesys envía las configuraciones del equipo que se ingresaron el la interfaz gráfica de la
+				//aplicación
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $vturno  = hex2bin($array[5]); 
@@ -1501,7 +1504,9 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 socket_write($client, $envio,$length);
             break;
             
-            case b4://venta canasta, datos en pantalla
+            case b4:
+				//venta canasta, datos en pantalla, Se reciben los datos de los productos, nombre y precio si están en existencia, si no lo hay o no
+				//existe se informa en pantalla al usuario
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 if($array[3] ==1){
@@ -1626,7 +1631,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 pg_close($dbconn); // Cerrando la conexión 
             break;      
             
-            case b7:  //consignaciones
+            case b7:  //envía valor de la consignacion al NSX
                 $ar = array(78,83,88,$array[3],231);
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
@@ -1739,7 +1744,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 pg_close($dbconn); // Cerrando la conexión 
             break;
             
-            case b9:  //configuracion larga
+            case b9:  //configuracion larga, Gnesys envía la información de configuración de las pantallas, los textos de todos los
+				//botones
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $consecutivo1 = "select max(pk_idventa) from venta where idposicion = 1";
@@ -1895,7 +1901,9 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 pg_close($dbconn); // Cerrando la conexión 
             break;
             
-            case bc: //forma de pago
+            case bc: 
+				//forma de pago, se
+				//envía una solicitud de forma de pago al sistema, se envía el valor a discriminar de la venta
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 if ($array[3] == 1){
@@ -1986,7 +1994,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 pg_close($dbconn); // Cerrando la conexión 
             break; 
             
-            case bf:  //preset calibracion
+            case bf:  //preset calibracion, envía al sistema el preset de la calibración a realizar
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
