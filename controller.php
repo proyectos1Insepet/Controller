@@ -550,6 +550,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		            $finv        = pg_query($actualiza);
 		            pg_free_result($res);
 		            pg_free_result($finv);
+		            echo "SERIAL\n";
 		        }
 		        $query       = "SELECT grado,valortotal,cantidadtotal,volumenfinal,dinerofinal, ppu,placaefectivo,tipovehiculo,kilometrajecliente,pk_idventa,nombreefectivo from venta where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3]);"; 
 		        $result      = pg_query($query); 
@@ -1072,6 +1073,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $query    = "UPDATE preset SET autorizado ='$autorizado', validacioncredito = 1 WHERE id_pos =$array[3]; ";
                 echo "Mensaje boton: $finmensj";
                 $qmen    = "UPDATE mensajes SET mensaje = '$finmensj' WHERE id_mensaje = $array[3];";
+                $qmen   .= "UPDATE preset SET serial = '0' WHERE id_pos = $array[3];";
                 $result  = pg_query($query);
                 $res     = pg_query($qmen);
                 if (!$result) {
@@ -1955,7 +1957,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             case bd: //calibracion
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $mantenimiento = "SELECT grado FROM preset WHERE id_pos = $array[3];";
+                $mantenimiento   = "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
+                $mantenimiento  .= "SELECT grado FROM preset WHERE id_pos = $array[3];";
                 $res           = pg_query($mantenimiento);
                 $respuesta     = pg_fetch_row($res);
                 $ar = array(78, 83, 88,$array[3],237,$respuesta[0]);
