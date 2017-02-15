@@ -1095,7 +1095,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $query    = "UPDATE preset SET autorizado ='$autorizado', validacioncredito = 1 WHERE id_pos =$array[3]; ";
                 echo "Mensaje boton: $finmensj";
                 $qmen    = "UPDATE mensajes SET mensaje = '$finmensj' WHERE id_mensaje = $array[3];";
-                //$qmen   .= "UPDATE preset SET serial = ' ' WHERE id_pos = $array[3];";
+                $qmen   .= "UPDATE preset SET serial = ' ' WHERE id_pos = $array[3];";
                 $result  = pg_query($query);
                 $res     = pg_query($qmen);
                 if (!$result) {
@@ -1920,8 +1920,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     $credito2 = 1;
                 } 
                 echo "Venta 1 = $venta_cero:: Venta 2 = $venta_cero2\n";
-                //$sql    = "UPDATE preset SET serial = ' ' WHERE id_pos = $array[3];";
-				//$result = pg_query($sql) ;
+                $sql    = "UPDATE preset SET serial = ' ' WHERE id_pos = $array[3];";
+				$result = pg_query($sql) ;
                 pg_close($dbconn); // Cerrando la conexión 
             break;
             
