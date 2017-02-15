@@ -542,7 +542,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 	 	        $dia    = date("d");
 		        $mes    = date("m");
 		        $year   = date("y");
-		        echo "C: $credito - V: $venta_cero - POS: $array[3]";
+		        echo "C: $credito - V: $venta_cero - POS: $array[3]\n";
+		        echo "C2: $credito2 - V2: $venta_cero2 - POS: $array[3]\n";
 		        if($credito == 1){
 		            if($venta_cero == 0 && $array[3] ==1){
     		            $actualiza   = "UPDATE venta SET  serialibutton = '$serialAlm' where pk_idventa  = (select max(pk_idventa) from venta where idposicion = 1)";
@@ -554,7 +555,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        }
 		        if($credito2 == 1){
 		            if($venta_cero2 == 0 && $array[3] ==2){
-    		            $actualiza   = "UPDATE venta SET  serialibutton = '$serialAlm' where pk_idventa = (select max(pk_idventa) from venta where idposicion = 2)";
+    		            $actualiza   = "UPDATE venta SET  serialibutton = '$serialAlm2' where pk_idventa = (select max(pk_idventa) from venta where idposicion = 2)";
     		            $finv        = pg_query($actualiza);
     		            pg_free_result($res);
     		            pg_free_result($finv);
@@ -726,7 +727,12 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        pg_close($dbconn); // Cerrando la conexión  
 		        $venta_cero  = 0;
 		        $venta_cero2 = 0;
-		        $serialAlm   = '';
+		        if($array[3] == 1){
+                    $serialAlm = ' ';    
+                }
+                if($array[3] == 2){
+                    $serialAlm2 = ' ';    
+                }
             break;
             
             case a4:   //Casos de reset, Gnesys responde con diversos reset según el proceso, para negarlo o para confirmarlo
@@ -1015,7 +1021,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 }
                 $restot  = pg_query($totales);
                 $rowtot  = pg_fetch_row($restot);
-                $credito = 1;
                 $minuto = date("i");
                 $hora   = date("h");
                 $dia    = date("d");
@@ -1027,7 +1032,12 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             
                 $revvol    = strrev(number_format((float)$rowtot[1], 2, '', ''));
                 $revdinero = strrev($rowtot[0]);
-                $serialAlm = $row[7];
+                if($array[3] == 1){
+                    $serialAlm = $row[7];    
+                }
+                if($array[3] == 2){
+                    $serialAlm2 = $row[7];    
+                }
                 $idcliente = strrev($row[7]);
                 $preset    = "990000";
                 $revpreset = strrev($preset);
