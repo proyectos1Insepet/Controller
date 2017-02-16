@@ -1444,12 +1444,6 @@ COPY venta_canasta (id_canasta, idposicionc, validacioncanasta, lecturacanasta, 
 SELECT pg_catalog.setval('venta_canasta_id_canasta_seq', 1, false);
 
 
---
--- Name: venta_pk_idventa_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('venta_pk_idventa_seq', 37812, true);
-
 
 --
 -- Data for Name: verificapago; Type: TABLE DATA; Schema: public; Owner: postgres
