@@ -140,6 +140,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
         if($fp1 == 0){
             if($controlfpago ==0){ //si no hay forma de pago
                 $fpago   = 1;
+                $qry   = "UPDATE estado SET rformapago = 0;";
+                $rslt  = pg_query($qry) ;
                 if($recibe == 0 || $recibe == 31){
                     $estado = 255;  //inactivo
                 }
@@ -261,6 +263,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
         if($fp2 == 0){
             if($controlfpago2 ==0){
             $fpago2  = 1;
+            $qry   = "UPDATE estado SET rformapago2 = 0;";
+            $rslt  = pg_query($qry) ;
             if($recibe2 == 0 || $recibe2 == 31){
                 $estado2 = 255;
             }
@@ -1933,13 +1937,13 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 if ($array[3] == 1){
                     $fpago        = 0;
                     $controlfpago = 1;
-                    $actfp  = "UPDATE estado SET fp1 = 0";
+                    $actfp  = "UPDATE estado SET fp1 = 0, rformapago = 0;";
                     $resact = pg_query($actfp);
                 }
                 if ($array[3] == 2){
                     $fpago2        = 0;
                     $controlfpago2 = 1;
-                    $actfp  = "UPDATE estado SET fp2 = 0";
+                    $actfp  = "UPDATE estado SET fp2 = 0, rformapago2 = 0;";
                     $resact = pg_query($actfp);
                 }
                 $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
@@ -1974,6 +1978,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $length = strlen($envio);
                 socket_write($client, $envio,$length);
                 pg_close($dbconn); // Cerrando la conexión 
+                $resetFP = 0;
             break;
             
             case bd: //calibracion
@@ -2187,6 +2192,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             case c3: //forma de pago
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
+                $resetFP = $resetFP+1;
                 if($array[5]==3 && $controlfpago !=2 && $array[3] == 1){
                     $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
                     $rfpago    = pg_query($fpago);
@@ -2196,6 +2202,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
                     $rhispago  = pg_query($hispago);
                     $controlfpago = 2;
+                    $actfp  = "UPDATE estado SET  rformapago = 1, fp1 = 0;";
+                    $resact = pg_query($actfp);
                 }
                 if($array[5]==3 && $controlfpago2 !=2 && $array[3] == 2){
                     $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
@@ -2206,17 +2214,40 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
                     $rhispago  = pg_query($hispago);
                     $controlfpago2 = 2;
+                    $actfp  = "UPDATE estado SET  rformapago2 = 1, fp2 = 0;";
+                    $resact = pg_query($actfp);
                 }
                 if($array[5]==4){
                     $fpago     = "DELETE FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
                     $rfpago    = pg_query($fpago);
+                    echo "reset rformapago\n";
                     if($array[3] == 1){
                         $controlfpago = 0;
+                        $actfp  = "UPDATE estado SET  rformapago = 2, fp1 = 0;";
+                        $resact = pg_query($actfp);
                     }
                     if($array[3] == 2){
                         $controlfpago2 = 0;
+                        $actfp  = "UPDATE estado SET  rformapago2 = 2,fp2 = 0;";
+                        $resact = pg_query($actfp);
                     }
                 }
+                if($resetFP == 40){
+                    if($array[3] == 1){
+                        $controlfpago = 0;
+                        $actfp  = "UPDATE estado SET  rformapago = 2, fp1 = 0;";
+                        $resact = pg_query($actfp);
+                        $resetFP = 0;
+                    }
+                    if($array[3] == 2){
+                        $controlfpago2 = 0;
+                        $actfp  = "UPDATE estado SET  rformapago2 = 2, fp2 = 0;";
+                        $resact = pg_query($actfp);
+                        $resetFP = 0;
+                    }
+                    
+                }
+                echo "Reset1: $resetFP\n";
                 $ACK = 3;
                 $ar = array(78,83,88,$array[3],243,$ACK);
                 $largo = count($ar);   
@@ -2228,8 +2259,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $envio = implode("", $ar);
                 $length = strlen($envio);
                 socket_write($client, $envio,$length);
-                pg_close($dbconn); // Cerrando la conexi��n 
-            break;
+                pg_close($dbconn); // Cerrando la conexion
+                break;
                                    
             case c5: //bloqueo corte
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
