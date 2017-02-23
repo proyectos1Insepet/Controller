@@ -1,7 +1,7 @@
 <?php
 //======================================================================
 // 					PHP CONTROLLER, INSEPET 2016
-// 						Versión  19-12-2016
+// 						Versión  23-02-2017
 //======================================================================
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
@@ -245,6 +245,9 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             if($recibe == 32){//Posicion bloqueada
                 $estado = 32;
             }
+            if($recibe == 33){//Posicion en error
+                $estado = 0;
+            }
         }
             if ($controlfpago == 1){
                 $estado = 26; 
@@ -366,7 +369,10 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             if($recibe2 == 32){
                 $estado2 = 32;
             }
+            if($recibe2 == 33){
+                $estado2 = 0;
             }
+            } 
             if ($controlfpago2 == 1){
                 $estado2 = 26; 
             }
