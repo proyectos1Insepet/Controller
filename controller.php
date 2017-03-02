@@ -2024,6 +2024,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 pg_close($dbconn); // Cerrando la conexión 
             break; 
             
+            case bf: //preset calibracion, envía al sistema el preset de la calibración a realizar
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
