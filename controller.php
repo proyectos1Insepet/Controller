@@ -1006,27 +1006,25 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $row  = pg_fetch_row($result);
                 echo "Tipo Preset:$row[1]";
                 if($row[0]==1){
-                    $totales  = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3];";
-                    $totales .= "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
+                    $totales  = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3];";                    
                     echo "Entra 1\n";
                 }
                 if($row[0]==2){
-                    $totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3];";
-                    $totales .= "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
+                    $totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3];";                    
                     echo "Entra 2\n";
                 }
                 if($row[0]==3){
-                    $totales = "SELECT dineromanguera3,totalmanguera3 FROM totales WHERE pk_id_posicion = $array[3];";
-                    $totales .= "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
+                    $totales = "SELECT dineromanguera3,totalmanguera3 FROM totales WHERE pk_id_posicion = $array[3];";                    
                     echo "Entra 3\n";
                 }
                 if($row[0]==4){
-                    $totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3];";
-                    $totales .= "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
+                    $totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3];";                    
                     echo "Entra 4\n";
                 }
-                $restot  = pg_query($totales);
-                $rowtot  = pg_fetch_row($restot);
+                $restot     = pg_query($totales);
+                $rowtot     = pg_fetch_row($restot);
+				$upmensajes = "UPDATE mensajes SET mensaje = ' ' WHERE id_mensaje = $array[3];";
+				$resmen     = pg_query($upmensajes);
                 $minuto = date("i");
                 $hora   = date("h");
                 $dia    = date("d");
@@ -2026,7 +2024,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 pg_close($dbconn); // Cerrando la conexión 
             break; 
             
-            case bf:  //preset calibracion, envía al sistema el preset de la calibración a realizar
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
@@ -2057,12 +2054,30 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     $tipo_preset = 2;
                     echo "Rapido";
                 }
+                if($row[0]==1){
+                        $totales = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3]";
+                        echo "Entra 1\n";
+                }
+                if($row[0]==2){
+                    $totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3]";
+                    echo "Entra 2\n";
+                }
+                if($row[0]==3){
+                    $totales = "SELECT dineromanguera3,totalmanguera3 FROM totales WHERE pk_id_posicion = $array[3]";
+                    echo "Entra 3\n";
+                }
+                if($row[0]==4){
+                    $totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3]";
+                    echo "Entra 4\n";
+                }
+                $restot  = pg_query($totales);
+                $rowtot  = pg_fetch_row($restot);
                 echo "Tipo Preset:$row[1]; Preset: $tipo_preset";
                 $ppu       = $row[5];
-                $totalvol  = number_format((float)$row[4], 2, '', '');
+                $totalvol  = number_format((float)$rowtot[1], 2, '', '');
                 echo "Volumen enviado:$totalvol\n";
                 $revvol    = strrev($totalvol);
-                $revdinero = strrev($row[3]);
+                $revdinero = strrev($rowtot[0]);
                 $revpreset = strrev(sprintf("%0-7s",$preset));
                 $revppu    = strrev($ppu);
                 
