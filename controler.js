@@ -1137,25 +1137,26 @@ function rx_data_mux(data){
             break;    
             case 'f':                                                           //CREDITO_CANASTA
                 //("serial borrado"+frame_1.serial_id);            
-                //('___creditocanastaL1___');
+                console.log('___creditocanastaL1___');
+                console.log(Date());
                 frame_1.supplier_position=data[3]; 
                 var L1supplier_positionD=data.charCodeAt(3);   
                 L1_request=data.charCodeAt(3);                    
-                //('>>Posicion surtidor:'+frame_1.supplier_position);
+                console.log('>>Posicion surtidor:'+frame_1.supplier_position);
                 for(x=0;x<=9;x++){         
                     frame_1.mileage[x]=data.charCodeAt(x+6);     
                 } 
-                //('>>Kilometraje:'+frame_1.mileage);
+                console.log('>>Kilometraje:'+frame_1.mileage);
                 frame_1.type_of_customer_identification=data[17]; 
-                //('>>Tipo de identificacion:'+frame_1.type_of_customer_identification);                
+                console.log('>>Tipo de identificacion:'+frame_1.type_of_customer_identification);                
                 for(x=0;x<=19;x++){         
                     frame_1.serial_id[x]=data.charCodeAt(x+19);     
                 } 
-                //('>>Serial ID:'+frame_1.serial_id);
+                console.log('>>Serial ID:'+frame_1.serial_id);
                 frame_1.type_sale =data[40];  
-                //('>>Tipo venta:'+frame_1.type_sale );   
+                console.log('>>Tipo venta:'+frame_1.type_sale );   
                 frame_1.product_type =data[42];  
-                //('>>Tipo de Producto:'+frame_1.product_type);
+                console.log('>>Tipo de Producto:'+frame_1.product_type);
                 number_process2_rxmux(type_of_reception);            
                 
                 switch (frame_1.type_sale){
@@ -1177,7 +1178,7 @@ function rx_data_mux(data){
                 for(x=0;x<=19;x++){
                     frame_1.serial_id[x]='0';
                 }
-                //("serial borrado"+frame_1.serial_id);
+                console.log("serial borrado"+frame_1.serial_id);
                 
                 next_position=45;                
                 tipeofResetL1='2';                
@@ -2022,30 +2023,31 @@ function rx_data_mux(data){
                 frame_2.memoria_part=2; 
             break;
             case X_CREDITBASKET:                                                //X - CREDITO_CANASTA
-                //('___creditocanastaL2___');
+                console.log('___creditocanastaL2___');
+                console.log(Date());
                 frame_2.supplier_position=data[next_position];  
                 var L2supplier_positionD=data.charCodeAt(next_position); 
                 L2_request=data.charCodeAt(data[next_position]);                  
-                //('>>Posicion surtidor:'+frame_2.supplier_position);
+                console.log('>>Posicion surtidor:'+frame_2.supplier_position);
                 next_position=next_position+3;                   
                 for(x=0;x<=9;x++){        
                     frame_2.mileage[x]=data.charCodeAt(x+next_position);     
                 } 
-                //('>>Kilometraje:'+frame_2.mileage);
+                console.log('>>Kilometraje:'+frame_2.mileage);
                 next_position=next_position+11;                   
                 frame_2.type_of_customer_identification=data[next_position];  
-                //('>>Tipo de identificacion:'+frame_2.type_of_customer_identification);
+                console.log('>>Tipo de identificacion:'+frame_2.type_of_customer_identification);
                 next_position=next_position+2;                
                 for(x=0;x<=19;x++){         
                     frame_2.serial_id[x]=data.charCodeAt(x+next_position);     
                 } 
-                //('>>Serial ID:'+frame_2.serial_id);
+                console.log('>>Serial ID:'+frame_2.serial_id);
                 next_position=next_position+21;                
                 frame_2.type_sale =data[next_position]; 
-                //('>>Tipo venta:'+frame_2.type_sale ); 
+                console.log('>>Tipo venta:'+frame_2.type_sale ); 
                 next_position=next_position+2;                
                 frame_2.product_type =data[next_position]; 
-                //('>>Tipo de Producto:'+frame_2.product_type);  
+                console.log('>>Tipo de Producto:'+frame_2.product_type);  
                 switch (frame_2.type_sale){
                     case '1':
                         muxWriteTablesL2(creditocanasta1L2);
@@ -2067,7 +2069,7 @@ function rx_data_mux(data){
                 for(x=0;x<=19;x++){
                     frame_2.serial_id[x]='0';
                 }
-                //("serial borrado lado2"+frame_2.serial_id);                
+                console.log("serial borrado lado2"+frame_2.serial_id);                
                 
                 tipeofResetL2='2';                  
                 dataOK=true;   
