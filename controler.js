@@ -1105,7 +1105,7 @@ function rx_data_mux(data){
                     frame_1.serial_id[x]=data.charCodeAt(x+29);     
                 } 
                 //(frame_1.supplier_position+"-"+frame_1.sales_number+"-"+frame_1.type_of_payment+"-"+frame_1.consultation_sale+"-"+frame_1.discrim_value
-                            +"-"+frame_1.serial_id);
+                //            +"-"+frame_1.serial_id);
                 number_process2_rxmux(type_of_reception);
                 muxWriteTablesL1(valordiscriminadoL1);                
                 TableNumber =discriminateSale_tableL1; 
@@ -1116,7 +1116,11 @@ function rx_data_mux(data){
             break;    
             case 'f':                                                           //CREDITO_CANASTA
                 //('___creditocanastaL1___');
+                for(x=0;x<=19;x++){         
+                    frame_1.serial_id[x]='0';     
+                }
                 frame_1.supplier_position=data[3]; 
+                //("Posicion: "+data[3]);
                 var L1supplier_positionD=data.charCodeAt(3);   
                 L1_request=data.charCodeAt(3);                    
                 for(x=0;x<=9;x++){         
@@ -1128,8 +1132,8 @@ function rx_data_mux(data){
                 } 
                 frame_1.type_sale =data[40];  
                 frame_1.product_type =data[42];  
-                //(frame_1.supplier_position+"-"+frame_1.mileage+"-"+frame_1.type_of_customer_identification+"-"+frame_1.serial_id
-                            +"-"+frame_1.type_sale+"-"+frame_1.product_type);
+                /*("Supplier:"+frame_1.supplier_position+" "+"Km:"+frame_1.mileage+" "+"Customer:"+frame_1.type_of_customer_identification+" "+
+                            "Serial:"+frame_1.serial_id+" "+"Type:"+frame_1.type_sale+" "+"Product:"+frame_1.product_type);*/
                 number_process2_rxmux(type_of_reception);            
                 
                 switch (frame_1.type_sale){
@@ -1468,8 +1472,8 @@ function rx_data_mux(data){
                             +"-"+frame_1.total_money_P2l1+"-"+frame_1.ppu_P2l1+"-"+frame_1.total_volume_P3l1+"-"+frame_1.total_money_P3l1+"-"+frame_1.ppu_P3l1
                             +"-"+frame_1.total_volume_P4l1+"-"+frame_1.total_money_P4l1+"-"+frame_1.ppu_P4l1+"-"+frame_1.total_volume_P1l2+"-"+frame_1.total_money_P1l2
                             +"-"+frame_1.ppu_P1l2+"-"+frame_1.total_volume_P2l2+"-"+frame_1.total_money_P2l2+"-"+frame_1.ppu_P2l2+"-"+frame_1.total_volume_P3l2
-                            +"-"+frame_1.total_money_P3l2+"-"+frame_1.ppu_P3l2+"-"+frame_1.total_volume_P4l2+"-"+frame_1.total_money_P4l2+"-"+frame_1.ppu_P4l2);
-                number_process2_rxmux(type_of_reception);*/
+                            +"-"+frame_1.total_money_P3l2+"-"+frame_1.ppu_P3l2+"-"+frame_1.total_volume_P4l2+"-"+frame_1.total_money_P4l2+"-"+frame_1.ppu_P4l2);*/
+                number_process2_rxmux(type_of_reception); 
                 muxWriteTablesL1(totaleselectronicosL1);                
                 next_position=287;   
                 tipeofResetL1='1';                   
@@ -1498,7 +1502,7 @@ function rx_data_mux(data){
                     frame_1.previous_PPU[x]=data.charCodeAt(x+47);   
                 } 
                 //(frame_1.supplier_position+"-"+frame_1.preset_type+"-"+frame_1.preset_value+"-"+frame_1.selected_product+"-"+frame_1.total_previous_volume
-                            +"-"+frame_1.total_money_previous+"-"+frame_1.previous_PPU);
+                //            +"-"+frame_1.total_money_previous+"-"+frame_1.previous_PPU);
                 muxWriteTablesL1(subemanijaL1);                
 
                 number_process2_rxmux(type_of_reception);
@@ -1895,7 +1899,7 @@ function rx_data_mux(data){
                     frame_2.serial_id[x]=data.charCodeAt(x+next_position);     
                 } 
                 //(frame_2.supplier_position+"-"+frame_2.sales_number+"-"+frame_2.type_of_payment+"-"+frame_2.consultation_sale+"-"+frame_2.discrim_value
-                            +"-"+frame_2.serial_id);
+                //           +"-"+frame_2.serial_id);
                 muxWriteTablesL2(valordiscriminadoL2);
                 TableNumber=discriminateSale_tableL2;
                 tipeofResetL2='2';                  
@@ -1904,6 +1908,9 @@ function rx_data_mux(data){
             break;
             case X_CREDITBASKET:                                                //X - CREDITO_CANASTA
                 //('___creditocanastaL2___');
+                for(x=0;x<=19;x++){         
+                    frame_2.serial_id[x]='0';     
+                }
                 frame_2.supplier_position=data[next_position];  
                 var L2supplier_positionD=data.charCodeAt(next_position); 
                 L2_request=data.charCodeAt(data[next_position]);                  
@@ -1917,12 +1924,11 @@ function rx_data_mux(data){
                 for(x=0;x<=19;x++){         
                     frame_2.serial_id[x]=data.charCodeAt(x+next_position);     
                 } 
-                //('>>Serial ID:'+frame_2.serial_id);
                 next_position=next_position+21;                
                 frame_2.type_sale =data[next_position]; 
                 next_position=next_position+2;                
                 frame_2.product_type =data[next_position]; 
-                //(frame_2.supplier_position+"-"+frame_2.mileage+"-"+frame_2.type_of_customer_identification+"-"+frame_2.type_sale+"-"+frame_2.product_type);
+                //("Supplier: "+frame_2.supplier_position+" "+"Km: "+frame_2.mileage+" "+"Serial: "+frame_2.serial_id+frame_2.type_of_customer_identification+"-"+frame_2.type_sale+"-"+frame_2.product_type);
                 switch (frame_2.type_sale){
                     case '1':
                         muxWriteTablesL2(creditocanasta1L2);
@@ -2361,7 +2367,7 @@ function rx_data_mux(data){
                     frame_2.previous_PPU[x]=data.charCodeAt(x+next_position);     
                 } 
                 //(frame_2.supplier_position+"-"+frame_2.preset_type+"-"+frame_2.preset_value+"-"+frame_2.selected_product+"-"+frame_2.total_previous_volume
-                            +"-"+frame_2.total_money_previous+"-"+frame_2.previous_PPU);
+                //            +"-"+frame_2.total_money_previous+"-"+frame_2.previous_PPU);
                 muxWriteTablesL2(subemanijaL2);                
                 tipeofResetL2='2';                  
                 dataOK=true;   
@@ -5229,11 +5235,11 @@ var readTables = function (error){
                         if(err){
                             return console.error('18error de turno', err);
                         }else{
-                            //("*******Datos del vendedor, serial y contraseña*******");                                
+                            //("*******Datos del vendedor, serial y contraseñ¡ªª*****");                                
                             vendedorserial=result.rows[0].usuario;
                             //("vendedor serial=" + vendedorserial);
                             vendedorcontrasena=result.rows[0].passwd;
-                            //("vendedor contraseña=" + vendedorcontrasena);
+                            //("vendedor contraseñ¡½¢ + vendedorcontrasena);
                             sendMux(datosvendedor_mux);                            
                         }      
                         });                         
@@ -5246,7 +5252,7 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('19error de venta', err);
                                 }else{
-                                    //("*******Respuesta a peticion N° venta a discriminar en forma de pagoL1*******");                                
+                                    //("*******Respuesta a peticion NÐ venta a discriminar en forma de pagoL1*******");                                
                                     idultimaventaPass2L1=result.rows[0].pk_idventa;
                                     //("Id ultimaventa=" + idultimaventaPass2L1);
                                     positionFP='1';
@@ -5289,7 +5295,7 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('21error de historicoventacanasta', err);
                                 }else{
-                                    //("*******Respuesta a peticion N° venta a discriminar en forma de pago canasta*******");                                
+                                    //("*******Respuesta a peticion NÐ venta a discriminar en forma de pago canasta*******");                                
                                     idultimaventa=result.rows[0].idventacanasta;
                                     if(idultimaventa==undefined || idultimaventa==null) {
                                         //("llenar con valor la tabla de historicoventacanasta para columna idventacansta");
@@ -5339,7 +5345,7 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('23error de venta', err);
                                 }else{
-                                    //("*******Respuesta a peticion N° venta a discriminar en forma de pago*******");                                
+                                    //("*******Respuesta a peticion NÐ venta a discriminar en forma de pago*******");                                
                                     idultimaventa=result.rows[0].pk_idventa;
                                     idultimaventaPass2L1=idultimaventa;
                                     //("Id ultimaventa combustible=" + idultimaventaPass2L1);
@@ -5353,7 +5359,7 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('24error de historicoventacanasta', err);
                                 }else{
-                                    //("*******Respuesta a peticion N° venta a discriminar en forma de pago canasta*******");                                
+                                    //("*******Respuesta a peticion NÐ venta a discriminar en forma de pago canasta*******");                                
                                     idultimaventa=result.rows[0].idventacanasta;
                                     if(idultimaventa==undefined || idultimaventa==null) {
                                         //("llenar con valor la tabla de historicoventacanasta para columna idventacansta");
@@ -5408,7 +5414,7 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('27error de venta', err);
                                 }else{
-                                    //("*******Respuesta a peticion N° venta a discriminar en forma de pagoL2*******");                                
+                                    //("*******Respuesta a peticion NÐ venta a discriminar en forma de pagoL2*******");                                
                                     idultimaventa=result.rows[0].pk_idventa;
                                     idultimaventaPass2L2=idultimaventa;
                                     //("Id ultimaventa=" + idultimaventaPass2L2);
@@ -5452,7 +5458,7 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('29error de historicoventacanasta', err);
                                 }else{
-                                    //("*******Respuesta a peticion N° venta a discriminar en forma de pagoL2*******");                                
+                                    //("*******Respuesta a peticion NÐ venta a discriminar en forma de pagoL2*******");                                
                                     idultimaventa=result.rows[0].idventacanasta;
                                     if(idultimaventa==undefined || idultimaventa==null) {
                                         //("llenar con valor la tabla de historicoventacanasta para columna idventacansta");
@@ -5501,7 +5507,7 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('31error de venta', err);
                                 }else{
-                                    //("*******Respuesta a peticion N° venta a discriminar en forma de pago*******");                                
+                                    //("*******Respuesta a peticion NÐ venta a discriminar en forma de pago*******");                                
                                     idultimaventa=result.rows[0].pk_idventa;
                                     idultimaventaPass2L2=idultimaventa;
                                     //("Id ultimaventa combustible=" + idultimaventaPass2L2);
@@ -5515,7 +5521,7 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('32error de historicoventacanasta', err);
                                 }else{
-                                    //("*******Respuesta a peticion N° venta a discriminar en forma de pago canasta*******");                                
+                                    //("*******Respuesta a peticion NÐ venta a discriminar en forma de pago canasta*******");                                
                                     idultimaventa=result.rows[0].idventacanasta;
                                     if(idultimaventa==undefined || idultimaventa==null) {
                                         //("llenar con valor la tabla de historicoventacanasta para columna idventacansta");
@@ -6535,7 +6541,7 @@ function count(){
 		//("contandoL1...");		
 	     contador=contador-1;
 	    if(contador==0){
-	        //("!deja de contarL1¡");
+	        //("!deja de contarL1b);
 	    	enable_count=0;	        
 	    }else{
 	        count();
@@ -6550,7 +6556,7 @@ function count2(){
 		//("contandoL2...");		
 	     contador2=contador2-1;
 	    if(contador2==0){
-	        //("!deja de contarL2¡");
+	        //("!deja de contarL2b);
 	    	enable_count2=0;	        
 	    }else{
 	        count2();
@@ -6574,6 +6580,7 @@ setInterval(count, 5000);
 setInterval(count2, 5000);   
 setInterval(stateMux,30000);
 
+//2017-03-13
 
 
 
