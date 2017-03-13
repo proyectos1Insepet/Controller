@@ -391,13 +391,13 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             $result  = pg_query($query) ;
         }
         $array = str_split($input); 
-        echo "Cadena entrada: $input\n";
+        //echo "Cadena entrada: $input\n";
         foreach ($array as &$valor) {
             $valor = bin2hex($valor);
         }
         unset($valor);
         $imprime_ar = implode("-",$array);
-        echo "Cadena entrada hex: $imprime_ar\n";        
+        //echo "Cadena entrada hex: $imprime_ar\n";        
         $CDG = 2;
         pg_free_result($result);
         pg_close($dbconn); // Cerrando la conexión 
@@ -432,7 +432,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 unset($valor);                                                                        
                 $envio = implode("", $ar);
                 $print = implode(" - ", $ar);
-                echo "Consulta A1: $print\n";
+                //echo "Consulta A1: $print\n";
                 $length = strlen($envio);                                                
                 $consultacierrasocket=0;
                 socket_write($client, $envio,$length);
@@ -717,7 +717,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        $largo = count($ar);                                                
 		        $ar[$largo] = verificar_check($ar, ($largo+1));
 		        $dato_a3 = implode("-",$ar);
-		        echo "Dato Fin venta: $dato_a3";
+		        //echo "Dato Fin venta: $dato_a3";
 		        foreach ($ar as &$valor) {
 			        $valor = chr($valor);
 		        }
@@ -1066,9 +1066,9 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $ar = array(78, 83, 88,$array[3], 214, $row[0], 2,  $arpreset[0],$arpreset[1],$arpreset[2],$arpreset[3],$arpreset[4],$arpreset[5],$arpreset[6],  84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],   80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],   72,$minuto,$hora,     70,$dia,$mes,$year, 73,$serial[0],$serial[1],$serial[2],$serial[3],$serial[4],$serial[5],$serial[6],$serial[7],$serial[8],$serial[9],$serial[10],$serial[11],$serial[12],$serial[13],$serial[14],$serial[15], 75,$arkm[9],$arkm[8],$arkm[7],$arkm[6],$arkm[5],$arkm[4],$arkm[3],$arkm[2],$arkm[1],$arkm[0]);
                 $largo = count($ar);  
                 $ar[$largo] = verificar_check($ar, ($largo +1));
-                echo "Largo A6: $largo\n";
+                //echo "Largo A6: $largo\n";
                 $dato_a6 = implode("-",$ar);
-                echo "Dato preset credito: $dato_a6\n";
+                //echo "Dato preset credito: $dato_a6\n";
                 foreach ($ar as &$valor) {
                     $valor = chr($valor);
                 }
@@ -1132,7 +1132,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $precio [3] = hex2bin($array[7]);
                 $precio [4] = hex2bin($array[6]);
                 $precio_db  = implode("", $precio);
-                echo "Precio Recibido: $precio_db\n";
+                //echo "Precio Recibido: $precio_db\n";
                 $cambio_precio  = "TRUNCATE TABLE solicitudes;";
                 $cambio_precio .= "INSERT INTO solicitudes VALUES (1,'P',0);";
                 $inserta_sol    =  pg_query($cambio_precio); 
