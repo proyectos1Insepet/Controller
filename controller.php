@@ -1,7 +1,7 @@
 <?php
 //======================================================================
 // 					PHP CONTROLLER, INSEPET 2016
-// 						Versión  03-03-2017
+// 						Versión  28-03-2017
 //======================================================================
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
@@ -11,6 +11,7 @@ $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'"
 $sql   = "TRUNCATE TABLE solicitudes"; 
 $res = pg_query($sql); 
 $query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
+$query  = "UPDATE preset SET serial = ' ';";
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
  `stty -F $impresora 115200`; //velocidad de las impresoras y puertos de comunicación
@@ -1095,13 +1096,14 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 echo "Autorizacion: $autorizado\n";
                 $mensj         = substr($input,15);
                 $mensajePlaca  = substr($mensj,0,-10);
-                $finmensj = "El  vehiculo  placa  $mensajePlaca, ha sido   autorizado";
-                $query    = "UPDATE preset SET autorizado ='$autorizado', validacioncredito = 1 WHERE id_pos =$array[3]; ";
-                echo "Mensaje boton: $finmensj";
-                $qmen    = "UPDATE mensajes SET mensaje = '$finmensj' WHERE id_mensaje = $array[3];";
-                $qmen   .= "UPDATE preset SET serial = ' ' WHERE id_pos = $array[3];";
-                $result  = pg_query($query);
-                $res     = pg_query($qmen);
+                $finmensj   = "El  vehiculo  placa  $mensajePlaca, ha sido   autorizado";
+                $query      = "UPDATE preset SET autorizado ='$autorizado', validacioncredito = 1 WHERE id_pos =$array[3]; ";                
+                $qmen		= "UPDATE mensajes SET mensaje = '$finmensj' WHERE id_mensaje = $array[3];";
+                $qmen2  	= "UPDATE preset SET serial = ' ' WHERE id_pos = $array[3];";
+                $result 	= pg_query($query);
+				$result2	= pg_query($query);
+                $res        = pg_query($qmen);
+				$res2       = pg_query($qmen2);
                 if (!$result) {
                     $ACK = 4;  
                 }else{

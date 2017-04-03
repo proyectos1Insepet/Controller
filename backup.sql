@@ -3,7 +3,8 @@
 --
 
 SET statement_timeout = 0;
-SET client_encoding = 'SQL_ASCII';
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
@@ -25,7 +26,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
--- Name: limpiar_copia_recibo(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: limpiar_copia_recibo(); Type: FUNCTION; Schema: public; Owner: db_admin
 --
 
 CREATE FUNCTION limpiar_copia_recibo() RETURNS trigger
@@ -38,10 +39,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.limpiar_copia_recibo() OWNER TO postgres;
+ALTER FUNCTION public.limpiar_copia_recibo() OWNER TO db_admin;
 
 --
--- Name: limpiar_historicocanasta(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: limpiar_historicocanasta(); Type: FUNCTION; Schema: public; Owner: db_admin
 --
 
 CREATE FUNCTION limpiar_historicocanasta() RETURNS trigger
@@ -54,10 +55,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.limpiar_historicocanasta() OWNER TO postgres;
+ALTER FUNCTION public.limpiar_historicocanasta() OWNER TO db_admin;
 
 --
--- Name: limpiar_historicoformasdepago(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: limpiar_historicoformasdepago(); Type: FUNCTION; Schema: public; Owner: db_admin
 --
 
 CREATE FUNCTION limpiar_historicoformasdepago() RETURNS trigger
@@ -70,10 +71,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.limpiar_historicoformasdepago() OWNER TO postgres;
+ALTER FUNCTION public.limpiar_historicoformasdepago() OWNER TO db_admin;
 
 --
--- Name: limpiar_ventas(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: limpiar_ventas(); Type: FUNCTION; Schema: public; Owner: db_admin
 --
 
 CREATE FUNCTION limpiar_ventas() RETURNS trigger
@@ -86,14 +87,14 @@ END;
 $$;
 
 
-ALTER FUNCTION public.limpiar_ventas() OWNER TO postgres;
+ALTER FUNCTION public.limpiar_ventas() OWNER TO db_admin;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: botones; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: botones; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE botones (
@@ -102,10 +103,10 @@ CREATE TABLE botones (
 );
 
 
-ALTER TABLE public.botones OWNER TO postgres;
+ALTER TABLE botones OWNER TO db_admin;
 
 --
--- Name: configuracion; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: configuracion; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE configuracion (
@@ -116,10 +117,10 @@ CREATE TABLE configuracion (
 );
 
 
-ALTER TABLE public.configuracion OWNER TO postgres;
+ALTER TABLE configuracion OWNER TO db_admin;
 
 --
--- Name: configuracion_pk_idconfiguracion_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: configuracion_pk_idconfiguracion_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE configuracion_pk_idconfiguracion_seq
@@ -130,17 +131,17 @@ CREATE SEQUENCE configuracion_pk_idconfiguracion_seq
     CACHE 1;
 
 
-ALTER TABLE public.configuracion_pk_idconfiguracion_seq OWNER TO postgres;
+ALTER TABLE configuracion_pk_idconfiguracion_seq OWNER TO db_admin;
 
 --
--- Name: configuracion_pk_idconfiguracion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: configuracion_pk_idconfiguracion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE configuracion_pk_idconfiguracion_seq OWNED BY configuracion.pk_idconfiguracion;
 
 
 --
--- Name: configuraciondispensador; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: configuraciondispensador; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE configuraciondispensador (
@@ -152,10 +153,10 @@ CREATE TABLE configuraciondispensador (
 );
 
 
-ALTER TABLE public.configuraciondispensador OWNER TO postgres;
+ALTER TABLE configuraciondispensador OWNER TO db_admin;
 
 --
--- Name: configuraciondispensador_pk_idconfiguraciondispen_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: configuraciondispensador_pk_idconfiguraciondispen_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE configuraciondispensador_pk_idconfiguraciondispen_seq
@@ -166,17 +167,17 @@ CREATE SEQUENCE configuraciondispensador_pk_idconfiguraciondispen_seq
     CACHE 1;
 
 
-ALTER TABLE public.configuraciondispensador_pk_idconfiguraciondispen_seq OWNER TO postgres;
+ALTER TABLE configuraciondispensador_pk_idconfiguraciondispen_seq OWNER TO db_admin;
 
 --
--- Name: configuraciondispensador_pk_idconfiguraciondispen_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: configuraciondispensador_pk_idconfiguraciondispen_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE configuraciondispensador_pk_idconfiguraciondispen_seq OWNED BY configuraciondispensador.pk_idconfiguraciondispen;
 
 
 --
--- Name: consignaciones; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: consignaciones; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE consignaciones (
@@ -189,10 +190,10 @@ CREATE TABLE consignaciones (
 );
 
 
-ALTER TABLE public.consignaciones OWNER TO postgres;
+ALTER TABLE consignaciones OWNER TO db_admin;
 
 --
--- Name: copiaderecibo; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: copiaderecibo; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE copiaderecibo (
@@ -202,10 +203,10 @@ CREATE TABLE copiaderecibo (
 );
 
 
-ALTER TABLE public.copiaderecibo OWNER TO postgres;
+ALTER TABLE copiaderecibo OWNER TO db_admin;
 
 --
--- Name: copiaderecibo_pk_idcopiarecibo_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: copiaderecibo_pk_idcopiarecibo_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE copiaderecibo_pk_idcopiarecibo_seq
@@ -216,17 +217,17 @@ CREATE SEQUENCE copiaderecibo_pk_idcopiarecibo_seq
     CACHE 1;
 
 
-ALTER TABLE public.copiaderecibo_pk_idcopiarecibo_seq OWNER TO postgres;
+ALTER TABLE copiaderecibo_pk_idcopiarecibo_seq OWNER TO db_admin;
 
 --
--- Name: copiaderecibo_pk_idcopiarecibo_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: copiaderecibo_pk_idcopiarecibo_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE copiaderecibo_pk_idcopiarecibo_seq OWNED BY copiaderecibo.pk_idcopiarecibo;
 
 
 --
--- Name: discriminapago; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: discriminapago; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE discriminapago (
@@ -239,10 +240,10 @@ CREATE TABLE discriminapago (
 );
 
 
-ALTER TABLE public.discriminapago OWNER TO postgres;
+ALTER TABLE discriminapago OWNER TO db_admin;
 
 --
--- Name: estado; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: estado; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE estado (
@@ -257,10 +258,10 @@ CREATE TABLE estado (
 );
 
 
-ALTER TABLE public.estado OWNER TO postgres;
+ALTER TABLE estado OWNER TO db_admin;
 
 --
--- Name: estado_pk_id_estado_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: estado_pk_id_estado_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE estado_pk_id_estado_seq
@@ -271,17 +272,17 @@ CREATE SEQUENCE estado_pk_id_estado_seq
     CACHE 1;
 
 
-ALTER TABLE public.estado_pk_id_estado_seq OWNER TO postgres;
+ALTER TABLE estado_pk_id_estado_seq OWNER TO db_admin;
 
 --
--- Name: estado_pk_id_estado_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: estado_pk_id_estado_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE estado_pk_id_estado_seq OWNED BY estado.pk_id_estado;
 
 
 --
--- Name: finventacanasta; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: finventacanasta; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE finventacanasta (
@@ -299,10 +300,10 @@ CREATE TABLE finventacanasta (
 );
 
 
-ALTER TABLE public.finventacanasta OWNER TO postgres;
+ALTER TABLE finventacanasta OWNER TO db_admin;
 
 --
--- Name: finventacanasta_id_canasta_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: finventacanasta_id_canasta_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE finventacanasta_id_canasta_seq
@@ -313,17 +314,17 @@ CREATE SEQUENCE finventacanasta_id_canasta_seq
     CACHE 1;
 
 
-ALTER TABLE public.finventacanasta_id_canasta_seq OWNER TO postgres;
+ALTER TABLE finventacanasta_id_canasta_seq OWNER TO db_admin;
 
 --
--- Name: finventacanasta_id_canasta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: finventacanasta_id_canasta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE finventacanasta_id_canasta_seq OWNED BY finventacanasta.id_canasta;
 
 
 --
--- Name: finventacanastacredito; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: finventacanastacredito; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE finventacanastacredito (
@@ -343,10 +344,10 @@ CREATE TABLE finventacanastacredito (
 );
 
 
-ALTER TABLE public.finventacanastacredito OWNER TO postgres;
+ALTER TABLE finventacanastacredito OWNER TO db_admin;
 
 --
--- Name: finventacanastacredito_id_canasta_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: finventacanastacredito_id_canasta_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE finventacanastacredito_id_canasta_seq
@@ -357,17 +358,17 @@ CREATE SEQUENCE finventacanastacredito_id_canasta_seq
     CACHE 1;
 
 
-ALTER TABLE public.finventacanastacredito_id_canasta_seq OWNER TO postgres;
+ALTER TABLE finventacanastacredito_id_canasta_seq OWNER TO db_admin;
 
 --
--- Name: finventacanastacredito_id_canasta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: finventacanastacredito_id_canasta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE finventacanastacredito_id_canasta_seq OWNED BY finventacanastacredito.id_canasta;
 
 
 --
--- Name: formadepago; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: formadepago; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE formadepago (
@@ -382,10 +383,10 @@ CREATE TABLE formadepago (
 );
 
 
-ALTER TABLE public.formadepago OWNER TO postgres;
+ALTER TABLE formadepago OWNER TO db_admin;
 
 --
--- Name: formadepago_pkformapago_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: formadepago_pkformapago_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE formadepago_pkformapago_seq
@@ -396,17 +397,17 @@ CREATE SEQUENCE formadepago_pkformapago_seq
     CACHE 1;
 
 
-ALTER TABLE public.formadepago_pkformapago_seq OWNER TO postgres;
+ALTER TABLE formadepago_pkformapago_seq OWNER TO db_admin;
 
 --
--- Name: formadepago_pkformapago_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: formadepago_pkformapago_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE formadepago_pkformapago_seq OWNED BY formadepago.pkformapago;
 
 
 --
--- Name: historicoformapago; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: historicoformapago; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE historicoformapago (
@@ -420,10 +421,10 @@ CREATE TABLE historicoformapago (
 );
 
 
-ALTER TABLE public.historicoformapago OWNER TO postgres;
+ALTER TABLE historicoformapago OWNER TO db_admin;
 
 --
--- Name: historicoformapago_pkidformapago_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: historicoformapago_pkidformapago_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE historicoformapago_pkidformapago_seq
@@ -434,17 +435,17 @@ CREATE SEQUENCE historicoformapago_pkidformapago_seq
     CACHE 1;
 
 
-ALTER TABLE public.historicoformapago_pkidformapago_seq OWNER TO postgres;
+ALTER TABLE historicoformapago_pkidformapago_seq OWNER TO db_admin;
 
 --
--- Name: historicoformapago_pkidformapago_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: historicoformapago_pkidformapago_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE historicoformapago_pkidformapago_seq OWNED BY historicoformapago.pkidformapago;
 
 
 --
--- Name: historicoventacanasta; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: historicoventacanasta; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE historicoventacanasta (
@@ -454,10 +455,10 @@ CREATE TABLE historicoventacanasta (
 );
 
 
-ALTER TABLE public.historicoventacanasta OWNER TO postgres;
+ALTER TABLE historicoventacanasta OWNER TO db_admin;
 
 --
--- Name: historicoventacanasta_idventacanasta_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: historicoventacanasta_idventacanasta_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE historicoventacanasta_idventacanasta_seq
@@ -468,17 +469,17 @@ CREATE SEQUENCE historicoventacanasta_idventacanasta_seq
     CACHE 1;
 
 
-ALTER TABLE public.historicoventacanasta_idventacanasta_seq OWNER TO postgres;
+ALTER TABLE historicoventacanasta_idventacanasta_seq OWNER TO db_admin;
 
 --
--- Name: historicoventacanasta_idventacanasta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: historicoventacanasta_idventacanasta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE historicoventacanasta_idventacanasta_seq OWNED BY historicoventacanasta.idventacanasta;
 
 
 --
--- Name: logos; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: logos; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE logos (
@@ -489,10 +490,10 @@ CREATE TABLE logos (
 );
 
 
-ALTER TABLE public.logos OWNER TO postgres;
+ALTER TABLE logos OWNER TO db_admin;
 
 --
--- Name: mantenimiento; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: mantenimiento; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE mantenimiento (
@@ -502,10 +503,10 @@ CREATE TABLE mantenimiento (
 );
 
 
-ALTER TABLE public.mantenimiento OWNER TO postgres;
+ALTER TABLE mantenimiento OWNER TO db_admin;
 
 --
--- Name: mapeodispensador; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: mapeodispensador; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE mapeodispensador (
@@ -522,10 +523,10 @@ CREATE TABLE mapeodispensador (
 );
 
 
-ALTER TABLE public.mapeodispensador OWNER TO postgres;
+ALTER TABLE mapeodispensador OWNER TO db_admin;
 
 --
--- Name: mapeodispensador_pk_idposicion_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: mapeodispensador_pk_idposicion_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE mapeodispensador_pk_idposicion_seq
@@ -536,17 +537,17 @@ CREATE SEQUENCE mapeodispensador_pk_idposicion_seq
     CACHE 1;
 
 
-ALTER TABLE public.mapeodispensador_pk_idposicion_seq OWNER TO postgres;
+ALTER TABLE mapeodispensador_pk_idposicion_seq OWNER TO db_admin;
 
 --
--- Name: mapeodispensador_pk_idposicion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: mapeodispensador_pk_idposicion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE mapeodispensador_pk_idposicion_seq OWNED BY mapeodispensador.pk_idposicion;
 
 
 --
--- Name: mensajes; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: mensajes; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE mensajes (
@@ -556,10 +557,10 @@ CREATE TABLE mensajes (
 );
 
 
-ALTER TABLE public.mensajes OWNER TO postgres;
+ALTER TABLE mensajes OWNER TO db_admin;
 
 --
--- Name: moneda; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: moneda; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE moneda (
@@ -570,10 +571,10 @@ CREATE TABLE moneda (
 );
 
 
-ALTER TABLE public.moneda OWNER TO postgres;
+ALTER TABLE moneda OWNER TO db_admin;
 
 --
--- Name: moneda_pk_idmoneda_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: moneda_pk_idmoneda_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE moneda_pk_idmoneda_seq
@@ -584,17 +585,17 @@ CREATE SEQUENCE moneda_pk_idmoneda_seq
     CACHE 1;
 
 
-ALTER TABLE public.moneda_pk_idmoneda_seq OWNER TO postgres;
+ALTER TABLE moneda_pk_idmoneda_seq OWNER TO db_admin;
 
 --
--- Name: moneda_pk_idmoneda_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: moneda_pk_idmoneda_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE moneda_pk_idmoneda_seq OWNED BY moneda.pk_idmoneda;
 
 
 --
--- Name: precios; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: precios; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE precios (
@@ -608,10 +609,10 @@ CREATE TABLE precios (
 );
 
 
-ALTER TABLE public.precios OWNER TO postgres;
+ALTER TABLE precios OWNER TO db_admin;
 
 --
--- Name: preset; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: preset; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE preset (
@@ -633,10 +634,10 @@ CREATE TABLE preset (
 );
 
 
-ALTER TABLE public.preset OWNER TO postgres;
+ALTER TABLE preset OWNER TO db_admin;
 
 --
--- Name: producto; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: producto; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE producto (
@@ -645,10 +646,10 @@ CREATE TABLE producto (
 );
 
 
-ALTER TABLE public.producto OWNER TO postgres;
+ALTER TABLE producto OWNER TO db_admin;
 
 --
--- Name: producto_pk_idproducto_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: producto_pk_idproducto_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE producto_pk_idproducto_seq
@@ -659,17 +660,17 @@ CREATE SEQUENCE producto_pk_idproducto_seq
     CACHE 1;
 
 
-ALTER TABLE public.producto_pk_idproducto_seq OWNER TO postgres;
+ALTER TABLE producto_pk_idproducto_seq OWNER TO db_admin;
 
 --
--- Name: producto_pk_idproducto_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: producto_pk_idproducto_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE producto_pk_idproducto_seq OWNED BY producto.pk_idproducto;
 
 
 --
--- Name: solicitudes; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: solicitudes; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE solicitudes (
@@ -679,10 +680,10 @@ CREATE TABLE solicitudes (
 );
 
 
-ALTER TABLE public.solicitudes OWNER TO postgres;
+ALTER TABLE solicitudes OWNER TO db_admin;
 
 --
--- Name: tipotransaccion; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: tipotransaccion; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE tipotransaccion (
@@ -691,10 +692,10 @@ CREATE TABLE tipotransaccion (
 );
 
 
-ALTER TABLE public.tipotransaccion OWNER TO postgres;
+ALTER TABLE tipotransaccion OWNER TO db_admin;
 
 --
--- Name: tipotransaccion_pk_idtipotransaccion_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: tipotransaccion_pk_idtipotransaccion_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE tipotransaccion_pk_idtipotransaccion_seq
@@ -705,17 +706,17 @@ CREATE SEQUENCE tipotransaccion_pk_idtipotransaccion_seq
     CACHE 1;
 
 
-ALTER TABLE public.tipotransaccion_pk_idtipotransaccion_seq OWNER TO postgres;
+ALTER TABLE tipotransaccion_pk_idtipotransaccion_seq OWNER TO db_admin;
 
 --
--- Name: tipotransaccion_pk_idtipotransaccion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: tipotransaccion_pk_idtipotransaccion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE tipotransaccion_pk_idtipotransaccion_seq OWNED BY tipotransaccion.pk_idtipotransaccion;
 
 
 --
--- Name: totales; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: totales; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE totales (
@@ -731,10 +732,10 @@ CREATE TABLE totales (
 );
 
 
-ALTER TABLE public.totales OWNER TO postgres;
+ALTER TABLE totales OWNER TO db_admin;
 
 --
--- Name: totales_pk_id_posicion_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: totales_pk_id_posicion_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE totales_pk_id_posicion_seq
@@ -745,17 +746,17 @@ CREATE SEQUENCE totales_pk_id_posicion_seq
     CACHE 1;
 
 
-ALTER TABLE public.totales_pk_id_posicion_seq OWNER TO postgres;
+ALTER TABLE totales_pk_id_posicion_seq OWNER TO db_admin;
 
 --
--- Name: totales_pk_id_posicion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: totales_pk_id_posicion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE totales_pk_id_posicion_seq OWNED BY totales.pk_id_posicion;
 
 
 --
--- Name: turno; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: turno; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE turno (
@@ -768,10 +769,10 @@ CREATE TABLE turno (
 );
 
 
-ALTER TABLE public.turno OWNER TO postgres;
+ALTER TABLE turno OWNER TO db_admin;
 
 --
--- Name: venta; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: venta; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE venta (
@@ -800,10 +801,10 @@ CREATE TABLE venta (
 );
 
 
-ALTER TABLE public.venta OWNER TO postgres;
+ALTER TABLE venta OWNER TO db_admin;
 
 --
--- Name: venta_canasta; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: venta_canasta; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE venta_canasta (
@@ -821,10 +822,10 @@ CREATE TABLE venta_canasta (
 );
 
 
-ALTER TABLE public.venta_canasta OWNER TO postgres;
+ALTER TABLE venta_canasta OWNER TO db_admin;
 
 --
--- Name: venta_canasta_id_canasta_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: venta_canasta_id_canasta_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE venta_canasta_id_canasta_seq
@@ -835,17 +836,17 @@ CREATE SEQUENCE venta_canasta_id_canasta_seq
     CACHE 1;
 
 
-ALTER TABLE public.venta_canasta_id_canasta_seq OWNER TO postgres;
+ALTER TABLE venta_canasta_id_canasta_seq OWNER TO db_admin;
 
 --
--- Name: venta_canasta_id_canasta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: venta_canasta_id_canasta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE venta_canasta_id_canasta_seq OWNED BY venta_canasta.id_canasta;
 
 
 --
--- Name: venta_pk_idventa_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: venta_pk_idventa_seq; Type: SEQUENCE; Schema: public; Owner: db_admin
 --
 
 CREATE SEQUENCE venta_pk_idventa_seq
@@ -856,17 +857,17 @@ CREATE SEQUENCE venta_pk_idventa_seq
     CACHE 1;
 
 
-ALTER TABLE public.venta_pk_idventa_seq OWNER TO postgres;
+ALTER TABLE venta_pk_idventa_seq OWNER TO db_admin;
 
 --
--- Name: venta_pk_idventa_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: venta_pk_idventa_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: db_admin
 --
 
 ALTER SEQUENCE venta_pk_idventa_seq OWNED BY venta.pk_idventa;
 
 
 --
--- Name: verificapago; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: verificapago; Type: TABLE; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 CREATE TABLE verificapago (
@@ -877,122 +878,122 @@ CREATE TABLE verificapago (
 );
 
 
-ALTER TABLE public.verificapago OWNER TO postgres;
+ALTER TABLE verificapago OWNER TO db_admin;
 
 --
--- Name: pk_idconfiguracion; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_idconfiguracion; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY configuracion ALTER COLUMN pk_idconfiguracion SET DEFAULT nextval('configuracion_pk_idconfiguracion_seq'::regclass);
 
 
 --
--- Name: pk_idconfiguraciondispen; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_idconfiguraciondispen; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY configuraciondispensador ALTER COLUMN pk_idconfiguraciondispen SET DEFAULT nextval('configuraciondispensador_pk_idconfiguraciondispen_seq'::regclass);
 
 
 --
--- Name: pk_idcopiarecibo; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_idcopiarecibo; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY copiaderecibo ALTER COLUMN pk_idcopiarecibo SET DEFAULT nextval('copiaderecibo_pk_idcopiarecibo_seq'::regclass);
 
 
 --
--- Name: pk_id_estado; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_id_estado; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY estado ALTER COLUMN pk_id_estado SET DEFAULT nextval('estado_pk_id_estado_seq'::regclass);
 
 
 --
--- Name: id_canasta; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: id_canasta; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY finventacanasta ALTER COLUMN id_canasta SET DEFAULT nextval('finventacanasta_id_canasta_seq'::regclass);
 
 
 --
--- Name: id_canasta; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: id_canasta; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY finventacanastacredito ALTER COLUMN id_canasta SET DEFAULT nextval('finventacanastacredito_id_canasta_seq'::regclass);
 
 
 --
--- Name: pkformapago; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pkformapago; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY formadepago ALTER COLUMN pkformapago SET DEFAULT nextval('formadepago_pkformapago_seq'::regclass);
 
 
 --
--- Name: pkidformapago; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pkidformapago; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY historicoformapago ALTER COLUMN pkidformapago SET DEFAULT nextval('historicoformapago_pkidformapago_seq'::regclass);
 
 
 --
--- Name: idventacanasta; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: idventacanasta; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY historicoventacanasta ALTER COLUMN idventacanasta SET DEFAULT nextval('historicoventacanasta_idventacanasta_seq'::regclass);
 
 
 --
--- Name: pk_idposicion; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_idposicion; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY mapeodispensador ALTER COLUMN pk_idposicion SET DEFAULT nextval('mapeodispensador_pk_idposicion_seq'::regclass);
 
 
 --
--- Name: pk_idmoneda; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_idmoneda; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY moneda ALTER COLUMN pk_idmoneda SET DEFAULT nextval('moneda_pk_idmoneda_seq'::regclass);
 
 
 --
--- Name: pk_idproducto; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_idproducto; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY producto ALTER COLUMN pk_idproducto SET DEFAULT nextval('producto_pk_idproducto_seq'::regclass);
 
 
 --
--- Name: pk_idtipotransaccion; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_idtipotransaccion; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY tipotransaccion ALTER COLUMN pk_idtipotransaccion SET DEFAULT nextval('tipotransaccion_pk_idtipotransaccion_seq'::regclass);
 
 
 --
--- Name: pk_id_posicion; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_id_posicion; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY totales ALTER COLUMN pk_id_posicion SET DEFAULT nextval('totales_pk_id_posicion_seq'::regclass);
 
 
 --
--- Name: pk_idventa; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: pk_idventa; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY venta ALTER COLUMN pk_idventa SET DEFAULT nextval('venta_pk_idventa_seq'::regclass);
 
 
 --
--- Name: id_canasta; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: id_canasta; Type: DEFAULT; Schema: public; Owner: db_admin
 --
 
 ALTER TABLE ONLY venta_canasta ALTER COLUMN id_canasta SET DEFAULT nextval('venta_canasta_id_canasta_seq'::regclass);
 
 
 --
--- Data for Name: botones; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: botones; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY botones (id_boton, textoboton) FROM stdin;
@@ -1115,7 +1116,7 @@ COPY botones (id_boton, textoboton) FROM stdin;
 
 
 --
--- Data for Name: configuracion; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: configuracion; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY configuracion (pk_idconfiguracion, nombre, descripcion, valor) FROM stdin;
@@ -1123,21 +1124,18 @@ COPY configuracion (pk_idconfiguracion, nombre, descripcion, valor) FROM stdin;
 
 
 --
--- Name: configuracion_pk_idconfiguracion_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: configuracion_pk_idconfiguracion_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('configuracion_pk_idconfiguracion_seq', 1, false);
 
 
 --
--- Data for Name: configuraciondispensador; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: configuraciondispensador; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY configuraciondispensador (pk_idconfiguraciondispen, nombre, descripcion, valor, activa) FROM stdin;
 24	SimboloVolumen	Simb Volumen	G	t
-25	Preset1	Preset rapido	20000	t
-26	Preset2	Preset rapido	30000	t
-27	Preset3	Preset rapido	50000	t
 1	Encabezados	Encabezados	ESTACION DE SERVICIO	t
 2	Encabezados	Encabezados	SAN SEBASTIAN	t
 3	Encabezados	Encabezados	NIT. 900.072.847-4	t
@@ -1148,28 +1146,31 @@ COPY configuraciondispensador (pk_idconfiguraciondispen, nombre, descripcion, va
 8	Encabezados	Encabezados		t
 9	Pie	Pie	GRACIAS POR SU COMPRA	t
 10	Pie	Pie	VUELVA PRONTO	t
-11	Pie	Pie	£	t
+11	Pie	Pie	Â£	t
+25	Preset1	Preset rapido	10000	t
+26	Preset2	Preset rapido	20000	t
+27	Preset3	Preset rapido	50000	t
 \.
 
 
 --
--- Name: configuraciondispensador_pk_idconfiguraciondispen_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: configuraciondispensador_pk_idconfiguraciondispen_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('configuraciondispensador_pk_idconfiguraciondispen_seq', 1, false);
 
 
 --
--- Data for Name: consignaciones; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: consignaciones; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY consignaciones (pk_idconsignacion, valorconsignacion, mensajeconsignacion, idpos, confirmacion, recibe) FROM stdin;
-1	200000	Operacion Incorrecta	1	0	0
+1	78000	Operacion Incorrecta	1	0	1
 \.
 
 
 --
--- Data for Name: copiaderecibo; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: copiaderecibo; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY copiaderecibo (pk_idcopiarecibo, fk_idventa, numerocopiasrecibo) FROM stdin;
@@ -1177,14 +1178,14 @@ COPY copiaderecibo (pk_idcopiarecibo, fk_idventa, numerocopiasrecibo) FROM stdin
 
 
 --
--- Name: copiaderecibo_pk_idcopiarecibo_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: copiaderecibo_pk_idcopiarecibo_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('copiaderecibo_pk_idcopiarecibo_seq', 1, false);
 
 
 --
--- Data for Name: discriminapago; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: discriminapago; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY discriminapago (id_pos, numeroventa2, tipofp, ventaconsulta2, valordiscriminado, serialid) FROM stdin;
@@ -1192,23 +1193,23 @@ COPY discriminapago (id_pos, numeroventa2, tipofp, ventaconsulta2, valordiscrimi
 
 
 --
--- Data for Name: estado; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: estado; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY estado (pk_id_estado, pos1, pos2, led, fp1, fp2, nsxonline, bloqueocorte) FROM stdin;
-1	25	25	1	0	0	1	2
+1	22	22	1	0	0	1	2
 \.
 
 
 --
--- Name: estado_pk_id_estado_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: estado_pk_id_estado_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('estado_pk_id_estado_seq', 1, true);
 
 
 --
--- Data for Name: finventacanasta; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: finventacanasta; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY finventacanasta (id_canasta, idposicionc, validacioncanasta, lecturacanasta, tipoventacanasta, serial, cantidad, cantidadvendida, nombre, valor, valormux) FROM stdin;
@@ -1216,14 +1217,14 @@ COPY finventacanasta (id_canasta, idposicionc, validacioncanasta, lecturacanasta
 
 
 --
--- Name: finventacanasta_id_canasta_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: finventacanasta_id_canasta_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('finventacanasta_id_canasta_seq', 1, false);
 
 
 --
--- Data for Name: finventacanastacredito; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: finventacanastacredito; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY finventacanastacredito (id_canasta, idposicionc, validacioncanasta, lecturacanasta, tipoventacanasta, serial, cantidad, cantidadvendida, nombre, valor, tipoidentificacion, serialid, valormux) FROM stdin;
@@ -1231,47 +1232,66 @@ COPY finventacanastacredito (id_canasta, idposicionc, validacioncanasta, lectura
 
 
 --
--- Name: finventacanastacredito_id_canasta_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: finventacanastacredito_id_canasta_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('finventacanastacredito_id_canasta_seq', 1, false);
 
 
 --
--- Data for Name: formadepago; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: formadepago; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
-
-
---
--- Name: formadepago_pkformapago_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-
-
---
--- Data for Name: historicoformapago; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY historicoformapago (pkidformapago, id_pos, numeroventa, tipoformadepago, valordiscriminado, ventaconsulta, identificadorfp) FROM stdin;
-1	1	1	1	00000100	1	00000000000000000000
+COPY formadepago (pkformapago, id_pos, numeroventa, tipoformadepago, valorventa, valordiscriminado, identificadorfp, ventaconsulta) FROM stdin;
+1	1	1	01	4285	00004185	                   G	1
+2	1	1	01	4285	00004185	                   5	1
+3	1	1	01	4285	00004185	                   6	1
+4	1	1	01	4285	00004185	                   6	1
 \.
 
 
 --
--- Name: historicoformapago_pkidformapago_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: formadepago_pkformapago_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
-
-
---
--- Data for Name: historicoventacanasta; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
+SELECT pg_catalog.setval('formadepago_pkformapago_seq', 8, true);
 
 
 --
--- Data for Name: logos; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: historicoformapago; Type: TABLE DATA; Schema: public; Owner: db_admin
+--
+
+COPY historicoformapago (pkidformapago, id_pos, numeroventa, tipoformadepago, valordiscriminado, ventaconsulta, identificadorfp) FROM stdin;
+1	1	1	1	00000100	1	00000000000000000000
+2	1	4	2	00004263	1	                 T5H
+\.
+
+
+--
+-- Name: historicoformapago_pkidformapago_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
+--
+
+SELECT pg_catalog.setval('historicoformapago_pkidformapago_seq', 2, true);
+
+
+--
+-- Data for Name: historicoventacanasta; Type: TABLE DATA; Schema: public; Owner: db_admin
+--
+
+COPY historicoventacanasta (idventacanasta, idposicionc, dineroventa) FROM stdin;
+1	1	1500
+\.
+
+
+--
+-- Name: historicoventacanasta_idventacanasta_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
+--
+
+SELECT pg_catalog.setval('historicoventacanasta_idventacanasta_seq', 1, true);
+
+
+--
+-- Data for Name: logos; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY logos (id_logo, nombrelogo, trama, tramakios) FROM stdin;
@@ -1281,7 +1301,7 @@ COPY logos (id_logo, nombrelogo, trama, tramakios) FROM stdin;
 
 
 --
--- Data for Name: mantenimiento; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: mantenimiento; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY mantenimiento (idposicion, grado, autorizacion) FROM stdin;
@@ -1289,34 +1309,34 @@ COPY mantenimiento (idposicion, grado, autorizacion) FROM stdin;
 
 
 --
--- Data for Name: mapeodispensador; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: mapeodispensador; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY mapeodispensador (pk_idposicion, numeromangueras, formatodinero, formatovolumen, formatoprecio, ppux10, numerodigitos, isla, tipoimpresora, impresora) FROM stdin;
-1	3	0	3	0	0	7	1	2	1
-2	3	0	3	0	0	7	1	2	0
+2	1	0	3	0	0	6	1	2	0
+1	1	0	3	0	0	6	1	1	1
 \.
 
 
 --
--- Name: mapeodispensador_pk_idposicion_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: mapeodispensador_pk_idposicion_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('mapeodispensador_pk_idposicion_seq', 1, false);
 
 
 --
--- Data for Name: mensajes; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: mensajes; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY mensajes (mensaje, id_mensaje, lecturacalibracion) FROM stdin;
-El  vehiculo  placa         , ha sido   autorizado	1	0
+El  vehiculo  placa  MJV663 , ha sido   autorizado	1	0
 El  vehiculo  placa         , ha sido   autorizado	2	0
 \.
 
 
 --
--- Data for Name: moneda; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: moneda; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY moneda (pk_idmoneda, unidadmoneda, descripcion, activa) FROM stdin;
@@ -1332,34 +1352,34 @@ COPY moneda (pk_idmoneda, unidadmoneda, descripcion, activa) FROM stdin;
 
 
 --
--- Name: moneda_pk_idmoneda_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: moneda_pk_idmoneda_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('moneda_pk_idmoneda_seq', 8, true);
 
 
 --
--- Data for Name: precios; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: precios; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY precios (id_pos, nsx1, nsx2, nsx3, disp1, disp2, disp3) FROM stdin;
-1	10620	07720	07240	10620	07720	07240
-2	10620	07720	07240	10620	07720	07240
+1	07389	07720	07240	07389	07720	07240
+2	07389	07720	07240	07389	07720	07240
 \.
 
 
 --
--- Data for Name: preset; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: preset; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY preset (id_pos, tipo_p, valor_p, totalesdin, totalesvol, ppu, grado, kilometraje, serial, autorizado, tipo_venta, mensajep, validacioncredito, lecturacupocredito, calibracion) FROM stdin;
-2	F 	09999900	186368120	26251.46	007240	3	0	0	0	1	Felicidades, tiene cupo	0	1	1
-1	2 	00030000	1025737779	135859.13	007720	2	0	0	0	1	\N	0	1	1
+1	1 	00010000	3865378	715.2	007389	1	0	 	0990000	1	\N	0	0	1
+2	F 	09999900	186368120	26251.46	007240	3	0	0	0	1	Felicidades, tiene cupo	0	0	1
 \.
 
 
 --
--- Data for Name: producto; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: producto; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY producto (pk_idproducto, nombre) FROM stdin;
@@ -1368,14 +1388,14 @@ COPY producto (pk_idproducto, nombre) FROM stdin;
 
 
 --
--- Name: producto_pk_idproducto_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: producto_pk_idproducto_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('producto_pk_idproducto_seq', 1, true);
 
 
 --
--- Data for Name: solicitudes; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: solicitudes; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY solicitudes (solicitabge2, tiposolicitud, confirmacion) FROM stdin;
@@ -1384,7 +1404,7 @@ COPY solicitudes (solicitabge2, tiposolicitud, confirmacion) FROM stdin;
 
 
 --
--- Data for Name: tipotransaccion; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tipotransaccion; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY tipotransaccion (pk_idtipotransaccion, nombretransaccion) FROM stdin;
@@ -1392,45 +1412,54 @@ COPY tipotransaccion (pk_idtipotransaccion, nombretransaccion) FROM stdin;
 
 
 --
--- Name: tipotransaccion_pk_idtipotransaccion_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: tipotransaccion_pk_idtipotransaccion_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('tipotransaccion_pk_idtipotransaccion_seq', 1, false);
 
 
 --
--- Data for Name: totales; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: totales; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY totales (pk_id_posicion, totalmanguera1, totalmanguera2, totalmanguera3, totalmanguera4, dineromanguera1, dineromanguera2, dineromanguera3, dineromanguera4) FROM stdin;
-1	12101.8099999999995	135853.950000000012	13868.5400000000009	0	125211037	1025697779	98576184	1025697779
-2	10121.1100000000006	143810.26999999999	26251.4599999999991	0	104647849	1085552579	186368120	1085552579
+1	716.210000000000036	0	0	0	3872893	0	0	0
+2	319.550000000000011	0	0	0	2411031	0	0	0
 \.
 
 
 --
--- Name: totales_pk_id_posicion_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: totales_pk_id_posicion_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('totales_pk_id_posicion_seq', 3, true);
 
 
 --
--- Data for Name: turno; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: turno; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY turno (usuario, turno, turnonsx, mensajeturno, habilitalecturaturno, passwd) FROM stdin;
-80184191	1	1	Apertura exitosa	1	0000
+123456	1	1	Apertura exitosa	1	1234
 \.
 
 
 --
--- Data for Name: venta; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: venta; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
+
+COPY venta (pk_idventa, fechainicial, fechafinal, cantidadtotal, valortotal, fk_idtipotransaccion, serialibutton, identificadorweb, volumeninicial, volumenfinal, placaefectivo, nombreefectivo, dineroinicial, dinerofinal, fk_idproducto, valorprogramado, ppu, idposicion, grado, tipovehiculo, tipopreset, kilometrajecliente) FROM stdin;
+1	2017-03-23 14:40:44.895126+00	2017-03-23 14:40:44.895126+00	0.495999999999999996	4285	\N	    610000003AE27C06	\N	711.07000000000005	711.559999999999945	          	0	3834242	3838527	\N	990000	8640	1	1	0	F 	0000000000
+2	2017-03-24 16:00:18.494557+00	2017-03-24 16:00:18.494557+00	1.63100000000000001	12051	\N	\N	\N	711.559999999999945	713.190000000000055	       123	0	3838527	3850578	\N	50000	7389	1	1	1	3 	0000000000
+3	2017-03-24 16:18:50.943489+00	2017-03-24 16:18:50.943489+00	0.97699999999999998	7219	\N	\N	\N	713.190000000000055	714.169999999999959	          	0	3850578	3857797	\N	30000	7389	1	1	1	2 	0000000000
+4	2017-03-24 16:20:59.048737+00	2017-03-24 16:20:59.048737+00	0.576999999999999957	4263	\N	\N	\N	714.169999999999959	714.75	        3T	0	3857797	3862060	\N	20000	7389	1	1	1	1 	0000000000
+5	2017-03-24 17:29:30.66109+00	2017-03-24 17:29:30.66109+00	0.44900000000000001	3318	\N	\N	\N	714.75	715.200000000000045	          	0	3862060	3865378	\N	999000	7389	1	1	1	F 	0000000000
+6	2017-03-24 17:31:02.316323+00	2017-03-24 17:31:02.316323+00	1.0169999999999999	7515	\N	    610000003AE27C06	\N	715.200000000000045	716.210000000000036	          	0	3865378	3872893	\N	10000	7389	1	1	1	1 	0000000123
+\.
 
 
 --
--- Data for Name: venta_canasta; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: venta_canasta; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY venta_canasta (id_canasta, idposicionc, validacioncanasta, lecturacanasta, tipoventacanasta, serial, cantidad, cantidadvendida, nombre, valor, valormux) FROM stdin;
@@ -1438,15 +1467,21 @@ COPY venta_canasta (id_canasta, idposicionc, validacioncanasta, lecturacanasta, 
 
 
 --
--- Name: venta_canasta_id_canasta_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: venta_canasta_id_canasta_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
 --
 
 SELECT pg_catalog.setval('venta_canasta_id_canasta_seq', 1, false);
 
 
+--
+-- Name: venta_pk_idventa_seq; Type: SEQUENCE SET; Schema: public; Owner: db_admin
+--
+
+SELECT pg_catalog.setval('venta_pk_idventa_seq', 6, true);
+
 
 --
--- Data for Name: verificapago; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: verificapago; Type: TABLE DATA; Schema: public; Owner: db_admin
 --
 
 COPY verificapago (id_pos, validacion, valorventa, activateclado) FROM stdin;
@@ -1455,7 +1490,7 @@ COPY verificapago (id_pos, validacion, valorventa, activateclado) FROM stdin;
 
 
 --
--- Name: botones_id_boton_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: botones_id_boton_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY botones
@@ -1463,7 +1498,7 @@ ALTER TABLE ONLY botones
 
 
 --
--- Name: configuracion_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: configuracion_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY configuracion
@@ -1471,7 +1506,7 @@ ALTER TABLE ONLY configuracion
 
 
 --
--- Name: configuraciondispensador_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: configuraciondispensador_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY configuraciondispensador
@@ -1479,7 +1514,7 @@ ALTER TABLE ONLY configuraciondispensador
 
 
 --
--- Name: consignaciones_pk_idconsignacion_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: consignaciones_pk_idconsignacion_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY consignaciones
@@ -1487,7 +1522,7 @@ ALTER TABLE ONLY consignaciones
 
 
 --
--- Name: copiaderecibo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: copiaderecibo_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY copiaderecibo
@@ -1495,7 +1530,7 @@ ALTER TABLE ONLY copiaderecibo
 
 
 --
--- Name: estado_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: estado_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY estado
@@ -1503,7 +1538,7 @@ ALTER TABLE ONLY estado
 
 
 --
--- Name: finventacanasta_id_canasta_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: finventacanasta_id_canasta_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY finventacanasta
@@ -1511,7 +1546,7 @@ ALTER TABLE ONLY finventacanasta
 
 
 --
--- Name: finventacanastacredito_id_canasta_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: finventacanastacredito_id_canasta_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY finventacanastacredito
@@ -1519,7 +1554,7 @@ ALTER TABLE ONLY finventacanastacredito
 
 
 --
--- Name: formadepago_pkformapago_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: formadepago_pkformapago_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY formadepago
@@ -1527,7 +1562,7 @@ ALTER TABLE ONLY formadepago
 
 
 --
--- Name: historicoformapago_pkidformapago_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: historicoformapago_pkidformapago_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY historicoformapago
@@ -1535,7 +1570,7 @@ ALTER TABLE ONLY historicoformapago
 
 
 --
--- Name: historicoventacanasta_idventacanasta_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: historicoventacanasta_idventacanasta_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY historicoventacanasta
@@ -1543,7 +1578,7 @@ ALTER TABLE ONLY historicoventacanasta
 
 
 --
--- Name: mapeodispensador_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: mapeodispensador_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY mapeodispensador
@@ -1551,7 +1586,7 @@ ALTER TABLE ONLY mapeodispensador
 
 
 --
--- Name: moneda_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: moneda_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY moneda
@@ -1559,7 +1594,7 @@ ALTER TABLE ONLY moneda
 
 
 --
--- Name: precios_id_pos_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: precios_id_pos_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY precios
@@ -1567,7 +1602,7 @@ ALTER TABLE ONLY precios
 
 
 --
--- Name: preset_id_pos_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: preset_id_pos_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY preset
@@ -1575,7 +1610,7 @@ ALTER TABLE ONLY preset
 
 
 --
--- Name: producto_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: producto_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY producto
@@ -1583,7 +1618,7 @@ ALTER TABLE ONLY producto
 
 
 --
--- Name: tipotransaccion_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: tipotransaccion_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY tipotransaccion
@@ -1591,7 +1626,7 @@ ALTER TABLE ONLY tipotransaccion
 
 
 --
--- Name: totales_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: totales_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY totales
@@ -1599,7 +1634,7 @@ ALTER TABLE ONLY totales
 
 
 --
--- Name: venta_canasta_id_canasta_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: venta_canasta_id_canasta_key; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY venta_canasta
@@ -1607,7 +1642,7 @@ ALTER TABLE ONLY venta_canasta
 
 
 --
--- Name: venta_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: venta_pkey; Type: CONSTRAINT; Schema: public; Owner: db_admin; Tablespace: 
 --
 
 ALTER TABLE ONLY venta
@@ -1615,14 +1650,14 @@ ALTER TABLE ONLY venta
 
 
 --
--- Name: limpiar_copia_recibo_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: limpiar_copia_recibo_trigger; Type: TRIGGER; Schema: public; Owner: db_admin
 --
 
 CREATE TRIGGER limpiar_copia_recibo_trigger BEFORE INSERT ON copiaderecibo FOR EACH STATEMENT EXECUTE PROCEDURE limpiar_copia_recibo();
 
 
 --
--- Name: limpiar_ventas_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+-- Name: limpiar_ventas_trigger; Type: TRIGGER; Schema: public; Owner: db_admin
 --
 
 CREATE TRIGGER limpiar_ventas_trigger BEFORE INSERT ON venta FOR EACH STATEMENT EXECUTE PROCEDURE limpiar_ventas();
@@ -1639,283 +1674,409 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
--- Name: botones; Type: ACL; Schema: public; Owner: postgres
+-- Name: botones; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE botones FROM PUBLIC;
-REVOKE ALL ON TABLE botones FROM postgres;
-GRANT ALL ON TABLE botones TO postgres;
+REVOKE ALL ON TABLE botones FROM db_admin;
 GRANT ALL ON TABLE botones TO db_admin;
+GRANT ALL ON TABLE botones TO postgres;
+GRANT ALL ON TABLE botones TO php_admin;
 
 
 --
--- Name: configuracion; Type: ACL; Schema: public; Owner: postgres
+-- Name: configuracion; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE configuracion FROM PUBLIC;
-REVOKE ALL ON TABLE configuracion FROM postgres;
-GRANT ALL ON TABLE configuracion TO postgres;
+REVOKE ALL ON TABLE configuracion FROM db_admin;
 GRANT ALL ON TABLE configuracion TO db_admin;
+GRANT ALL ON TABLE configuracion TO postgres;
+GRANT ALL ON TABLE configuracion TO php_admin;
 
 
 --
--- Name: configuracion_pk_idconfiguracion_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: configuracion_pk_idconfiguracion_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE configuracion_pk_idconfiguracion_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE configuracion_pk_idconfiguracion_seq FROM postgres;
-GRANT ALL ON SEQUENCE configuracion_pk_idconfiguracion_seq TO postgres;
+REVOKE ALL ON SEQUENCE configuracion_pk_idconfiguracion_seq FROM db_admin;
 GRANT ALL ON SEQUENCE configuracion_pk_idconfiguracion_seq TO db_admin;
+GRANT ALL ON SEQUENCE configuracion_pk_idconfiguracion_seq TO postgres;
 
 
 --
--- Name: configuraciondispensador; Type: ACL; Schema: public; Owner: postgres
+-- Name: configuraciondispensador; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE configuraciondispensador FROM PUBLIC;
-REVOKE ALL ON TABLE configuraciondispensador FROM postgres;
-GRANT ALL ON TABLE configuraciondispensador TO postgres;
+REVOKE ALL ON TABLE configuraciondispensador FROM db_admin;
 GRANT ALL ON TABLE configuraciondispensador TO db_admin;
+GRANT ALL ON TABLE configuraciondispensador TO postgres;
+GRANT ALL ON TABLE configuraciondispensador TO php_admin;
 
 
 --
--- Name: configuraciondispensador_pk_idconfiguraciondispen_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: configuraciondispensador_pk_idconfiguraciondispen_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE configuraciondispensador_pk_idconfiguraciondispen_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE configuraciondispensador_pk_idconfiguraciondispen_seq FROM postgres;
-GRANT ALL ON SEQUENCE configuraciondispensador_pk_idconfiguraciondispen_seq TO postgres;
+REVOKE ALL ON SEQUENCE configuraciondispensador_pk_idconfiguraciondispen_seq FROM db_admin;
 GRANT ALL ON SEQUENCE configuraciondispensador_pk_idconfiguraciondispen_seq TO db_admin;
+GRANT ALL ON SEQUENCE configuraciondispensador_pk_idconfiguraciondispen_seq TO postgres;
 
 
 --
--- Name: consignaciones; Type: ACL; Schema: public; Owner: postgres
+-- Name: consignaciones; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE consignaciones FROM PUBLIC;
-REVOKE ALL ON TABLE consignaciones FROM postgres;
-GRANT ALL ON TABLE consignaciones TO postgres;
+REVOKE ALL ON TABLE consignaciones FROM db_admin;
 GRANT ALL ON TABLE consignaciones TO db_admin;
+GRANT ALL ON TABLE consignaciones TO postgres;
 
 
 --
--- Name: copiaderecibo; Type: ACL; Schema: public; Owner: postgres
+-- Name: copiaderecibo; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE copiaderecibo FROM PUBLIC;
-REVOKE ALL ON TABLE copiaderecibo FROM postgres;
-GRANT ALL ON TABLE copiaderecibo TO postgres;
+REVOKE ALL ON TABLE copiaderecibo FROM db_admin;
 GRANT ALL ON TABLE copiaderecibo TO db_admin;
+GRANT ALL ON TABLE copiaderecibo TO postgres;
+GRANT ALL ON TABLE copiaderecibo TO php_admin;
 
 
 --
--- Name: copiaderecibo_pk_idcopiarecibo_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: copiaderecibo_pk_idcopiarecibo_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE copiaderecibo_pk_idcopiarecibo_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE copiaderecibo_pk_idcopiarecibo_seq FROM postgres;
-GRANT ALL ON SEQUENCE copiaderecibo_pk_idcopiarecibo_seq TO postgres;
+REVOKE ALL ON SEQUENCE copiaderecibo_pk_idcopiarecibo_seq FROM db_admin;
 GRANT ALL ON SEQUENCE copiaderecibo_pk_idcopiarecibo_seq TO db_admin;
+GRANT ALL ON SEQUENCE copiaderecibo_pk_idcopiarecibo_seq TO postgres;
 
 
 --
--- Name: estado; Type: ACL; Schema: public; Owner: postgres
+-- Name: discriminapago; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON TABLE discriminapago FROM PUBLIC;
+REVOKE ALL ON TABLE discriminapago FROM db_admin;
+GRANT ALL ON TABLE discriminapago TO db_admin;
+GRANT ALL ON TABLE discriminapago TO php_admin;
+
+
+--
+-- Name: estado; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE estado FROM PUBLIC;
-REVOKE ALL ON TABLE estado FROM postgres;
-GRANT ALL ON TABLE estado TO postgres;
+REVOKE ALL ON TABLE estado FROM db_admin;
 GRANT ALL ON TABLE estado TO db_admin;
+GRANT ALL ON TABLE estado TO postgres;
+GRANT ALL ON TABLE estado TO php_admin;
 
 
 --
--- Name: estado_pk_id_estado_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: estado_pk_id_estado_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE estado_pk_id_estado_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE estado_pk_id_estado_seq FROM postgres;
-GRANT ALL ON SEQUENCE estado_pk_id_estado_seq TO postgres;
+REVOKE ALL ON SEQUENCE estado_pk_id_estado_seq FROM db_admin;
 GRANT ALL ON SEQUENCE estado_pk_id_estado_seq TO db_admin;
+GRANT ALL ON SEQUENCE estado_pk_id_estado_seq TO postgres;
 
 
 --
--- Name: logos; Type: ACL; Schema: public; Owner: postgres
+-- Name: finventacanasta; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON TABLE finventacanasta FROM PUBLIC;
+REVOKE ALL ON TABLE finventacanasta FROM db_admin;
+GRANT ALL ON TABLE finventacanasta TO db_admin;
+GRANT ALL ON TABLE finventacanasta TO php_admin;
+
+
+--
+-- Name: finventacanastacredito; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON TABLE finventacanastacredito FROM PUBLIC;
+REVOKE ALL ON TABLE finventacanastacredito FROM db_admin;
+GRANT ALL ON TABLE finventacanastacredito TO db_admin;
+GRANT ALL ON TABLE finventacanastacredito TO php_admin;
+
+
+--
+-- Name: formadepago; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON TABLE formadepago FROM PUBLIC;
+REVOKE ALL ON TABLE formadepago FROM db_admin;
+GRANT ALL ON TABLE formadepago TO db_admin;
+GRANT ALL ON TABLE formadepago TO php_admin;
+
+
+--
+-- Name: historicoformapago; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON TABLE historicoformapago FROM PUBLIC;
+REVOKE ALL ON TABLE historicoformapago FROM db_admin;
+GRANT ALL ON TABLE historicoformapago TO db_admin;
+GRANT ALL ON TABLE historicoformapago TO php_admin;
+
+
+--
+-- Name: historicoformapago_pkidformapago_seq; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON SEQUENCE historicoformapago_pkidformapago_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE historicoformapago_pkidformapago_seq FROM db_admin;
+GRANT ALL ON SEQUENCE historicoformapago_pkidformapago_seq TO db_admin;
+GRANT ALL ON SEQUENCE historicoformapago_pkidformapago_seq TO php_admin;
+
+
+--
+-- Name: historicoventacanasta; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON TABLE historicoventacanasta FROM PUBLIC;
+REVOKE ALL ON TABLE historicoventacanasta FROM db_admin;
+GRANT ALL ON TABLE historicoventacanasta TO db_admin;
+GRANT ALL ON TABLE historicoventacanasta TO php_admin;
+
+
+--
+-- Name: logos; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE logos FROM PUBLIC;
-REVOKE ALL ON TABLE logos FROM postgres;
-GRANT ALL ON TABLE logos TO postgres;
+REVOKE ALL ON TABLE logos FROM db_admin;
 GRANT ALL ON TABLE logos TO db_admin;
+GRANT ALL ON TABLE logos TO postgres;
+GRANT ALL ON TABLE logos TO php_admin;
 
 
 --
--- Name: mapeodispensador; Type: ACL; Schema: public; Owner: postgres
+-- Name: mantenimiento; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON TABLE mantenimiento FROM PUBLIC;
+REVOKE ALL ON TABLE mantenimiento FROM db_admin;
+GRANT ALL ON TABLE mantenimiento TO db_admin;
+GRANT ALL ON TABLE mantenimiento TO php_admin;
+
+
+--
+-- Name: mapeodispensador; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE mapeodispensador FROM PUBLIC;
-REVOKE ALL ON TABLE mapeodispensador FROM postgres;
-GRANT ALL ON TABLE mapeodispensador TO postgres;
+REVOKE ALL ON TABLE mapeodispensador FROM db_admin;
 GRANT ALL ON TABLE mapeodispensador TO db_admin;
+GRANT ALL ON TABLE mapeodispensador TO postgres;
+GRANT ALL ON TABLE mapeodispensador TO php_admin;
 
 
 --
--- Name: mapeodispensador_pk_idposicion_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: mapeodispensador_pk_idposicion_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE mapeodispensador_pk_idposicion_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE mapeodispensador_pk_idposicion_seq FROM postgres;
-GRANT ALL ON SEQUENCE mapeodispensador_pk_idposicion_seq TO postgres;
+REVOKE ALL ON SEQUENCE mapeodispensador_pk_idposicion_seq FROM db_admin;
 GRANT ALL ON SEQUENCE mapeodispensador_pk_idposicion_seq TO db_admin;
+GRANT ALL ON SEQUENCE mapeodispensador_pk_idposicion_seq TO postgres;
 
 
 --
--- Name: mensajes; Type: ACL; Schema: public; Owner: postgres
+-- Name: mensajes; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE mensajes FROM PUBLIC;
-REVOKE ALL ON TABLE mensajes FROM postgres;
-GRANT ALL ON TABLE mensajes TO postgres;
+REVOKE ALL ON TABLE mensajes FROM db_admin;
 GRANT ALL ON TABLE mensajes TO db_admin;
+GRANT ALL ON TABLE mensajes TO postgres;
+GRANT ALL ON TABLE mensajes TO php_admin;
 
 
 --
--- Name: moneda; Type: ACL; Schema: public; Owner: postgres
+-- Name: moneda; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE moneda FROM PUBLIC;
-REVOKE ALL ON TABLE moneda FROM postgres;
-GRANT ALL ON TABLE moneda TO postgres;
+REVOKE ALL ON TABLE moneda FROM db_admin;
 GRANT ALL ON TABLE moneda TO db_admin;
+GRANT ALL ON TABLE moneda TO postgres;
+GRANT ALL ON TABLE moneda TO php_admin;
 
 
 --
--- Name: moneda_pk_idmoneda_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: moneda_pk_idmoneda_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE moneda_pk_idmoneda_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE moneda_pk_idmoneda_seq FROM postgres;
-GRANT ALL ON SEQUENCE moneda_pk_idmoneda_seq TO postgres;
+REVOKE ALL ON SEQUENCE moneda_pk_idmoneda_seq FROM db_admin;
 GRANT ALL ON SEQUENCE moneda_pk_idmoneda_seq TO db_admin;
+GRANT ALL ON SEQUENCE moneda_pk_idmoneda_seq TO postgres;
 
 
 --
--- Name: precios; Type: ACL; Schema: public; Owner: postgres
+-- Name: precios; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE precios FROM PUBLIC;
-REVOKE ALL ON TABLE precios FROM postgres;
-GRANT ALL ON TABLE precios TO postgres;
+REVOKE ALL ON TABLE precios FROM db_admin;
 GRANT ALL ON TABLE precios TO db_admin;
+GRANT ALL ON TABLE precios TO postgres;
+GRANT ALL ON TABLE precios TO php_admin;
 
 
 --
--- Name: preset; Type: ACL; Schema: public; Owner: postgres
+-- Name: preset; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE preset FROM PUBLIC;
-REVOKE ALL ON TABLE preset FROM postgres;
-GRANT ALL ON TABLE preset TO postgres;
+REVOKE ALL ON TABLE preset FROM db_admin;
 GRANT ALL ON TABLE preset TO db_admin;
+GRANT ALL ON TABLE preset TO postgres;
+GRANT ALL ON TABLE preset TO php_admin;
 
 
 --
--- Name: producto; Type: ACL; Schema: public; Owner: postgres
+-- Name: producto; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE producto FROM PUBLIC;
-REVOKE ALL ON TABLE producto FROM postgres;
-GRANT ALL ON TABLE producto TO postgres;
+REVOKE ALL ON TABLE producto FROM db_admin;
 GRANT ALL ON TABLE producto TO db_admin;
+GRANT ALL ON TABLE producto TO postgres;
+GRANT ALL ON TABLE producto TO php_admin;
 
 
 --
--- Name: producto_pk_idproducto_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: producto_pk_idproducto_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE producto_pk_idproducto_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE producto_pk_idproducto_seq FROM postgres;
-GRANT ALL ON SEQUENCE producto_pk_idproducto_seq TO postgres;
+REVOKE ALL ON SEQUENCE producto_pk_idproducto_seq FROM db_admin;
 GRANT ALL ON SEQUENCE producto_pk_idproducto_seq TO db_admin;
+GRANT ALL ON SEQUENCE producto_pk_idproducto_seq TO postgres;
 
 
 --
--- Name: solicitudes; Type: ACL; Schema: public; Owner: postgres
+-- Name: solicitudes; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE solicitudes FROM PUBLIC;
-REVOKE ALL ON TABLE solicitudes FROM postgres;
-GRANT ALL ON TABLE solicitudes TO postgres;
+REVOKE ALL ON TABLE solicitudes FROM db_admin;
 GRANT ALL ON TABLE solicitudes TO db_admin;
+GRANT ALL ON TABLE solicitudes TO postgres;
+GRANT ALL ON TABLE solicitudes TO php_admin;
 
 
 --
--- Name: tipotransaccion; Type: ACL; Schema: public; Owner: postgres
+-- Name: tipotransaccion; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE tipotransaccion FROM PUBLIC;
-REVOKE ALL ON TABLE tipotransaccion FROM postgres;
-GRANT ALL ON TABLE tipotransaccion TO postgres;
+REVOKE ALL ON TABLE tipotransaccion FROM db_admin;
 GRANT ALL ON TABLE tipotransaccion TO db_admin;
+GRANT ALL ON TABLE tipotransaccion TO postgres;
 
 
 --
--- Name: tipotransaccion_pk_idtipotransaccion_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: tipotransaccion_pk_idtipotransaccion_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE tipotransaccion_pk_idtipotransaccion_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE tipotransaccion_pk_idtipotransaccion_seq FROM postgres;
-GRANT ALL ON SEQUENCE tipotransaccion_pk_idtipotransaccion_seq TO postgres;
+REVOKE ALL ON SEQUENCE tipotransaccion_pk_idtipotransaccion_seq FROM db_admin;
 GRANT ALL ON SEQUENCE tipotransaccion_pk_idtipotransaccion_seq TO db_admin;
+GRANT ALL ON SEQUENCE tipotransaccion_pk_idtipotransaccion_seq TO postgres;
 
 
 --
--- Name: totales; Type: ACL; Schema: public; Owner: postgres
+-- Name: totales; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE totales FROM PUBLIC;
-REVOKE ALL ON TABLE totales FROM postgres;
-GRANT ALL ON TABLE totales TO postgres;
+REVOKE ALL ON TABLE totales FROM db_admin;
 GRANT ALL ON TABLE totales TO db_admin;
+GRANT ALL ON TABLE totales TO postgres;
+GRANT ALL ON TABLE totales TO php_admin;
 
 
 --
--- Name: totales_pk_id_posicion_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: totales_pk_id_posicion_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE totales_pk_id_posicion_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE totales_pk_id_posicion_seq FROM postgres;
-GRANT ALL ON SEQUENCE totales_pk_id_posicion_seq TO postgres;
+REVOKE ALL ON SEQUENCE totales_pk_id_posicion_seq FROM db_admin;
 GRANT ALL ON SEQUENCE totales_pk_id_posicion_seq TO db_admin;
+GRANT ALL ON SEQUENCE totales_pk_id_posicion_seq TO postgres;
 
 
 --
--- Name: turno; Type: ACL; Schema: public; Owner: postgres
+-- Name: turno; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE turno FROM PUBLIC;
-REVOKE ALL ON TABLE turno FROM postgres;
-GRANT ALL ON TABLE turno TO postgres;
+REVOKE ALL ON TABLE turno FROM db_admin;
 GRANT ALL ON TABLE turno TO db_admin;
+GRANT ALL ON TABLE turno TO postgres;
+GRANT ALL ON TABLE turno TO php_admin;
 
 
 --
--- Name: venta; Type: ACL; Schema: public; Owner: postgres
+-- Name: venta; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON TABLE venta FROM PUBLIC;
-REVOKE ALL ON TABLE venta FROM postgres;
-GRANT ALL ON TABLE venta TO postgres;
+REVOKE ALL ON TABLE venta FROM db_admin;
 GRANT ALL ON TABLE venta TO db_admin;
+GRANT ALL ON TABLE venta TO postgres;
+GRANT ALL ON TABLE venta TO php_admin;
 
 
 --
--- Name: venta_pk_idventa_seq; Type: ACL; Schema: public; Owner: postgres
+-- Name: venta_canasta; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON TABLE venta_canasta FROM PUBLIC;
+REVOKE ALL ON TABLE venta_canasta FROM db_admin;
+GRANT ALL ON TABLE venta_canasta TO db_admin;
+GRANT ALL ON TABLE venta_canasta TO php_admin;
+
+
+--
+-- Name: venta_canasta_id_canasta_seq; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON SEQUENCE venta_canasta_id_canasta_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE venta_canasta_id_canasta_seq FROM db_admin;
+GRANT ALL ON SEQUENCE venta_canasta_id_canasta_seq TO db_admin;
+GRANT ALL ON SEQUENCE venta_canasta_id_canasta_seq TO php_admin;
+
+
+--
+-- Name: venta_pk_idventa_seq; Type: ACL; Schema: public; Owner: db_admin
 --
 
 REVOKE ALL ON SEQUENCE venta_pk_idventa_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE venta_pk_idventa_seq FROM postgres;
-GRANT ALL ON SEQUENCE venta_pk_idventa_seq TO postgres;
+REVOKE ALL ON SEQUENCE venta_pk_idventa_seq FROM db_admin;
 GRANT ALL ON SEQUENCE venta_pk_idventa_seq TO db_admin;
+GRANT ALL ON SEQUENCE venta_pk_idventa_seq TO postgres;
+
+
+--
+-- Name: verificapago; Type: ACL; Schema: public; Owner: db_admin
+--
+
+REVOKE ALL ON TABLE verificapago FROM PUBLIC;
+REVOKE ALL ON TABLE verificapago FROM db_admin;
+GRANT ALL ON TABLE verificapago TO db_admin;
+GRANT ALL ON TABLE verificapago TO php_admin;
 
 
 --

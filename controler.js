@@ -1090,6 +1090,9 @@ function rx_data_mux(data){
             case 'e':                                                           //VALOR_DISCRIMINADO
                 //('___valordiscriminadoL1___');
                 frame_1.supplier_position=data[3];  
+                for(x=0;x<=19;x++){         
+                    frame_1.serial_id[x]='0';     
+                }
                 L1_request=data.charCodeAt(3);                  
                 for(x=0;x<=7;x++){        
                     frame_1.sales_number[x]=data.charCodeAt(x+6);     
@@ -1222,10 +1225,10 @@ function rx_data_mux(data){
                     for(x=0;x<=19;x++){          
                         frame_1.isleroid[x]=data.charCodeAt(x+160);     
                     } 
-                    /*(frame_1.supplier_position+"-"+frame_1.type_sale+"-"+frame_1.serialP1+"-"+frame_1.quantityP1+"-"+frame_1.total_valueP1
+                    console.log(frame_1.supplier_position+"-"+frame_1.type_sale+"-"+frame_1.serialP1+"-"+frame_1.quantityP1+"-"+frame_1.total_valueP1
                                 +"-"+frame_1.serialP2+"-"+frame_1.quantityP2+"-"+frame_1.total_valueP2+"-"+frame_1.serialP3+"-"+frame_1.quantityP3
                                 +"-"+frame_1.total_valueP3+"-"+frame_1.sellout_basket+"-"+frame_1.date_hour+"-"+frame_1.type_of_customer_identification
-                                +"-"+frame_1.customer_identification+"-"+frame_1.islero_typeid+"-"+frame_1.isleroid);*/
+                                +"-"+frame_1.customer_identification+"-"+frame_1.islero_typeid+"-"+frame_1.isleroid);
                     switch (frame_1.type_sale){
                         case '1':
                             muxWriteTablesL1(finventacanasta1L1);
@@ -2164,10 +2167,10 @@ function rx_data_mux(data){
                     for(x=0;x<=19;x++){       
                         frame_2.isleroid[x]=data.charCodeAt(x+next_position);     
                     } 
-                    /*(frame_2.supplier_position+"-"+frame_2.type_sale+"-"+frame_2.serialP1+"-"+frame_2.quantityP1+"-"+frame_2.total_valueP1
+                    console.log(frame_2.supplier_position+"-"+frame_2.type_sale+"-"+frame_2.serialP1+"-"+frame_2.quantityP1+"-"+frame_2.total_valueP1
                                 +"-"+frame_2.serialP2+"-"+frame_2.quantityP2+"-"+frame_2.total_valueP2+"-"+frame_2.serialP3+"-"+frame_2.quantityP3+"-"+frame_2.total_valueP3
                                 +"-"+frame_2.sellout_basket+"-"+frame_2.date_hour+"-"+frame_2.type_of_customer_identification+"-"+frame_2.customer_identification
-                                +"-"+frame_2.islero_typeid+"-"+frame_2.isleroid);*/
+                                +"-"+frame_2.islero_typeid+"-"+frame_2.isleroid);
                     switch (frame_2.type_sale){
                         case '1':
                             muxWriteTablesL2(finventacanasta1L2);
@@ -3927,9 +3930,7 @@ var muxWriteTablesL1 =function(WriteCase){
                     var valormux            = frame_1.total_valueP1;
                     var tipoidentificacion  = frame_1.type_of_customer_identification;
                     var serialid            = frame_1.serial_id;
-                    //("var uno"+tipoidentificacion);
-                    //("var dos"+serialid);
-                    client.query(sprintf("INSERT INTO finventacanastacredito (tipoventacanasta,cantidadvendida,valormux,idposicionc,id_canasta,serial,tipoidentificacion,serialid) VALUES ('%1$s','%2$s','%3$s','%4$s','%5$s','%6$s','%7$s','%8$s')",tipoventacanasta,cantidadvendida,valormux,1,1,serial,tipoidentificacion,serialid),function(err,result){                        
+                    client.query(sprintf("INSERT INTO finventacanastacredito (tipoventacanasta,cantidadvendida,valormux,idposicionc,id_canasta,serial,tipoidentificacion,serialid) VALUES (%1$s,'%2$s','%3$s',%4$s,%5$s,'%6$s','%7$s','%8$s')",tipoventacanasta,cantidadvendida,valormux,1,1,serial,tipoidentificacion,serialid),function(err,result){                        
                         done();
                         if(err){
                             return console.error('12Error de finventacanastacredito', err);
@@ -4304,7 +4305,7 @@ var muxWriteTablesL2 =function(WriteCase2){
                     var valormux            = frame_2.total_valueP1;
                     var tipoidentificacion  = frame_2.type_of_customer_identification;
                     var serialid            = frame_2.serial_id;                                
-                    client.query(sprintf("INSERT INTO finventacanastacredito (tipoventacanasta,cantidadvendida,valormux,idposicionc,id_canasta,serial,tipoidentificacion,serialid) VALUES ('%1$s','%2$s','%3$s','%4$s','%5$s','%6$s','%7$s','%8$s')",tipoventacanasta,cantidadvendida,valormux,2,1,serial,tipoidentificacion,serialid),function(err,result){                        
+                    client.query(sprintf("INSERT INTO finventacanastacredito (tipoventacanasta,cantidadvendida,valormux,idposicionc,id_canasta,serial,tipoidentificacion,serialid) VALUES (%1$s,'%2$s','%3$s',%4$s,%5$s,'%6$s','%7$s','%8$s')",tipoventacanasta,cantidadvendida,valormux,2,1,serial,tipoidentificacion,serialid),function(err,result){                        
                         done();
                         if(err){
                             return console.error('12Error de finventacanastacredito', err);
@@ -5230,7 +5231,7 @@ var readTables = function (error){
                         });
                     break;
                     case sellerData:
-                        client.query("SELECT usuario,passwd FROM turno);", function(err,result){
+                        client.query("SELECT usuario,passwd FROM turno;", function(err,result){
                         done();
                         if(err){
                             return console.error('18error de turno', err);
