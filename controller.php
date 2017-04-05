@@ -1,7 +1,7 @@
 <?php
 //======================================================================
 // 					PHP CONTROLLER, INSEPET 2016
-// 						Versión  28-03-2017
+// 						Versión  05-04-2017
 //======================================================================
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
@@ -10,8 +10,7 @@ $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'"
     or die('Can not connect: ' . \pg_last_error());
 $sql   = "TRUNCATE TABLE solicitudes"; 
 $res = pg_query($sql); 
-$query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
-$query  = "UPDATE preset SET serial = ' ';";
+$query   = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
  `stty -F $impresora 115200`; //velocidad de las impresoras y puertos de comunicación
@@ -46,6 +45,9 @@ $port = 1002;
 $recupera = 0;
 $recupera2 = 0;
 $soltotales = 0;
+$rbtGNE   .= "UPDATE preset SET serial = ' ';";
+$rbtGNE   .= "UPDATE estado SET nsxonline = 0;";
+$result = pg_query($rbtGNE);
  //Creación del socket
 if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0))){
     $errorcode = socket_last_error();
