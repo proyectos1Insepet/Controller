@@ -45,7 +45,9 @@ $port = 1002;
 $recupera = 0;
 $recupera2 = 0;
 $soltotales = 0;
-$rbtGNE   .= "UPDATE preset SET serial = ' ';";
+$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'") // conexión a base de datos
+or die('Can not connect: ' . \pg_last_error());
+$rbtGNE    = "UPDATE preset SET serial = ' ';";
 $rbtGNE   .= "UPDATE estado SET nsxonline = 0;";
 $result = pg_query($rbtGNE);
  //Creación del socket
@@ -80,8 +82,7 @@ if(!socket_listen ($sock , 10)){
 } 
 socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>30,"usec"=>0)); //Tiempo de desconexión por no entrada de datos
 socket_set_option($sock, SOL_SOCKET, SO_SNDTIMEO, array("sec"=>30,"usec"=>0)); //Tiempo de desconexión por no entrada de datos
-$dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'") // conexión a base de datos
-or die('Can not connect: ' . \pg_last_error());
+
 if ($consultacierrasocket == 0){
     $sql1    = "TRUNCATE TABLE solicitudes;";
     $res1    = pg_query($sql1); 

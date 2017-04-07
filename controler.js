@@ -1225,10 +1225,10 @@ function rx_data_mux(data){
                     for(x=0;x<=19;x++){          
                         frame_1.isleroid[x]=data.charCodeAt(x+160);     
                     } 
-                    console.log(frame_1.supplier_position+"-"+frame_1.type_sale+"-"+frame_1.serialP1+"-"+frame_1.quantityP1+"-"+frame_1.total_valueP1
+                    /*(frame_1.supplier_position+"-"+frame_1.type_sale+"-"+frame_1.serialP1+"-"+frame_1.quantityP1+"-"+frame_1.total_valueP1
                                 +"-"+frame_1.serialP2+"-"+frame_1.quantityP2+"-"+frame_1.total_valueP2+"-"+frame_1.serialP3+"-"+frame_1.quantityP3
                                 +"-"+frame_1.total_valueP3+"-"+frame_1.sellout_basket+"-"+frame_1.date_hour+"-"+frame_1.type_of_customer_identification
-                                +"-"+frame_1.customer_identification+"-"+frame_1.islero_typeid+"-"+frame_1.isleroid);
+                                +"-"+frame_1.customer_identification+"-"+frame_1.islero_typeid+"-"+frame_1.isleroid);*/
                     switch (frame_1.type_sale){
                         case '1':
                             muxWriteTablesL1(finventacanasta1L1);
@@ -2167,10 +2167,10 @@ function rx_data_mux(data){
                     for(x=0;x<=19;x++){       
                         frame_2.isleroid[x]=data.charCodeAt(x+next_position);     
                     } 
-                    console.log(frame_2.supplier_position+"-"+frame_2.type_sale+"-"+frame_2.serialP1+"-"+frame_2.quantityP1+"-"+frame_2.total_valueP1
+                    /*(frame_2.supplier_position+"-"+frame_2.type_sale+"-"+frame_2.serialP1+"-"+frame_2.quantityP1+"-"+frame_2.total_valueP1
                                 +"-"+frame_2.serialP2+"-"+frame_2.quantityP2+"-"+frame_2.total_valueP2+"-"+frame_2.serialP3+"-"+frame_2.quantityP3+"-"+frame_2.total_valueP3
                                 +"-"+frame_2.sellout_basket+"-"+frame_2.date_hour+"-"+frame_2.type_of_customer_identification+"-"+frame_2.customer_identification
-                                +"-"+frame_2.islero_typeid+"-"+frame_2.isleroid);
+                                +"-"+frame_2.islero_typeid+"-"+frame_2.isleroid);*/
                     switch (frame_2.type_sale){
                         case '1':
                             muxWriteTablesL2(finventacanasta1L2);
@@ -6581,7 +6581,7 @@ setInterval(count, 5000);
 setInterval(count2, 5000);   
 setInterval(stateMux,30000);
 
-//2017-03-13
+//2017-04-05
 
 
 

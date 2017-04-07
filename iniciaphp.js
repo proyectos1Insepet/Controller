@@ -1,7 +1,7 @@
 var exec = require('exec');
 
 
-exec('service servicio_controler start', function(err, out, code) {
+exec('/etc/init.d/servicio_controler start', function(err, out, code) {
   if (err instanceof Error)
     throw err;
   process.stderr.write(err);
