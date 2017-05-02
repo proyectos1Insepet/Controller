@@ -1,7 +1,7 @@
 <?php
 //======================================================================
 // 					PHP CONTROLLER, INSEPET 2016
-// 						Versión  28-03-2017
+// 						Versión  02-05-2017
 //======================================================================
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
@@ -628,9 +628,36 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        unset($valor);
 
                 if ($venta_cero ==1){ //Venta cero pos1
-                    $qgrado = "SELECT grado FROM preset WHERE id_pos = 1";
+                    $qgrado = "SELECT grado FROM preset WHERE id_pos = 1";										
                     $rgrado = pg_query($qgrado);
                     $rowgrado = pg_fetch_row($rgrado);
+					if($rowgrado[0]==1){
+						$totales  = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3];";                    
+						echo "Entra 1\n";
+					}
+					if($rowgrado[0]==2){
+						$totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3];";                    
+						echo "Entra 2\n";
+					}
+					if($rowgrado[0]==3){
+						$totales = "SELECT dineromanguera3,totalmanguera3 FROM totales WHERE pk_id_posicion = $array[3];";                    
+						echo "Entra 3\n";
+					}
+					if($rowgrado[0]==4){
+						$totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3];";                    
+						echo "Entra 4\n";
+					}
+					$restot     = pg_query($totales);
+					$rowtot     = pg_fetch_row($restot);
+					$revvol    = strrev(number_format((float)$rowtot[1], 2, '', ''));
+					$revdinero = strrev($rowtot[0]);					
+					
+					$stringvol = sprintf("%0-12s",$revvol);
+					$stringdin = sprintf("%0-12s",$revdinero);
+					
+					$arvol     = str_split($stringvol);
+					$ardinero  = str_split($stringdin);
+
                     $ar = array(78, 83, 88, 1,211,$rowgrado[0],68,0,0,0,0,0,0,0,    86,0,0,0,0,0,0,0,    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                     pg_free_result($rgrado);
                 }
@@ -638,6 +665,32 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     $qgrado = "SELECT grado FROM preset WHERE id_pos = 2";
                     $rgrado = pg_query($qgrado);
                     $rowgrado = pg_fetch_row($rgrado);
+					if($rowgrado[0]==1){
+						$totales  = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3];";                    
+						echo "Entra 1\n";
+					}
+					if($rowgrado[0]==2){
+						$totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3];";                    
+						echo "Entra 2\n";
+					}
+					if($rowgrado[0]==3){
+						$totales = "SELECT dineromanguera3,totalmanguera3 FROM totales WHERE pk_id_posicion = $array[3];";                    
+						echo "Entra 3\n";
+					}
+					if($rowgrado[0]==4){
+						$totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3];";                    
+						echo "Entra 4\n";
+					}
+					$restot     = pg_query($totales);
+					$rowtot     = pg_fetch_row($restot);
+					$revvol    = strrev(number_format((float)$rowtot[1], 2, '', ''));
+					$revdinero = strrev($rowtot[0]);					
+					
+					$stringvol = sprintf("%0-12s",$revvol);
+					$stringdin = sprintf("%0-12s",$revdinero);
+					
+					$arvol     = str_split($stringvol);
+					$ardinero  = str_split($stringdin);
                     $ar = array(78, 83, 88, 2,211,$grado,68,0,0,0,0,0,0,0,    86,0,0,0,0,0,0,0,    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                     pg_free_result($rgrado);
                 }
