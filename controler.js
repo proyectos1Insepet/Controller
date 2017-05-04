@@ -3766,15 +3766,56 @@ var muxWriteTablesL1 =function(WriteCase){
                         if(err){
                             return console.error('2Error de venta', err);
                         }else{
+							
+							if (grado == 1){
+								client.query(sprintf("UPDATE totales SET totalmanguera1 ='%1$s', dineromanguera1 ='%2$s' WHERE pk_id_posicion=1",volumenfinal,dinerofinal),function(err,result){
+									done();
+									if(err){
+										return console.error('2Error de venta', err);
+									}else{
+										
+									}
+								});
+							}
+							if (grado == 2){
+								client.query(sprintf("UPDATE totales SET totalmanguera2 ='%1$s', dineromanguera2 ='%2$s' WHERE pk_id_posicion=1",volumenfinal,dinerofinal),function(err,result){
+									done();
+									if(err){
+										return console.error('2Error de venta', err);
+									}else{
+										
+									}
+								});
+							}
+							if (grado == 3){
+								client.query(sprintf("UPDATE totales SET totalmanguera3 ='%1$s', dineromanguera3 ='%2$s' WHERE pk_id_posicion=1",volumenfinal,dinerofinal),function(err,result){
+									done();
+									if(err){
+										return console.error('2Error de venta', err);
+									}else{
+										
+									}
+								});
+							}
+							if (grado == 4){
+								client.query(sprintf("UPDATE totales SET totalmanguera4 ='%1$s', dineromanguera4 ='%2$s' WHERE pk_id_posicion=1",volumenfinal,dinerofinal),function(err,result){
+									done();
+									if(err){
+										return console.error('2Error de venta', err);
+									}else{
+										
+									}
+								});
+							}
+							client.query(sprintf("UPDATE estado SET pos1 = '%1$s' where pk_id_estado = 1 ",4),function(err,result){
+								done();
+								if(err){
+									return console.error('3Error de estado', err);
+								}else{
+								}
+							});
                         }
-                    });
-                    client.query(sprintf("UPDATE estado SET pos1 = '%1$s' where pk_id_estado = 1 ",4),function(err,result){
-                        done();
-                        if(err){
-                            return console.error('3Error de estado', err);
-                        }else{
-                        }
-                    });   
+                    });                       
                     contador=4;
                     enable_count=1;
                     count();                   
@@ -4146,15 +4187,58 @@ var muxWriteTablesL2 =function(WriteCase2){
                         if(err){
                             return console.error('2Error de venta', err);
                         }else{
+							
+							if (grado == 1){
+								client.query(sprintf("UPDATE totales SET totalmanguera1 ='%1$s', dineromanguera1 ='%2$s' WHERE pk_id_posicion=2",volumenfinal,dinerofinal),function(err,result){
+									done();
+									if(err){
+										return console.error('2Error de venta', err);
+									}else{
+										
+									}
+								});
+							}
+							if (grado == 2){
+								client.query(sprintf("UPDATE totales SET totalmanguera2 ='%1$s', dineromanguera2 ='%2$s' WHERE pk_id_posicion=2",volumenfinal,dinerofinal),function(err,result){
+									done();
+									if(err){
+										return console.error('2Error de venta', err);
+									}else{
+										
+									}
+								});
+							}
+							if (grado == 3){
+								client.query(sprintf("UPDATE totales SET totalmanguera3 ='%1$s', dineromanguera3 ='%2$s' WHERE pk_id_posicion=2",volumenfinal,dinerofinal),function(err,result){
+									done();
+									if(err){
+										return console.error('2Error de venta', err);
+									}else{
+										
+									}
+								});
+							}
+							if (grado == 4){
+								client.query(sprintf("UPDATE totales SET totalmanguera4 ='%1$s', dineromanguera4 ='%2$s' WHERE pk_id_posicion=2",volumenfinal,dinerofinal),function(err,result){
+									done();
+									if(err){
+										return console.error('2Error de venta', err);
+									}else{
+										
+									}
+								});
+							}
+							client.query(sprintf("UPDATE estado SET pos2 = '%1$s' where pk_id_estado = 2 ",4),function(err,result){
+								done();
+								if(err){
+									return console.error('3Error de estado', err);
+								}else{
+								}
+							});
+							
                         }
                     });
-                    client.query(sprintf("UPDATE estado SET pos2 = '%1$s' where pk_id_estado = 1 ",4),function(err,result){
-                        done();
-                        if(err){
-                            return console.error('3Error de estado', err);
-                        }else{
-                        }
-                    });   
+                       
                     contador2=4;
                     enable_count2=1;
                     count2();                      
@@ -6581,7 +6665,7 @@ setInterval(count, 5000);
 setInterval(count2, 5000);   
 setInterval(stateMux,30000);
 
-//2017-03-13
+//2017-V-04
 
 
 
