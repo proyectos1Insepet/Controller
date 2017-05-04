@@ -8,9 +8,7 @@ set_time_limit (0);
 $consultacierrasocket=0;
 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
     or die('Can not connect: ' . \pg_last_error());
-$sql   = "TRUNCATE TABLE solicitudes"; 
-$res = pg_query($sql); 
-$query  = "INSERT INTO solicitudes (solicitabge2) VALUES(0);";
+$query  = "UPDATE solicitudes SET solicitabge2=0;";
 $query  = "UPDATE preset SET serial = ' ';";
 $result = pg_query($query); 
 $impresora ='/dev/ttyO1';
@@ -81,9 +79,9 @@ socket_set_option($sock, SOL_SOCKET, SO_SNDTIMEO, array("sec"=>30,"usec"=>0)); /
 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'") // conexión a base de datos
 or die('Can not connect: ' . \pg_last_error());
 if ($consultacierrasocket == 0){
-    $sql1    = "TRUNCATE TABLE solicitudes;";
-    $res1    = pg_query($sql1); 
-    $query   = "INSERT INTO solicitudes (solicitabge2,tiposolicitud,confirmacion) VALUES(0,'T',1)"; 
+    //$sql1    = "TRUNCATE TABLE solicitudes;";
+    //$res1    = pg_query($sql1); 
+    $query   = "UPDATE solicitudes SET (solicitabge2,tiposolicitud,confirmacion) = (0,'T',1)"; 
     $result  = pg_query($query); 
     pg_free_result($result);
     $consultacierrasocket =1;
