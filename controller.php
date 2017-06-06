@@ -1,7 +1,7 @@
 <?php
 //======================================================================
 // 					PHP CONTROLLER, INSEPET 2016
-// 						Versión  02-05-2017
+// 						Versión  06-06-2017
 //======================================================================
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
@@ -547,8 +547,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 	 	        $dia    = date("d");
 		        $mes    = date("m");
 		        $year   = date("y");
-		        echo "C: $credito - V: $venta_cero - POS: $array[3]\n";
-		        echo "C2: $credito2 - V2: $venta_cero2 - POS: $array[3]\n";
 		        if($credito == 1){
 		            if($venta_cero == 0 && $array[3] ==1){
     		            $actualiza   = "UPDATE venta SET  serialibutton = '$serialAlm' where pk_idventa  = (select max(pk_idventa) from venta where idposicion = 1)";
@@ -573,7 +571,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        $grado       = $row[0];
 		        $dinero      = $row[1];
 		        $num2dec     = $row[2];
-		        $volumen     = number_format((float)$num2dec, 3, '', '');
+		        $volumen     = number_format((float)$num2dec, 3, '', '');				
 		        $volfinal    = $row[3];
 		        $dinfinal    = $row[4];
 		        $ppu         = $row[5];   
@@ -582,8 +580,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        $kilometraje = $row[8];
 		        $idventa     = $row[9];
 		        $clientefec  = $row[10];
-		
-		        $datvol      = number_format((float)$volfinal, 2, '', '');
+				$datvol      = number_format((float)$volfinal, 2, '', '');
+		        
 		 
 		        $revimp     = strrev($dinero);
 		        $revcant    = strrev($volumen);
@@ -692,80 +690,14 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     $ar = array(78, 83, 88, 2,211,$grado,68,0,0,0,0,0,0,0,    86,0,0,0,0,0,0,0,    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                     pg_free_result($rgrado);
                 }
-                if($venta_cero == 0){ // venta normal
+                if($venta_cero == 0 && $array[3] ==1){ // venta normal
+                    $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
+                }
+				if($venta_cero2 == 0 && $array[3] ==2){ // venta normal
                     $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                 }
                 echo "Venta cero:$venta_cero, $venta_cero2\n";
-                /*if ($recupera == 1){ //para recuperacion 1-1
-                    $query = "SELECT pk_idventa,volumeninicial, volumenfinal, dineroinicial,dinerofinal, ppu,valorprogramado,kilometrajecliente,grado,nombreefectivo,placaefectivo,tipovehiculo,cantidadtotal from venta where pk_idventa = ($idnsx+1);"; 
-                    $result      = pg_query($query); 
-                    $row         = pg_fetch_row($result);
-                    $num2dec     = $row[12];
-                    $volumen     = number_format((float)$num2dec, 3, '', '');
-                    $dinero      = $row[4]-$row[3];
-                    $idventa     = $row[0];
-                    $ppu         = $row[5];   
-                    $preset      = $row[6];
-                    $kilometraje = $row[7];
-                    $grado       = $row[8]; 
-                    $placa       = $row[10];
-                    $revimp      = strrev($dinero);
-                    $revcant    = strrev($volumen);
-                    $revidventa = strrev($idventa);
-                    $revppu     = strrev($ppu);
-                    $revpreset  = strrev($preset);   
-                    $revkm      = strrev($kilometraje);
-                    $revdinero  = strrev($row[4]);
-                    $revvol     = strrev(number_format((float)$row[2], 2, '', ''));
-                    $revplaca   = strrev($placa);
-                
-                    $stringimp     = sprintf("%0-7s",$revimp);
-                    $stringcant    = sprintf("%0-7s",$revcant);
-                    $stringdin     = sprintf("%0-12s",$revdinero);
-                    $stringvol     = sprintf("%0-12s",$revvol);
-                    $stringidventa = sprintf("%0-9s",$revidventa);
-                    $stringppu     = sprintf("%0-5s",$revppu);
-                    $strpreset     = sprintf("%0-6s",$revpreset);
-                    $strkm         = sprintf("%0-10s",$revkm);
-                    $strplaca      = sprintf("%0-7s",$revplaca);
-                    echo "Importe: $stringimp; Cantidad:$stringcant; Venta: $stringidventa; PPU: $stringppu; Preset: $strpreset; Placa: $strplaca; Tipo Venta: $row[11]\n";
-                
-                    $arimporte   = str_split($stringimp);
-                    $arvolumen   = str_split($stringcant);
-                    $ardinero    = str_split($stringdin);
-                    $arvol       = str_split($stringvol);
-                    $aridventa   = str_split($stringidventa);
-                    $arppu       = str_split($stringppu);
-                    $arpreset    = str_split($strpreset); 
-                    $arkm        = str_split($strkm);
-                    $arplaca     = str_split($strplaca);
-                    foreach ($arplaca as &$valor) {
-                        $valor = ord($valor);
-                    }
-                    unset($valor);
-                    $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);
-                    $largo = count($ar);                                                
-                    $ar[$largo] = verificar_check($ar, ($largo+1));
-                    $dato_a3 = implode("-",$ar);
-                    foreach ($ar as &$valor) {
-                        $valor = chr($valor);
-                    }
-                    unset($valor);                                          
-                    $envio = implode("", $ar);
-                    $length = strlen($envio);
-                    socket_write($client, $envio,$length);
-                    if ($array[3] == 1){
-                        $query     = "UPDATE estado SET pos1 = 22";
-                        $resultado = pg_query($query);
-                        $recupera  = 0;
-                    }
-                    if ($array[3] ==2){
-                        $query     = "UPDATE estado SET pos2 = 22";
-                        $resultado = pg_query($query);
-                        $recupera  = 0;
-                    }
-                }*/
-                
+               
 		        $largo = count($ar);                                                
 		        $ar[$largo] = verificar_check($ar, ($largo+1));
 		        $dato_a3 = implode("-",$ar);
