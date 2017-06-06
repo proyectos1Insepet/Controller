@@ -119,7 +119,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
         $led     = $row[2];
         $fp1     = $row[3];
         $fp2     = $row[4];
-        
+        echo "Recibe: $recibe";
+        echo " Recibe2: $recibe2\n";
         if($ciclo == 50){  //ciclo para comprobar actividad Beagle-MUX
             $ciclo = 0;
             if($led ==0){
@@ -195,6 +196,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             }
             if($recibe == 4){ //fin venta
                 $estado = 4;
+                $venta_ceroef  = 0;
             }
             if($recibe == 5){ //preset con identificador
                 $estado = 5;
@@ -213,6 +215,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             }
             if($recibe == 10){ //Fin venta cero
                 $estado = 4;
+                $venta_ceroef = 1;
             }
             if($recibe == 12){//Configuraciones iniciales
                 $estado = 12;
@@ -319,6 +322,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             }
             if($recibe2 == 4){
                 $estado2 = 4;
+		        $venta_cero2ef = 0;
             }
             if($recibe2 == 5){
                 $estado2 = 5;
@@ -337,6 +341,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             }
             if($recibe2 == 10){
                 $estado2 = 4;
+                $venta_cero2ef = 1;
             }
             if($recibe2 == 12){
                 $estado2 = 12;
@@ -471,7 +476,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 echo "Tipo Preset:$row[1]; Preset: $tipo_preset";
                 if($row[0]==1){
                         $totales = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3]";
-                        echo "Entra 1\n";
+                        echo "Entra 1 preset\n";
                 }
                 if($row[0]==2){
                     $totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3]";
@@ -623,13 +628,13 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        }
 		        unset($valor);
 
-                if ($venta_cero ==1){ //Venta cero pos1
+                if (($venta_cero == 1 || $venta_ceroef == 1)){ //Venta cero pos1
                     $qgrado = "SELECT grado FROM preset WHERE id_pos = 1";										
                     $rgrado = pg_query($qgrado);
                     $rowgrado = pg_fetch_row($rgrado);
 					if($rowgrado[0]==1){
 						$totales  = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3];";                    
-						echo "Entra 1\n";
+						echo "Entra 1 fin venta\n";
 					}
 					if($rowgrado[0]==2){
 						$totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3];";                    
@@ -657,13 +662,13 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     $ar = array(78, 83, 88, 1,211,$rowgrado[0],68,0,0,0,0,0,0,0,    86,0,0,0,0,0,0,0,    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                     pg_free_result($rgrado);
                 }
-                if ($venta_cero2 ==1){ //venta cero pos2
+                if (($venta_cero2 == 1 || $venta_cero2ef == 1)){ //venta cero pos2
                     $qgrado = "SELECT grado FROM preset WHERE id_pos = 2";
                     $rgrado = pg_query($qgrado);
                     $rowgrado = pg_fetch_row($rgrado);
 					if($rowgrado[0]==1){
 						$totales  = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3];";                    
-						echo "Entra 1\n";
+						echo "Entra 1 fin venta L2\n";
 					}
 					if($rowgrado[0]==2){
 						$totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3];";                    
@@ -690,18 +695,18 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     $ar = array(78, 83, 88, 2,211,$grado,68,0,0,0,0,0,0,0,    86,0,0,0,0,0,0,0,    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                     pg_free_result($rgrado);
                 }
-                if($venta_cero == 0 && $array[3] ==1){ // venta normal
+                if(($venta_cero == 0 && $venta_ceroef == 0) && $array[3] ==1){ // venta normal
                     $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                 }
-				if($venta_cero2 == 0 && $array[3] ==2){ // venta normal
+				if(($venta_cero2 == 0 && $venta_cero2ef == 0) && $array[3] ==2){ // venta normal
                     $ar = array(78, 83, 88, $array[3],211,$grado,68,$arimporte[0],$arimporte[1],$arimporte[2],$arimporte[3],$arimporte[4],$arimporte[5],$arimporte[6],    86,$arvolumen[0],$arvolumen[1],$arvolumen[2],$arvolumen[3],$arvolumen[4],$arvolumen[5],$arvolumen[6],    84,$ardinero[0],$ardinero[1],$ardinero[2],$ardinero[3],$ardinero[4],$ardinero[5],$ardinero[6],$ardinero[7],$ardinero[8],$ardinero[9],$ardinero[10],$ardinero[11],$arvol[0],$arvol[1],$arvol[2],$arvol[3],$arvol[4],$arvol[5],$arvol[6],$arvol[7],$arvol[8],$arvol[9],$arvol[10],$arvol[11],    80,$arppu[0],$arppu[1],$arppu[2],$arppu[3],$arppu[4],    72,$minuto,$hora,   70,$dia,$mes,$year,      80,$arplaca[0],$arplaca[1],$arplaca[2],$arplaca[3],$arplaca[4],$arplaca[5],$arplaca[6],  73,$tipo_veh,    75,$arkm[0],$arkm[1],$arkm[2],$arkm[3],$arkm[4],$arkm[5],$arkm[6],$arkm[7],$arkm[8],$arkm[9],   $aridventa[0],$aridventa[1],$aridventa[2],$aridventa[3],$aridventa[4],$aridventa[5],$aridventa[6],$aridventa[7],$aridventa[8],$arnit[0],$arnit[1],$arnit[2],$arnit[3],$arnit[4],$arnit[5],$arnit[6],$arnit[7],$arnit[8],$arnit[9]);  //Borrar $aridventa para quitar consecutivo de venta
                 }
-                echo "Venta cero:$venta_cero, $venta_cero2\n";
+                echo "Venta cero:$venta_cero, $venta_ceroef, $venta_cero2, $venta_cero2ef \n";
                
 		        $largo = count($ar);                                                
 		        $ar[$largo] = verificar_check($ar, ($largo+1));
 		        $dato_a3 = implode("-",$ar);
-		        //echo "Dato Fin venta: $dato_a3";
+		        echo "Dato Fin venta: $dato_a3";
 		        foreach ($ar as &$valor) {
 			        $valor = chr($valor);
 		        }
@@ -717,6 +722,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        pg_close($dbconn); // Cerrando la conexión  
 		        $venta_cero  = 0;
 		        $venta_cero2 = 0;
+		        $venta_ceroef  = 0;
+		        $venta_cero2ef = 0;
 		        if($array[3] == 1){
                     $serialAlm = ' ';    
                 }
@@ -991,7 +998,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 echo "Tipo Preset:$row[1]";
                 if($row[0]==1){
                     $totales  = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3];";                    
-                    echo "Entra 1\n";
+                    echo "Entra 1 Credito\n";
                 }
                 if($row[0]==2){
                     $totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3];";                    
@@ -2042,7 +2049,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 }
                 if($row[0]==1){
                         $totales = "SELECT dineromanguera1,totalmanguera1 FROM totales WHERE pk_id_posicion = $array[3]";
-                        echo "Entra 1\n";
+                        echo "Entra 1 calibracion\n";
                 }
                 if($row[0]==2){
                     $totales = "SELECT dineromanguera2,totalmanguera2 FROM totales WHERE pk_id_posicion = $array[3]";

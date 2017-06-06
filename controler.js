@@ -4228,7 +4228,7 @@ var muxWriteTablesL2 =function(WriteCase2){
 									}
 								});
 							}
-							client.query(sprintf("UPDATE estado SET pos2 = '%1$s' where pk_id_estado = 2 ",4),function(err,result){
+							client.query(sprintf("UPDATE estado SET pos2 = '%1$s' where pk_id_estado = 1 ",4),function(err,result){
 								done();
 								if(err){
 									return console.error('3Error de estado', err);
