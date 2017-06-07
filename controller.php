@@ -143,8 +143,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 if($recibe == 0 || $recibe == 31){
                     $estado = 255;  //inactivo
                 }
-            if($recibe == 22){ //espera
-                $venta_ceroef  = 1;
+            if($recibe == 22){ //espera                
                 if($venta_cero ==1){
                     $estado = 4;
                     $pos1 = 0;
@@ -185,6 +184,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $listo = 1;
             }
             if($recibe == 25){ //surtiendo
+				$venta_ceroef  = 1;
                 if(!$listo || $credito ==1){
                     $estado = 3;    
                     $estado_espera = 0;
@@ -270,8 +270,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             if($recibe2 == 0 || $recibe2 == 31){
                 $estado2 = 255;
             }
-            if($recibe2 == 22){
-                $venta_cero2ef = 1;
+            if($recibe2 == 22){                
                 if ($venta_cero2 == 1){
                     $estado2 = 4;
                     $pos2 = 0;
@@ -312,6 +311,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $listo2 = 1;
             }
             if($recibe2 == 25){
+				$venta_cero2ef = 1;
                 if(!$listo2 || $credito2 ==1){
                     $estado2 = 3;    
                     $estado_espera2 = 0;
