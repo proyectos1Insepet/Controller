@@ -1,7 +1,7 @@
 <?php
 //======================================================================
 // 					PHP CONTROLLER, INSEPET 2016
-// 						Versión  06-06-2017
+// 						Versión  13-06-2017
 //======================================================================
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
@@ -160,7 +160,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                         $credito = 0;
                     }
                 }
-                
                 if ($venta_cero == 0){
                     $estado = 1;
                     $pos1 = 0;
@@ -184,7 +183,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $listo = 1;
             }
             if($recibe == 25){ //surtiendo
-				$venta_ceroef  = 1;
                 if(!$listo || $credito ==1){
                     $estado = 3;    
                     $estado_espera = 0;
@@ -311,7 +309,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $listo2 = 1;
             }
             if($recibe2 == 25){
-				$venta_cero2ef = 1;
                 if(!$listo2 || $credito2 ==1){
                     $estado2 = 3;    
                     $estado_espera2 = 0;
@@ -447,11 +444,12 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             case a2: //Envía preset, solicita la programación que se hace al equipo
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $query = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
+                $query  = "SELECT grado, tipo_p, valor_p, totalesdin, totalesvol,ppu FROM preset WHERE id_pos = $array[3];";
+                
                 $result = pg_query($query);
                 $query2 = "UPDATE preset SET validacioncredito = 0, autorizado ='0', serial = '0' WHERE id_pos = $array[3];";
                 $res    = pg_query($query2);
-                $row  = pg_fetch_row($result);
+                $row    = pg_fetch_row($result);
                 $minuto = date("i");
                 $hora   = date("h");
                 $dia    = date("d");
@@ -492,10 +490,14 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                     $totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3]";
                     echo "Entra 4\n";
                 }
-                $restot  = pg_query($totales);
-                $rowtot  = pg_fetch_row($restot);
+                $searchsale  = "SELECT pk_idventa from venta where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3]);";
+                $lastsale  = pg_query($searchsale);
+                $compsale  = pg_fetch_row($lastsale);
+                $restot    = pg_query($totales);
+                $rowtot    = pg_fetch_row($restot);
                 $ppu       = $row[5];
                 $totalvol  = number_format((float)$rowtot[1], 2, '', '');
+                $totaldin  = $rowtot[0];
                 echo "Volumen enviado:$totalvol\n";
                 $revvol    = strrev($totalvol);
                 $revdinero = strrev($rowtot[0]);
@@ -558,7 +560,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		            if($venta_cero == 0 && $array[3] ==1){
     		            $actualiza   = "UPDATE venta SET  serialibutton = '$serialAlm' where pk_idventa  = (select max(pk_idventa) from venta where idposicion = 1)";
     		            $finv        = pg_query($actualiza); 
-    		            pg_free_result($res); 
     		            pg_free_result($finv); 
     		            echo "SERIAL\n"; 
 		            }
@@ -567,7 +568,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		            if($venta_cero2 == 0 && $array[3] ==2){
     		            $actualiza   = "UPDATE venta SET  serialibutton = '$serialAlm2' where pk_idventa = (select max(pk_idventa) from venta where idposicion = 2)";
     		            $finv        = pg_query($actualiza);
-    		            pg_free_result($res);
     		            pg_free_result($finv);
     		            echo "SERIAL\n";
 		            }
@@ -589,7 +589,20 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        $clientefec  = $row[10];
 				$datvol      = number_format((float)$volfinal, 2, '', '');
 		        
-		 
+		        $rescompsale = ($idventa - $compsale[0]);
+				if($rescompsale <= 0 && $array[3] ==1){
+					$venta_ceroef = 1;
+				}else{
+					$venta_ceroef = 0;
+				}
+				if($rescompsale <= 0 && $array[3] ==2){
+					$venta_cero2ef = 1;
+				}else{
+					$venta_cero2ef = 0;
+				}
+                echo "Res sale: $rescompsale Venta: $idventa \n";
+		        
+		        
 		        $revimp     = strrev($dinero);
 		        $revcant    = strrev($volumen);
 		        $revdinero  = strrev($dinfinal);
@@ -1120,7 +1133,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $estadolec  = "SELECT lecturacupocredito, validacioncredito FROM preset WHERE id_pos =$array[3]; ";
                 $qestadolec = pg_query($estadolec);
                 $row        = pg_fetch_row($qestadolec);
-                echo "Lectura Credito:$row[0] Validacion :$row[1] ;\n ";
                 $precio [0] = hex2bin($array[10]);
                 $precio [1] = hex2bin($array[9]);
                 $precio [2] = hex2bin($array[8]);
@@ -2244,7 +2256,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                         $resact = pg_query($actfp);
                     }
                 }
-                if($resetFP == 40){
+                if($resetFP == 200){
                     if($array[3] == 1){
                         $controlfpago = 0;
                         $actfp  = "UPDATE estado SET   fp1 = 0;";

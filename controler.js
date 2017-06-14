@@ -4057,7 +4057,7 @@ var muxWriteTablesL1 =function(WriteCase){
                     var dineromanguera3  = frame_1.total_money_P3l1;
                     var dineromanguera4  = frame_1.total_money_P4l1;
                     //(new Date());
-                    client.query(sprintf("UPDATE totales SET totalmanguera1 ='%1$s', totalmanguera2 = '%2$s' , totalmanguera3 ='%3$s',totalmanguera4 ='%4$s',dineromanguera1 ='%5$s', dineromanguera2 ='%6$s', dineromanguera3 = '%7$s', dineromanguera4='%6$s' WHERE pk_id_posicion=1",totalmanguera1,totalmanguera2,totalmanguera3,totalmanguera4,dineromanguera1,dineromanguera2,dineromanguera3,dineromanguera4),function(err,result){
+                    client.query(sprintf("UPDATE totales SET totalmanguera1 ='%1$s', totalmanguera2 = '%2$s' , totalmanguera3 ='%3$s',totalmanguera4 ='%4$s',dineromanguera1 ='%5$s', dineromanguera2 ='%6$s', dineromanguera3 = '%7$s', dineromanguera4='%8$s' WHERE pk_id_posicion=1",totalmanguera1,totalmanguera2,totalmanguera3,totalmanguera4,dineromanguera1,dineromanguera2,dineromanguera3,dineromanguera4),function(err,result){
                         done();
                         if(err){
                             return console.error('19Error de totales', err);
@@ -4076,7 +4076,7 @@ var muxWriteTablesL1 =function(WriteCase){
                     dineromanguera2  = frame_1.total_money_P2l2;
                     dineromanguera3  = frame_1.total_money_P3l2;
                     dineromanguera4  = frame_1.total_money_P4l2;                        
-                    client.query(sprintf("UPDATE totales SET totalmanguera1 ='%1$s', totalmanguera2 = '%2$s' , totalmanguera3 ='%3$s',totalmanguera4 ='%4$s',dineromanguera1 ='%5$s', dineromanguera2 ='%6$s', dineromanguera3 = '%7$s', dineromanguera4='%6$s' WHERE pk_id_posicion=2",totalmanguera1,totalmanguera2,totalmanguera3,totalmanguera4,dineromanguera1,dineromanguera2,dineromanguera3,dineromanguera4),function(err,result){
+                    client.query(sprintf("UPDATE totales SET totalmanguera1 ='%1$s', totalmanguera2 = '%2$s' , totalmanguera3 ='%3$s',totalmanguera4 ='%4$s',dineromanguera1 ='%5$s', dineromanguera2 ='%6$s', dineromanguera3 = '%7$s', dineromanguera4='%8$s' WHERE pk_id_posicion=2",totalmanguera1,totalmanguera2,totalmanguera3,totalmanguera4,dineromanguera1,dineromanguera2,dineromanguera3,dineromanguera4),function(err,result){
                         done();
                         if(err){
                             return console.error('20Error de totales', err);
@@ -6665,7 +6665,7 @@ setInterval(count, 5000);
 setInterval(count2, 5000);   
 setInterval(stateMux,30000);
 
-//2017-V-04
+//2017-VI-06
 
 
 
