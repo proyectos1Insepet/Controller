@@ -1,7 +1,7 @@
 <?php
 //======================================================================
 // 					PHP CONTROLLER, INSEPET 2016
-// 						Versión  13-06-2017
+// 						Versión  22-06-2017
 //======================================================================
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
@@ -195,7 +195,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             }
             if($recibe == 4){ //fin venta
                 $estado = 4;
-                $venta_ceroef  = 0;
             }
             if($recibe == 5){ //preset con identificador
                 $estado = 5;
@@ -321,7 +320,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             }
             if($recibe2 == 4){
                 $estado2 = 4;
-		        $venta_cero2ef = 0;
             }
             if($recibe2 == 5){
                 $estado2 = 5;
@@ -435,7 +433,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 unset($valor);                                                                        
                 $envio = implode("", $ar);
                 $print = implode(" - ", $ar);
-                //echo "Consulta A1: $print\n";
+                echo "Consulta A1: $print\n";
                 $length = strlen($envio);                                                
                 $consultacierrasocket=0;
                 socket_write($client, $envio,$length);
@@ -493,6 +491,11 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $searchsale  = "SELECT pk_idventa from venta where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3]);";
                 $lastsale  = pg_query($searchsale);
                 $compsale  = pg_fetch_row($lastsale);
+                if($array[3]==1){
+                    $idsale1   = $compsale[0];     
+                }else{
+                    $idsale2   = $compsale[0];
+                }
                 $restot    = pg_query($totales);
                 $rowtot    = pg_fetch_row($restot);
                 $ppu       = $row[5];
@@ -588,18 +591,23 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 		        $idventa     = $row[9];
 		        $clientefec  = $row[10];
 				$datvol      = number_format((float)$volfinal, 2, '', '');
-		        
-		        $rescompsale = ($idventa - $compsale[0]);
-				if($rescompsale <= 0 && $array[3] ==1){
-					$venta_ceroef = 1;
-				}else{
-					$venta_ceroef = 0;
-				}
-				if($rescompsale <= 0 && $array[3] ==2){
-					$venta_cero2ef = 1;
-				}else{
-					$venta_cero2ef = 0;
-				}
+		        if($array[3] == 1){
+		            $rescompsale = ($idventa - $idsale1);
+		            if($rescompsale == 0){
+					    $venta_ceroef = 1;
+				    }else{
+					    $venta_ceroef = 0;
+				    }
+		        }
+		        if($array[3] == 2){
+		            $rescompsale = ($idventa - $idsale2);
+		            if($rescompsale == 0){
+					    $venta_cero2ef = 1;
+				    }else{
+					    $venta_cero2ef = 0;
+				    }
+		        }
+				
                 echo "Res sale: $rescompsale Venta: $idventa \n";
 		        
 		        
@@ -697,7 +705,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 						$totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3];";                    
 						echo "Entra 4\n";
 					}
-					$restot     = pg_query($totales);     
+					$restot     = pg_query($totales);
 					$rowtot     = pg_fetch_row($restot);
 					$revvol    = strrev(number_format((float)$rowtot[1], 2, '', ''));
 					$revdinero = strrev($rowtot[0]);					
@@ -991,7 +999,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $imprime = implode("-",$ar);
                 $length = strlen($envio);
                 
-                echo "Envio totales: $imprime\n";
+                echo "Envio totales: $imprime , $envio\n";
                 print_r($ardinero1);
                 print_r($arvol1);
                 print_r($ardinero2);
@@ -1001,7 +1009,6 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 pg_free_result($result);
                 pg_free_result($res);
                 pg_close($dbconn); // Cerrando la conexión    
-                print_r(ar);
                 socket_write($client, $envio);
             break;
                 
@@ -1916,6 +1923,14 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
             case bb: //estado crédito espera
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
+                $searchsale  = "SELECT pk_idventa from venta where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3]);";
+                $lastsale  = pg_query($searchsale);
+                $compsale  = pg_fetch_row($lastsale);
+                if($array[3]==1){
+                    $idsale1   = $compsale[0];     
+                }else{
+                    $idsale2   = $compsale[0];
+                }
                 if($array[3] ==1){
                     $estado_ee = 21;
                     $estado_espera = 1;
@@ -1959,7 +1974,11 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 $identificadorfp = $datos[4];
                 $stringid  = sprintf("%-20s",$identificadorfp);
                 $disfp     = $datos[2]*100;
-
+                $idventafp = $datos[3];
+                $revidfp   = strrev($idventafp);
+                $stridfp   = sprintf("%0-9s",$revidfp);
+                $aridfp    = str_split($stridfp);
+                
                 echo "Discriminado ajustado:$disfp";
                 $stringaj  = sprintf("%8s",$disfp);
                 
@@ -1974,7 +1993,8 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
                 }
                 unset($valor);
                 print_r($aridforma);
-                $ar = array(78, 83, 88,$array[3],236,$datos[0],$arvdiscr[0],$arvdiscr[1],$arvdiscr[2],$arvdiscr[3],$arvdiscr[4],$arvdiscr[5],$arvdiscr[6],$arvdiscr[7],$datos[1],$aridforma[0],$aridforma[1],$aridforma[2],$aridforma[3],$aridforma[4],$aridforma[5],$aridforma[6],$aridforma[7],$aridforma[8],$aridforma[9],$aridforma[10],$aridforma[11],$aridforma[12],$aridforma[13],$aridforma[14],$aridforma[15],$aridforma[16],$aridforma[17],$aridforma[18],$aridforma[19]);
+                print_r($aridfp);
+                $ar = array(78, 83, 88,$array[3],236,$datos[0],$arvdiscr[0],$arvdiscr[1],$arvdiscr[2],$arvdiscr[3],$arvdiscr[4],$arvdiscr[5],$arvdiscr[6],$arvdiscr[7],$datos[1],$aridforma[0],$aridforma[1],$aridforma[2],$aridforma[3],$aridforma[4],$aridforma[5],$aridforma[6],$aridforma[7],$aridforma[8],$aridforma[9],$aridforma[10],$aridforma[11],$aridforma[12],$aridforma[13],$aridforma[14],$aridforma[15],$aridforma[16],$aridforma[17],$aridforma[18],$aridforma[19],$aridfp[0],$aridfp[1],$aridfp[2],$aridfp[3],$aridfp[4],$aridfp[5],$aridfp[6],$aridfp[7],$aridfp[8]);
                 $largo = count($ar);   
                 $ar[$largo] = verificar_check($ar, ($largo+1));
                 foreach ($ar as &$valor) {
