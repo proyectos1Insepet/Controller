@@ -697,7 +697,7 @@ pg_close($dbconn); // Cerrando la conexión de la base de datos
 						$totales = "SELECT dineromanguera4,totalmanguera4 FROM totales WHERE pk_id_posicion = $array[3];";                    
 						echo "Entra 4\n";
 					}
-					$restot     = pg_query($totales);
+					$restot     = pg_query($totales);     
 					$rowtot     = pg_fetch_row($restot);
 					$revvol    = strrev(number_format((float)$rowtot[1], 2, '', ''));
 					$revdinero = strrev($rowtot[0]);					
