@@ -802,7 +802,7 @@ function abrir_print2(error){
                         copiaL2=1;							
                     }
                 });                   
-            }   
+            } 
         });  
    }
 }
@@ -821,6 +821,7 @@ var L1ERROR,L2ERROR,datagiveTotable_creditL1,datagiveTotable_creditL2;
 function rx_data_mux(data){
            
     if((data[0]==='B') && (data[1]==='G') && (data[2]==='E')){                  //encabezado
+        //console.log(">>"+data);
         accountant=0;        
         for(x=0;x<=data.length;x++){
             accountant++;               
@@ -1225,10 +1226,10 @@ function rx_data_mux(data){
                     for(x=0;x<=19;x++){          
                         frame_1.isleroid[x]=data.charCodeAt(x+160);     
                     } 
-                    console.log(frame_1.supplier_position+"-"+frame_1.type_sale+"-"+frame_1.serialP1+"-"+frame_1.quantityP1+"-"+frame_1.total_valueP1
+                    /*console.log(frame_1.supplier_position+"-"+frame_1.type_sale+"-"+frame_1.serialP1+"-"+frame_1.quantityP1+"-"+frame_1.total_valueP1
                                 +"-"+frame_1.serialP2+"-"+frame_1.quantityP2+"-"+frame_1.total_valueP2+"-"+frame_1.serialP3+"-"+frame_1.quantityP3
                                 +"-"+frame_1.total_valueP3+"-"+frame_1.sellout_basket+"-"+frame_1.date_hour+"-"+frame_1.type_of_customer_identification
-                                +"-"+frame_1.customer_identification+"-"+frame_1.islero_typeid+"-"+frame_1.isleroid);
+                                +"-"+frame_1.customer_identification+"-"+frame_1.islero_typeid+"-"+frame_1.isleroid);*/
                     switch (frame_1.type_sale){
                         case '1':
                             muxWriteTablesL1(finventacanasta1L1);
@@ -2167,10 +2168,10 @@ function rx_data_mux(data){
                     for(x=0;x<=19;x++){       
                         frame_2.isleroid[x]=data.charCodeAt(x+next_position);     
                     } 
-                    console.log(frame_2.supplier_position+"-"+frame_2.type_sale+"-"+frame_2.serialP1+"-"+frame_2.quantityP1+"-"+frame_2.total_valueP1
+                    /*console.log(frame_2.supplier_position+"-"+frame_2.type_sale+"-"+frame_2.serialP1+"-"+frame_2.quantityP1+"-"+frame_2.total_valueP1
                                 +"-"+frame_2.serialP2+"-"+frame_2.quantityP2+"-"+frame_2.total_valueP2+"-"+frame_2.serialP3+"-"+frame_2.quantityP3+"-"+frame_2.total_valueP3
                                 +"-"+frame_2.sellout_basket+"-"+frame_2.date_hour+"-"+frame_2.type_of_customer_identification+"-"+frame_2.customer_identification
-                                +"-"+frame_2.islero_typeid+"-"+frame_2.isleroid);
+                                +"-"+frame_2.islero_typeid+"-"+frame_2.isleroid);*/
                     switch (frame_2.type_sale){
                         case '1':
                             muxWriteTablesL2(finventacanasta1L2);
@@ -2488,7 +2489,10 @@ function rx_data_mux(data){
 *********************************************************************************************************
 */
 
-function number_process_rxmux(accountant,accountant_2,identifier){
+function number_process_rxmux(accountant,accountant_2,identifier,error){
+    if(error){
+        return console.error('Error number_process_rxmux', error);
+    }else{
     
     if(accountant==9  && accountant_2==6){     
         if(identifier=='a'){
@@ -2866,6 +2870,7 @@ function number_process_rxmux(accountant,accountant_2,identifier){
         default:
     }
     return (type_of_reception);
+    }
 }
 
 
@@ -2879,7 +2884,10 @@ function number_process_rxmux(accountant,accountant_2,identifier){
 */
 
 
-function number_process2_rxmux(type_of_reception){
+function number_process2_rxmux(type_of_reception,error){
+    if(error){
+         return console.error('Error number_process2_rxmux', error);
+    }else{
     
     if (type_of_reception==STATE_STATE || type_of_reception==SALESORDER_STATE || type_of_reception==DISCRIMINATESALE_STATE || 
         type_of_reception==DISCRIMINATEDVALUE_STATE || type_of_reception==CREDITBASKET_STATE || type_of_reception==PROD_IDENTI_BASKET__STATE || 
@@ -2957,7 +2965,7 @@ function number_process2_rxmux(type_of_reception){
         type_of_reception_2=X_TURN;
     }
     return (type_of_reception_2);    
-    
+    }
 }
 
 
@@ -3203,7 +3211,7 @@ function watchful(error){
                             }      
                         });
                     }                        
-                }   
+                }
             });
         }  
     }    
@@ -3461,7 +3469,7 @@ var statesPhpL1 =function(estadoL1){
                 }
             });                 
                                   
-        }   
+        } 
     });
 
 };
@@ -3717,7 +3725,7 @@ var statesPhpL2 =function(estadoL2){
                 }
             });                 
                                   
-        }   
+        }
     });
 
 };
@@ -4139,7 +4147,7 @@ var muxWriteTablesL1 =function(WriteCase){
                 }
             });                 
                                   
-        }   
+        } 
     });
 };
 
@@ -4534,7 +4542,7 @@ var muxWriteTablesL2 =function(WriteCase2){
                 }
             });                 
                                   
-        }   
+        }  
     });
 };
 
@@ -4803,7 +4811,6 @@ var readTables_credit = function(error){
                 }else{
                 }      
             });             
-        
         });
     }
 }
@@ -5998,7 +6005,7 @@ var readTables = function (error){
                 }else{
                 }      
                 });                                
-            }   
+            } 
         });
     }           
 
@@ -6021,8 +6028,11 @@ var positionOne= new Buffer(1);
 var positionTwo= new Buffer(1);
             
             
-var sendMux =function(numeroEnvio){
-    switch (numeroEnvio){
+var sendMux =function(numeroEnvio,error){
+    if(error){
+        return console.error('1Error sendBBB2vivomux', err);  
+    }else{
+        switch (numeroEnvio){
         case initialSettings_mux:                                                
             var f = new Date();                                               
             x=0;
@@ -6500,6 +6510,7 @@ var sendMux =function(numeroEnvio){
 	    break;            
         default:
     }
+    }
 };
 
 
@@ -6511,7 +6522,10 @@ var sendMux =function(numeroEnvio){
 *               
 *******************************************************************************************
 */
-var sendBBB2vivomux =function(){
+var sendBBB2vivomux =function(error){
+    if(error){
+        return console.error('1Error sendBBB2vivomux', err);
+    }else{
     
     pg.connect(conString, function(err, client, done){
         if(err){
@@ -6522,11 +6536,13 @@ var sendBBB2vivomux =function(){
                 if(err){
                     return console.error('2Error de vivoestadomux', err);
                 }else{    
-                    //('>>Estado del BGE: Vivo');                    
+                    console.log('>>Estado del BGE: Vivo');                    
                 }
             });                                       
-        }   
+        }  
     });
+    
+    }
 };
 
 
@@ -6559,7 +6575,7 @@ var stateMux = function(error){
                         }
                     } 
                 });                
-            }   
+            } 
         });
     } 
 }
@@ -6665,7 +6681,7 @@ setInterval(count, 5000);
 setInterval(count2, 5000);   
 setInterval(stateMux,30000);
 
-//2017-VI-06
+//2017-VII-11
 
 
 
