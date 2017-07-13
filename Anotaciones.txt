@@ -28,6 +28,7 @@ ff		Inactivo
 24      Listo calibracion
 25      Credito canasta
 26      Respuesta forma de pago 
+34      Listo Tappsi
 
 /******************************************************/
 ACK  = 3
