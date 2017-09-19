@@ -1,7 +1,7 @@
 <?php
 //======================================================================
 // 					PHP CONTROLLER, INSEPET 2016
-// 						Versión  22-06-2017
+// 						Versión  13-06-2017
 //======================================================================
 error_reporting(~E_NOTICE);
 set_time_limit (0); 
@@ -81,8 +81,7 @@ or die('Can not connect: ' . \pg_last_error());
 if ($consultacierrasocket == 0){
     //$sql1    = "TRUNCATE TABLE solicitudes;";
     //$res1    = pg_query($sql1); 
-    $query   = "UPDATE solicitudes SET (solicitabge2,tiposolicitud,confirmacion) = (0,'T',1);"; 
-    $query  .= "UPDATE estado SET nsxonline = 0;";
+    $query   = "UPDATE solicitudes SET (solicitabge2,tiposolicitud,confirmacion) = (0,'T',1)"; 
     $result  = pg_query($query); 
     pg_free_result($result);
     $consultacierrasocket =1;
@@ -101,7 +100,6 @@ if(socket_getpeername($client , $address , $port)){
 $estado_espera =0;
 $venta_cero = 0;
 $venta_cero2 = 0;
-$impfp   = 0;
 $fpago   = 1;
 $fpago2  = 1;
 $listo   = 0;
@@ -110,7 +108,6 @@ $fallacanasta  = 0;
 $fallacanasta2 = 0;
 echo "Conexion: $conexion\n";
 pg_close($dbconn); // Cerrando la conexión de la base de datos    
-sleep(2);
     while ($conexion){  //ciclo mientras hay conexión con nsx
         $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
         or die('Can not connect: ' . \pg_last_error());        
@@ -124,7 +121,7 @@ sleep(2);
         $fp2     = $row[4];
         echo "Recibe: $recibe";
         echo " Recibe2: $recibe2\n";
-        if($ciclo == 20){  //ciclo para comprobar actividad Beagle-MUX
+        if($ciclo == 50){  //ciclo para comprobar actividad Beagle-MUX
             $ciclo = 0;
             if($led ==0){
                  $estado_pos = "UPDATE estado SET pos1 = 0, pos2 =0;";
@@ -134,7 +131,7 @@ sleep(2);
                 $res_led    = pg_query($estado_led);
             }
         }
-        echo "Control FP: " . $controlfpago. "\n";
+       
         //Estados POS 1
         if($fp1 == 1 && $fpago == 1){ //comprobación formas de pago
             $estado = 22;
@@ -198,6 +195,7 @@ sleep(2);
             }
             if($recibe == 4){ //fin venta
                 $estado = 4;
+                $venta_ceroef  = 0;
             }
             if($recibe == 5){ //preset con identificador
                 $estado = 5;
@@ -250,9 +248,6 @@ sleep(2);
             }
             if($recibe == 33){//Posicion en error
                 $estado = 0;
-            }
-            if($recibe == 34){//Posicion en error
-                $estado = 34;
             }
         }
             if ($controlfpago == 1){
@@ -326,6 +321,7 @@ sleep(2);
             }
             if($recibe2 == 4){
                 $estado2 = 4;
+		        $venta_cero2ef = 0;
             }
             if($recibe2 == 5){
                 $estado2 = 5;
@@ -378,9 +374,6 @@ sleep(2);
             }
             if($recibe2 == 33){
                 $estado2 = 0;
-            }
-            if($recibe2 == 34){//Posicion en error
-                $estado2 = 34;
             }
             } 
             if ($controlfpago2 == 1){
@@ -442,7 +435,7 @@ sleep(2);
                 unset($valor);                                                                        
                 $envio = implode("", $ar);
                 $print = implode(" - ", $ar);
-                echo "Consulta A1: $print\n";
+                //echo "Consulta A1: $print\n";
                 $length = strlen($envio);                                                
                 $consultacierrasocket=0;
                 socket_write($client, $envio,$length);
@@ -500,11 +493,6 @@ sleep(2);
                 $searchsale  = "SELECT pk_idventa from venta where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3]);";
                 $lastsale  = pg_query($searchsale);
                 $compsale  = pg_fetch_row($lastsale);
-                if($array[3]==1){
-                    $idsale1   = $compsale[0];     
-                }else{
-                    $idsale2   = $compsale[0];
-                }
                 $restot    = pg_query($totales);
                 $rowtot    = pg_fetch_row($restot);
                 $ppu       = $row[5];
@@ -600,23 +588,18 @@ sleep(2);
 		        $idventa     = $row[9];
 		        $clientefec  = $row[10];
 				$datvol      = number_format((float)$volfinal, 2, '', '');
-		        if($array[3] == 1){
-		            $rescompsale = ($idventa - $idsale1);
-		            if($rescompsale == 0){
-					    $venta_ceroef = 1;
-				    }else{
-					    $venta_ceroef = 0;
-				    }
-		        }
-		        if($array[3] == 2){
-		            $rescompsale = ($idventa - $idsale2);
-		            if($rescompsale == 0){
-					    $venta_cero2ef = 1;
-				    }else{
-					    $venta_cero2ef = 0;
-				    }
-		        }
-				
+		        
+		        $rescompsale = ($idventa - $compsale[0]);
+				if($rescompsale <= 0 && $array[3] ==1){
+					$venta_ceroef = 1;
+				}else{
+					$venta_ceroef = 0;
+				}
+				if($rescompsale <= 0 && $array[3] ==2){
+					$venta_cero2ef = 1;
+				}else{
+					$venta_cero2ef = 0;
+				}
                 echo "Res sale: $rescompsale Venta: $idventa \n";
 		        
 		        
@@ -1008,7 +991,7 @@ sleep(2);
                 $imprime = implode("-",$ar);
                 $length = strlen($envio);
                 
-                echo "Envio totales: $imprime , $envio\n";
+                echo "Envio totales: $imprime\n";
                 print_r($ardinero1);
                 print_r($arvol1);
                 print_r($ardinero2);
@@ -1018,6 +1001,7 @@ sleep(2);
                 pg_free_result($result);
                 pg_free_result($res);
                 pg_close($dbconn); // Cerrando la conexión    
+                print_r(ar);
                 socket_write($client, $envio);
             break;
                 
@@ -1312,11 +1296,9 @@ sleep(2);
                 $fila        = pg_fetch_row($print);
                 if($array[3] == 1){
                         $controlfpago = 0;
-                        $impfp =1;
                 }
                 if($array[3] == 2){
                         $controlfpago2 =0;
-                        $impfp =1;
                 }
                 echo "Fila: $fila[0]\n";
                 if ($fila[0] == 2){
@@ -1934,14 +1916,6 @@ sleep(2);
             case bb: //estado crédito espera
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $searchsale  = "SELECT pk_idventa from venta where pk_idventa = (select max(pk_idventa) from venta where idposicion = $array[3]);";
-                $lastsale  = pg_query($searchsale);
-                $compsale  = pg_fetch_row($lastsale);
-                if($array[3]==1){
-                    $idsale1   = $compsale[0];     
-                }else{
-                    $idsale2   = $compsale[0];
-                }
                 if($array[3] ==1){
                     $estado_ee = 21;
                     $estado_espera = 1;
@@ -1967,7 +1941,6 @@ sleep(2);
 				//envía una solicitud de forma de pago al sistema, se envía el valor a discriminar de la venta
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
-                $impfp = 0;
                 if ($array[3] == 1){
                     $fpago        = 0;
                     $controlfpago = 1;
@@ -1986,12 +1959,8 @@ sleep(2);
                 $identificadorfp = $datos[4];
                 $stringid  = sprintf("%-20s",$identificadorfp);
                 $disfp     = $datos[2]*100;
-                $idventafp = $datos[3];
-                $revidfp   = strrev($idventafp);
-                $stridfp   = sprintf("%0-9s",$revidfp);
-                $aridfp    = str_split($stridfp);
-                
-                echo "Discriminado ajustado: ". $disfp."\n";
+
+                echo "Discriminado ajustado:$disfp";
                 $stringaj  = sprintf("%8s",$disfp);
                 
                 $arvdiscr  = str_split($stringaj);
@@ -2005,8 +1974,7 @@ sleep(2);
                 }
                 unset($valor);
                 print_r($aridforma);
-                print_r($aridfp);
-                $ar = array(78, 83, 88,$array[3],236,$datos[0],$arvdiscr[0],$arvdiscr[1],$arvdiscr[2],$arvdiscr[3],$arvdiscr[4],$arvdiscr[5],$arvdiscr[6],$arvdiscr[7],$datos[1],$aridforma[0],$aridforma[1],$aridforma[2],$aridforma[3],$aridforma[4],$aridforma[5],$aridforma[6],$aridforma[7],$aridforma[8],$aridforma[9],$aridforma[10],$aridforma[11],$aridforma[12],$aridforma[13],$aridforma[14],$aridforma[15],$aridforma[16],$aridforma[17],$aridforma[18],$aridforma[19],$aridfp[0],$aridfp[1],$aridfp[2],$aridfp[3],$aridfp[4],$aridfp[5],$aridfp[6],$aridfp[7],$aridfp[8]);
+                $ar = array(78, 83, 88,$array[3],236,$datos[0],$arvdiscr[0],$arvdiscr[1],$arvdiscr[2],$arvdiscr[3],$arvdiscr[4],$arvdiscr[5],$arvdiscr[6],$arvdiscr[7],$datos[1],$aridforma[0],$aridforma[1],$aridforma[2],$aridforma[3],$aridforma[4],$aridforma[5],$aridforma[6],$aridforma[7],$aridforma[8],$aridforma[9],$aridforma[10],$aridforma[11],$aridforma[12],$aridforma[13],$aridforma[14],$aridforma[15],$aridforma[16],$aridforma[17],$aridforma[18],$aridforma[19]);
                 $largo = count($ar);   
                 $ar[$largo] = verificar_check($ar, ($largo+1));
                 foreach ($ar as &$valor) {
@@ -2250,62 +2218,43 @@ sleep(2);
                 $dbconn = pg_connect("host=localhost dbname=nsx user=php_admin password='12345'")
                 or die('Can not connect: ' . \pg_last_error());
                 $resetFP = $resetFP+1;
-                if($impfp == 0){
                 if($array[5]==3 && $controlfpago !=2 && $array[3] == 1){
-                    $fpagoq    = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
-                    $rfpago    = pg_query($fpagoq);
+                    $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
+                    $rfpago    = pg_query($fpago);
                     $datos     = pg_fetch_row($rfpago); 
                     $identificadorfp = $datos[4];
                     $stringid  = sprintf("%-20s",$identificadorfp);
-                    if($datos[0] != 3){
-                        $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
-                        $rhispago  = pg_query($hispago);
-                    }else{
-                        $selnumv   = "SELECT valortotal,pk_idventa FROM venta where pk_idventa = (select max(pk_idventa) FROM venta where idposicion=1);";
-                        $rselnumv  = pg_query($selnumv);
-                        $seldatos  = pg_fetch_row($rselnumv);
-                        $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$seldatos[1],'$stringid');";
-                        $rhispago  = pg_query($hispago);
-                    }
+                    $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
+                    $rhispago  = pg_query($hispago);
                     $controlfpago = 2;
                     $actfp  = "UPDATE estado SET  fp1 = 0;";
                     $resact = pg_query($actfp);
                 }
                 if($array[5]==3 && $controlfpago2 !=2 && $array[3] == 2){
-                    $fpagoq    = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
-                    $rfpago    = pg_query($fpagoq);
+                    $fpago     = "SELECT ventaconsulta,tipoformadepago,valordiscriminado, numeroventa, identificadorfp FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
+                    $rfpago    = pg_query($fpago);
                     $datos     = pg_fetch_row($rfpago); 
                     $identificadorfp = $datos[4];
                     $stringid  = sprintf("%-20s",$identificadorfp);
-                    echo "Tipo FP: ". $datos[0]." \n";
-                    if($datos[0] != 3){
-                         $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
-                         $rhispago  = pg_query($hispago);
-                    }else{
-                        $selnumv   = "SELECT valortotal,pk_idventa FROM venta where pk_idventa = (select max(pk_idventa) FROM venta where idposicion=1);";
-                        $rselnumv  = pg_query($selnumv);
-                        $seldatos  = pg_fetch_row($rselnumv);
-                        $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$seldatos[1],'$stringid');";
-                        $rhispago  = pg_query($hispago);
-                    }
+                    $hispago   = "INSERT INTO historicoformapago (ventaconsulta,tipoformadepago,valordiscriminado,id_pos,numeroventa,identificadorfp) VALUES ($datos[0],$datos[1],'$datos[2]',$array[3],$datos[3],'$stringid');";
+                    $rhispago  = pg_query($hispago);
                     $controlfpago2 = 2;
                     $actfp  = "UPDATE estado SET  fp2 = 0;";
                     $resact = pg_query($actfp);
                 }
                 if($array[5]==4){
-                    $fpagoq    = "DELETE FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
-                    $rfpago    = pg_query($fpagoq);
+                    $fpago     = "DELETE FROM formadepago WHERE pkformapago = (SELECT MAX(pkformapago) FROM formadepago WHERE id_pos =$array[3]);";
+                    $rfpago    = pg_query($fpago);
                     if($array[3] == 1){
-                        $controlfpago = 2;
+                        $controlfpago = 0;
                         $actfp  = "UPDATE estado SET  fp1 = 0;";
                         $resact = pg_query($actfp);
                     }
                     if($array[3] == 2){
-                        $controlfpago2 = 2;
+                        $controlfpago2 = 0;
                         $actfp  = "UPDATE estado SET  fp2 = 0;";
                         $resact = pg_query($actfp);
                     }
-                }
                 }
                 if($resetFP == 200){
                     if($array[3] == 1){
@@ -2322,7 +2271,7 @@ sleep(2);
                     }
                     
                 }
-                echo "Reset1:". $resetFP. "Respuesta datafono: ".$array[5]."\n";
+                echo "Reset1: $resetFP\n";
                 $ACK = 3;
                 $ar = array(78,83,88,$array[3],243,$ACK);
                 $largo = count($ar);   
