@@ -821,7 +821,7 @@ var L1ERROR,L2ERROR,datagiveTotable_creditL1,datagiveTotable_creditL2;
 function rx_data_mux(data){
            
     if((data[0]==='B') && (data[1]==='G') && (data[2]==='E')){                  //encabezado
-        //console.log(">>"+data);
+        console.log(">>"+data);
         accountant=0;        
         for(x=0;x<=data.length;x++){
             accountant++;               
@@ -900,7 +900,7 @@ function rx_data_mux(data){
                         switch (frame_1.type_sale){
                             case '1':
                                 statesPhpL1(idusuariocredito2L1);
-                                //('>>EstadoL1: Espera transaccion credito');                                        
+                                console.log('>>EstadoL1: Espera transaccion credito');                                        
                             break;    
                             case '2':
                                 statesPhpL1(transaccionCrecan2L1);
@@ -1076,7 +1076,7 @@ function rx_data_mux(data){
                     frame_1.type_of_payment[x]=data.charCodeAt(x+15);     
                 } 
                 frame_1.consultation_sale=data[18];     
-                //(frame_1.supplier_position+"-"+frame_1.sales_number+"-"+frame_1.type_of_payment+"-"+frame_1.consultation_sale);
+                console.log(frame_1.supplier_position+"-"+frame_1.sales_number+"-"+frame_1.type_of_payment+"-"+frame_1.consultation_sale);
                 number_process2_rxmux(type_of_reception);         
                 if(ocupaconsultaDATABASEFPL2!=1){  
                     ocupaconsultaDATABASEFPL1=1;                                 
@@ -1119,7 +1119,7 @@ function rx_data_mux(data){
                 frame_1.memoria_part=2;      
             break;    
             case 'f':                                                           //CREDITO_CANASTA
-                //('___creditocanastaL1___');
+                console.log('___creditocanastaL1___');
                 for(x=0;x<=19;x++){         
                     frame_1.serial_id[x]='0';     
                 }
@@ -1136,8 +1136,8 @@ function rx_data_mux(data){
                 } 
                 frame_1.type_sale =data[40];  
                 frame_1.product_type =data[42];  
-                /*("Supplier:"+frame_1.supplier_position+" "+"Km:"+frame_1.mileage+" "+"Customer:"+frame_1.type_of_customer_identification+" "+
-                            "Serial:"+frame_1.serial_id+" "+"Type:"+frame_1.type_sale+" "+"Product:"+frame_1.product_type);*/
+                console.log("Supplier:"+frame_1.supplier_position+" "+"Km:"+frame_1.mileage+" "+"Customer:"+frame_1.type_of_customer_identification+" "+
+                            "Serial:"+frame_1.serial_id+" "+"Type:"+frame_1.type_sale+" "+"Product:"+frame_1.product_type);
                 number_process2_rxmux(type_of_reception);            
                 
                 switch (frame_1.type_sale){
@@ -1870,7 +1870,7 @@ function rx_data_mux(data){
                 } 
                 next_position=next_position+3;                  
                 frame_2.consultation_sale=data[next_position];  
-                //(frame_2.supplier_position+"-"+frame_2.sales_number+"-"+frame_2.type_of_payment+"-"+frame_2.consultation_sale);
+                console.log("Position: "+frame_2.supplier_position+" Sale number: "+frame_2.sales_number+" Payment: "+frame_2.type_of_payment+"Consultation sale: "+frame_2.consultation_sale);
                 if(ocupaconsultaDATABASEFPL1!=1){
                     ocupaconsultaDATABASEFPL2=1;                                
                     muxWriteTablesL2(discriminarformadepagoventaL2);
@@ -1881,7 +1881,7 @@ function rx_data_mux(data){
                 frame_2.memoria_part=2; 
             break;
             case X_DISCRIMINATEDVALUE:                                          //X - VALOR_DISCRIMINADO
-                //('___valordiscriminadoL2___');
+                console.log('___valordiscriminadoL2___');
                 frame_2.supplier_position=data[next_position];  
                 L2_request=data.charCodeAt(data[next_position]);                   
                 next_position=next_position+3;              
@@ -1902,8 +1902,8 @@ function rx_data_mux(data){
                 for(x=0;x<=19;x++){        
                     frame_2.serial_id[x]=data.charCodeAt(x+next_position);     
                 } 
-                //(frame_2.supplier_position+"-"+frame_2.sales_number+"-"+frame_2.type_of_payment+"-"+frame_2.consultation_sale+"-"+frame_2.discrim_value
-                //           +"-"+frame_2.serial_id);
+                console.log(frame_2.supplier_position+"-"+frame_2.sales_number+"-"+frame_2.type_of_payment+"-"+frame_2.consultation_sale+"-"+frame_2.discrim_value
+                           +"-"+frame_2.serial_id);
                 muxWriteTablesL2(valordiscriminadoL2);
                 TableNumber=discriminateSale_tableL2;
                 tipeofResetL2='2';                  
@@ -3293,13 +3293,32 @@ var statesPhpL1 =function(estadoL1){
                     });
                 break;    
                 case idusuariocreditoL1:
-                    client.query(sprintf("UPDATE estado SET pos1 = '%1$s' ",5),function(err,result){
+                    /*client.query(sprintf("UPDATE estado SET pos1 = '%1$s' ",5),function(err,result){
                         done();
                         if(err){
                             return console.error('7Error de estado', err);
                         }else{
                         }
-                    });                            
+                    }); */
+                    if(frame_1.type_of_customer_identification == 6){
+                        client.query(sprintf("UPDATE estado SET pos1 = '%1$s' ",34),function(err,result){
+                            done();
+                            if(err){
+                                return console.error('10Error de estado', err);
+                            }else{
+                                console.log("Customer"+ frame_1.type_of_customer_identification);
+                            }
+                        }); 
+                    }else{
+                        client.query(sprintf("UPDATE estado SET pos1 = '%1$s' ",5),function(err,result){
+                            done();
+                            if(err){
+                                return console.error('10Error de estado', err);
+                            }else{
+                                console.log("Customer"+ frame_1.type_of_customer_identification);
+                            }
+                        });     
+                    }
                 break;
                 case transaccionCrecanL1:
                     client.query(sprintf("UPDATE estado SET pos1 = '%1$s' ",17),function(err,result){
@@ -3320,13 +3339,25 @@ var statesPhpL1 =function(estadoL1){
                     });                    
                 break;
                 case idusuariocredito2L1:
-                    client.query(sprintf("UPDATE estado SET pos1 = '%1$s' ",5),function(err,result){
-                        done();
-                        if(err){
-                            return console.error('10Error de estado', err);
-                        }else{
-                        }
-                    });                  
+                    if(frame_1.type_of_customer_identification == 6){
+                        client.query(sprintf("UPDATE estado SET pos1 = '%1$s' ",34),function(err,result){
+                            done();
+                            if(err){
+                                return console.error('10Error de estado', err);
+                            }else{
+                                console.log("Customer"+ frame_1.type_of_customer_identification);
+                            }
+                        }); 
+                    }else{
+                        client.query(sprintf("UPDATE estado SET pos1 = '%1$s' ",5),function(err,result){
+                            done();
+                            if(err){
+                                return console.error('10Error de estado', err);
+                            }else{
+                                console.log("Customer"+ frame_1.type_of_customer_identification);
+                            }
+                        });     
+                    }
                 break;
                 case transaccionCrecan2L1:
                     client.query(sprintf("UPDATE estado SET pos1 = '%1$s' ",17),function(err,result){
@@ -3549,13 +3580,34 @@ var statesPhpL2 =function(estadoL2){
                     });                                       
                 break;    
                 case idusuariocreditoL2:
-                    client.query(sprintf("UPDATE estado SET pos2 = '%1$s' ",5),function(err,result){
+                    /*client.query(sprintf("UPDATE estado SET pos2 = '%1$s' ",5),function(err,result){
                         done();
                         if(err){
                             return console.error('7Error de estado', err);
                         }else{
                         }
-                    });                                   
+                    }); */
+                    
+                    if(frame_2.type_of_customer_identification == 6){
+                        client.query(sprintf("UPDATE estado SET pos2 = '%1$s' ",34),function(err,result){
+                            done();
+                            if(err){
+                                return console.error('10Error de estado', err);
+                            }else{
+                                console.log("Customer"+ frame_2.type_of_customer_identification);
+                            }
+                        }); 
+                    }else{
+                        client.query(sprintf("UPDATE estado SET pos2 = '%1$s' ",5),function(err,result){
+                            done();
+                            if(err){
+                                return console.error('10Error de estado', err);
+                            }else{
+                                console.log("Customer"+ frame_2.type_of_customer_identification);
+                            }
+                        });     
+                    }
+                    
                 break;
                 case transaccionCrecanL2:
                     client.query(sprintf("UPDATE estado SET pos2 = '%1$s' ",17),function(err,result){
@@ -3876,6 +3928,8 @@ var muxWriteTablesL1 =function(WriteCase){
                     var kilometraje = frame_1.mileage;
                     var serial      = frame_1.serial_id;
                     var tipo_venta  = parseFloat(frame_1.type_sale);
+                    console.log("Customer"+frame_1.type_of_customer_identification);
+                    
                     if(frame_1.product_type=='0'){
                        frame_1.product_type='1'; 
                     }
@@ -5506,7 +5560,7 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('27error de venta', err);
                                 }else{
-                                    //("*******Respuesta a peticion NРventa a discriminar en forma de pagoL2*******");                                
+                                    console.log("*******Respuesta a peticion NРventa a discriminar en forma de pagoL2*******");                                
                                     idultimaventa=result.rows[0].pk_idventa;
                                     idultimaventaPass2L2=idultimaventa;
                                     //("Id ultimaventa=" + idultimaventaPass2L2);
@@ -5613,9 +5667,10 @@ var readTables = function (error){
                                 if(err){
                                     return console.error('32error de historicoventacanasta', err);
                                 }else{
-                                    //("*******Respuesta a peticion NРventa a discriminar en forma de pago canasta*******");                                
+                                    //("*******Respuesta a peticion NРventa a discriminar en forma de pago canasta*******"); 
+                                    
                                     idultimaventa=result.rows[0].idventacanasta;
-                                    if(idultimaventa==undefined || idultimaventa==null) {
+                                    if(idultimaventa==null || idultimaventa==undefined) {
                                         //("llenar con valor la tabla de historicoventacanasta para columna idventacansta");
                                         idultimaventa='0';
                                     }                                    
@@ -6394,21 +6449,21 @@ var sendMux =function(numeroEnvio,error){
             shift_message=shift_message+adding_spaces;
             //("mensaje"+shift_message);
             authorizedMoney="0999000";
-            var result1 =parseInt(authorizedMoney,10);
-            var result2 =parseInt(PPUauthorized,10);
-            var result3=result1/result2;
+            var result1 =parseFloat(authorizedMoney);
+            var result2 =parseFloat(PPUauthorized);
+            var result3=(result1/result2)*10;
             var authorizedVolume = result3.toFixed(3);            
             completePlot(entered_value=authorizedVolume); 
             authorizedVolume=return_value;
             var authorizedVolume = authorizedVolume.replace(".", ",");            
             if(L1_request>0 && L1_request!=undefined){
                 muxport.write("MUX"+positionOne+"C"+";"+validation+";"+authorizedVolume+";"+"0"+authorizedMoney+";"+"0"+PPUauthorized+";"+shift_message+";"+"&"+positionTwo+"N;&"+"*");                
-                //("MUX"+"1"+"C"+";"+validation+";"+authorizedVolume+";"+"0"+authorizedMoney+";"+"0"+PPUauthorized+";"+shift_message+";"+"&"+"2N;&"+"*"); 
+                console.log("MUX"+"1"+"C"+";"+validation+";"+authorizedVolume+";"+"0"+authorizedMoney+";"+"0"+PPUauthorized+";"+shift_message+";"+"&"+"2N;&"+"*"); 
                 L1_request=0;
             }
             if(L2_request>0 && L2_request!=undefined){
                 muxport.write("MUX"+positionOne+"N;&"+positionTwo+"C"+";"+validation+";"+authorizedVolume+";"+"0"+authorizedMoney+";"+"0"+PPUauthorized+";"+shift_message+";"+"&"+"*");
-                //("MUX"+"1N;&"+"2"+"C"+";"+validation+";"+authorizedVolume+";"+"0"+authorizedMoney+";"+"0"+PPUauthorized+";"+shift_message+";"+"&"+"*"); 
+                console.log("MUX"+"1N;&"+"2"+"C"+";"+validation+";"+authorizedVolume+";"+"0"+authorizedMoney+";"+"0"+PPUauthorized+";"+shift_message+";"+"&"+"*"); 
                 L2_request=0;
             }     
             TableNumber=not_readtable;             
@@ -6536,7 +6591,7 @@ var sendBBB2vivomux =function(error){
                 if(err){
                     return console.error('2Error de vivoestadomux', err);
                 }else{    
-                    console.log('>>Estado del BGE: Vivo');                    
+                    //console.log('>>Estado del BGE: Vivo');                    
                 }
             });                                       
         }  
@@ -6594,6 +6649,8 @@ var completePlot =function(entered_value){
     
     var x=0;
     x= String(entered_value);
+    console.log(x);
+    console.log((x.length));
     switch (x.length) {     
         case 0:
             entered_value='00000000'+entered_value;                    
