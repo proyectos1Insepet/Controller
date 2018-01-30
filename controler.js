@@ -1,6 +1,6 @@
 /*
 *********************************************************************************************************
-*                                           MUX CODE
+*                                            CONTROLLER.JS
 *
 *                             (c) Copyright 2016; Sistemas Insepet LTDA
 *
@@ -16,37 +16,34 @@
 *********************************************************************************************************
 */
 
-//var ds              = require("xmldeserializer");
-//var trycatch        = require('trycatch');
+
 var sprintf         = require("sprintf").sprintf;
-//var rest_autorizar  = require("request");
-//var rest_venta      = require("request");
 var sp              = require("serialport");
 var sp2             = require("serialport");
 var sp3             = require("serialport");
 var pg              = require('pg');
-//var jonah           = require('jonah');
+
 /*
 *********************************************************************************************************
 *                                    DECLARACION DE VARIABLES
 *********************************************************************************************************
 */
 var port_mux          = '/dev/ttyO4';
-var config_port_mux   = {baudrate: 115200, parser: sp.parsers.readline("*")};
+var config_port_mux   = {baudrate: 115200, parser: sp.parsers.readline("*")}; //Configuración puerto MUX, velocidad, separador y puerto
 var muxport           = new sp.SerialPort(port_mux,config_port_mux,abrir);
 
 var port_print          = '/dev/ttyO1';
-var config_port_print   = {baudrate: 115200, parser: sp2.parsers.readline("*")};//9600
+var config_port_print   = {baudrate: 115200, parser: sp2.parsers.readline("*")};//Configuración impresoras, velocidad y puerto
 var printport           = new sp2.SerialPort(port_print,config_port_print);
 
 var port_print2         = '/dev/ttyO2';
 var config_port_print2  = {baudrate: 115200, parser: sp3.parsers.readline("*")};
 var printport2          = new sp3.SerialPort(port_print2,config_port_print2);
      
-var conString         = "postgrest://db_admin:12345@localhost:5432/nsx";
+var conString         = "postgrest://db_admin:12345@localhost:5432/nsx"; //Cadena de conexión base de datos
 /*****************Variables para el flujo***************************/
 
-//variables globales
+//variables globales para estado, respuestas y datos de recepción-envío MUX, recepción-envío Beagle
 var x;
 var accountant;
 var accountant_2;
@@ -300,7 +297,7 @@ var requestConfigurationL1,requestConfigurationL2;
 *********************************************************************************************************
 *                                    function abrir(error)
 *
-* Description : Abre el puerto serial para la comunicacion con el mux
+* Description : Abre el puerto serial para la comunicación con el mux
 *               
 *********************************************************************************************************
 */
@@ -322,7 +319,7 @@ function abrir(error){
 */
 var campo1,campo2,campo3,campo4,campo5,campo6,campo9,campo10,campo11;
 var copiaL1=0,copiaL2=0; 
-       
+//Impresión sin sistema, el .js toma el control del puerto y genera el recibo de venta       
 function abrir_print(error){
     
    if (error){
@@ -566,6 +563,7 @@ function abrir_print(error){
    }
 }
 
+//Impresión sin sistema, el .js toma el control del puerto y genera el recibo de venta 
 function abrir_print2(error){
     
    if (error){
@@ -839,7 +837,7 @@ function rx_data_mux(data){
         number_process_rxmux(accountant,accountant_2,identifier=data[4]);   
         sendBBB2vivomux();        
                        
-        switch (identifier) {  
+        switch (identifier) {  //Identifica la tarea que tiene que realizar según el dato que envía el MUX
             case 'a':     
                 frame_1.supplier_position=data[3];  
                 positionOne=data[3];
@@ -4210,7 +4208,7 @@ var muxWriteTablesL1 =function(WriteCase){
 
 /*
 *********************************************************************************************************
-*                                function muxWriteTablesL1()
+*                                function muxWriteTablesL2()
 *
 * Description : Escribe los datos insertados al lado dos para el code php
 *               
